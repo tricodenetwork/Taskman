@@ -7,6 +7,12 @@ import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { Motion } from "@legendapp/motion";
 import Profile from "../screens/Profile";
 import Login from "../screens/Login";
+import Accounts from "../screens/Accounts";
+import CreateAccount from "../screens/CreateAccount";
+import CreateJob from "../screens/CreateJob";
+import Jobs from "../screens/Jobs";
+import Tasks from "../screens/Tasks";
+import Taskman from "../screens/Taskman";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -18,10 +24,16 @@ export const MainStack = () => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName='login'
+        initialRouteName='taskman'
       >
+        <Stack.Screen name='taskman' component={Taskman} />
         <Stack.Screen name='profile' component={Profile} />
         <Stack.Screen name='login' component={Login} />
+        <Stack.Screen name='accounts' component={Accounts} />
+        <Stack.Screen name='jobs' component={Jobs} />
+        <Stack.Screen name='tasks' component={Tasks} />
+        <Stack.Screen name='CreateAccount' component={CreateAccount} />
+        <Stack.Screen name='CreateJob' component={CreateJob} />
         {/* <Stack.Screen name='home' component={TabNav} /> */}
       </Stack.Navigator>
     </NavigationContainer>

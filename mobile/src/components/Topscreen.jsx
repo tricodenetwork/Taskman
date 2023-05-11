@@ -6,31 +6,91 @@ import Notify from '../../assets/images/notify.svg';
 import { styles } from '../styles/stylesheet';
 import Svg, { Circle, Rect } from "react-native-svg";
 import ProfileCard from './ProfileCard'
+import { Motion } from "@legendapp/motion";
+import { useRoute } from "@react-navigation/native";
+import { AntDesign } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { setMenu } from "../store/slice-reducers/Formslice";
+import Menu from "./Menu";
 
+const Topscreen = ({
+  text,
+  text2,
+  text3,
+  children,
+  onPress,
+  navigation,
+  Edit,
+}) => {
+  const route = useRoute();
+  const dispatch = useDispatch();
+  const { menu } = useSelector((state) => state.app);
 
-
-
-const Topscreen = () => {
-    return (
-      <LinearGradient
-        className=''
-        style={styls.topSection}
-        colors={["#004343", "#0C4D4D"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+  const toggleMenu = () => {
+    dispatch(setMenu());
+  };
+  return (
+    <LinearGradient
+      style={styls.topSection}
+      colors={["#004343", "#0C4D4D"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+    >
+      <View
+        // id='headerNav'
+        className='px-4 justify-between flex-row items-center h-[20%] bg-opacity-100 border- border-white mt-[4vh]  relative flex  rounded-bl-[35px]'
       >
-        <View id='headerNav' className='px-4 justify-between flex-row items-center h-[20%] bg-opacity-100 border- border-white mt-[4vh]  relative flex  rounded-bl-[35px]'>
-          <TouchableOpacity>
+        <Menu navigation={navigation} />
+        <TouchableOpacity
+          className={`z-[500]  ${
+            menu && "relative transition duration-0 ease-linear left-[35vw]"
+          }`}
+          onPress={route.name == "taskman" ? toggleMenu : onPress}
+        >
+          {route.name == "taskman" ? (
+            <Motion.View className='bg-primary_light rounded-full w-[50px] h-[50px] flex items-center justify-center'>
+              <Ionicons
+                // name='md-arrow-back-outline'
+                name={!menu ? "ios-menu" : "ios-close"}
+                size={35}
+                style={styles.backArrow}
+                color={!menu ? "white" : "darkgreen"}
+              />
+            </Motion.View>
+          ) : (
             <Ionicons
               name='md-arrow-back-outline'
               size={30}
               style={styles.backArrow}
-              color='white'
+              color={!menu ? "white" : "darkgreen"}
             />
-          </TouchableOpacity>
-          <Text style={styles.text_md} className='text-white text-xl'>
-            Profile
+          )}
+        </TouchableOpacity>
+        <Text
+          style={styles.text_md}
+          className='text-white absolute w-[100vw] text-center top-[25%] text-xl'
+        >
+          {text}
+        </Text>
+        {route.name == "tasks" && (
+          <Text
+            style={styles.text_sm}
+            className='text-white absolute w-[100vw] text-center top-[95%]'
+          >
+            Tasks:{text2}
           </Text>
+        )}
+        <Text
+          style={styles.text_sm}
+          className='text-white absolute w-[100vw] text-center top-[145%]'
+        >
+          {text3}
+        </Text>
+        {route.name == "tasks" ? (
+          <TouchableOpacity onPress={Edit}>
+            <AntDesign name='select1' size={24} color='white' />
+          </TouchableOpacity>
+        ) : (
           <TouchableOpacity className='relative border- border-white'>
             <Svg
               className='absolute  bottom-2 right-[-1vw]'
@@ -50,10 +110,12 @@ const Topscreen = () => {
 
             <Notify width={20} height={22} />
           </TouchableOpacity>
-        </View>
-      </LinearGradient>
-    );
-}
+        )}
+      </View>
+      {children}
+    </LinearGradient>
+  );
+};
 
 const styls = StyleSheet.create({
 

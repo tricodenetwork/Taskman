@@ -1,13 +1,13 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-     Pcard:{
-        shadowColor: "#000",
-        shadowOffset: {height: 50, width: 20},
-        shadowOpacity: 1,
-        shadowRadius:3.84,
-        elevation: 5,
-    },
+  Pcard: {
+    shadowColor: "#000",
+    shadowOffset: { height: 50, width: 20 },
+    shadowOpacity: 1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
   image: {
     flex: 1,
     width: "100%",
@@ -33,10 +33,33 @@ export const styles = StyleSheet.create({
   },
   text_md2: {
     fontFamily: "AxiformaSemiBold",
-    fontWeight:'600'
+    fontWeight: "600",
   },
   text_sm: {
     fontFamily: "AxiformaRegular",
     // fontWeight:'400'
+  },
+  input2: {
+    width: "95%",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    // borderWidth: 0.8,
+    // borderRadius: 8,
+    // height: 45,
+  },
+  box: {
+    position: "absolute",
+    right: 0,
+    bottom: 40,
+    padding: 5,
+  },
+  box2: {
+    width: "87%",
+    position: "absolute",
+    // right: 0,
+  },
+  averageText: {
+    fontSize: 15,
+    paddingLeft: 5,
   },
 });

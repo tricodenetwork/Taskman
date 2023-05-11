@@ -1,21 +1,29 @@
+import "react-native-gesture-handler";
+
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { MainStack } from "./src/navigator/AppNavigator";
 import { Provider } from "react-redux";
-import { store } from "./src/store/store";
+import { store, persistor } from "./src/store/store";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { PersistGate } from "redux-persist/integration/react";
+import Menu from "./src/components/Menu";
 
 const App = () => {
   return (
     <Provider store={store}>
-      <StatusBar
-      style="light"
-        backgroundColor='#004343'
-        animated={true}
-        //  hidden
-      />
-
-      <MainStack />
+      <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <StatusBar
+            style='light'
+            backgroundColor='#004343'
+            animated={true}
+            //  hidden
+          />
+          <MainStack />
+        </GestureHandlerRootView>
+      </PersistGate>
     </Provider>
   );
 };

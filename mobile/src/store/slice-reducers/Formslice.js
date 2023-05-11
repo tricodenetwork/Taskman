@@ -2,10 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   visible: false,
-  service: "",
-  location: {},
-  long: 0,
-  lat: 0,
+  search: "",
+  filter: "Name",
+  role: "",
+  menu: false,
 };
 
 const formSlice = createSlice({
@@ -15,18 +15,19 @@ const formSlice = createSlice({
     setVisible(state, action) {
       state.visible = action.payload;
     },
-    setLocale(state, action) {
-      state.location = action.payload;
+    setSearch(state, action) {
+      state.search = action.payload;
     },
-    setLong(state, action) {
-      state.long = action.payload;
+    setFilter(state, action) {
+      state.filter = action.payload;
     },
-    setLat(state, action) {
-      state.lat = action.payload;
+    setMenu(state, action) {
+      state.menu = !state.menu;
     },
   },
 });
 
-export const { setVisible, setLocale, setLong, setLat } = formSlice.actions;
+export const { setVisible, setSearch, setFilter, setRole, setMenu } =
+  formSlice.actions;
 
 export default formSlice.reducer;

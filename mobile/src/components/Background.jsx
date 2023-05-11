@@ -65,8 +65,6 @@ const Background = ({
           style={[{ minHeight: Math.round(windowHeight) }]}
           className={`h-full ${bgColor} relative`}
         >
-          <Topscreen />
-
           {children}
         </View>
       </DismissKeyboard>

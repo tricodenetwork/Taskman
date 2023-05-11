@@ -6,10 +6,18 @@ import OptionsCard from "../components/OptionsCard";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from '@expo/vector-icons';
 import LowerButton from '../components/LowerButton'
+import Topscreen from "../components/Topscreen";
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
   return (
     <Background>
+      <Topscreen
+        onPress={() => {
+          navigation.goBack();
+        }}
+        text={"Profile"}
+      />
+
       <ProfileCard />
       <OptionsCard
         text={"Security Details"}
@@ -33,7 +41,7 @@ const Profile = () => {
           />
         }
       />
-      <LowerButton text={"Log out"}/>
+      <LowerButton text={"Log out"} />
     </Background>
   );
 };
