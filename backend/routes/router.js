@@ -1,6 +1,7 @@
 const express = require("express");
 const route = express.Router();
 const controller = require("../controller/controller");
+const activeJobsController = require("../controller/activeJobsController");
 const multer = require("multer");
 
 // File Storage
@@ -63,5 +64,11 @@ route.delete("/job", controller.deleteJob);
 route.patch("/job", controller.editJob);
 route.patch("/job/tasks", controller.deleteTask);
 // route.post("/uploadersong", upload.any(), controller.create);
+
+//ActiveJobsRoute
+
+route.post("/activate", activeJobsController.activateJob);
+route.get("/activate", activeJobsController.getactiveJobs);
+route.delete("/activate", activeJobsController.deleteActiveJobs);
 
 module.exports = route;

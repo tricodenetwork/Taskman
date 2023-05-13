@@ -2,17 +2,17 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { styles } from "../styles/stylesheet";
 import { AntDesign } from "@expo/vector-icons";
-import { deleteJob, deleteTasks } from "../api/Functions";
+import { deleteActiveJob, deleteJob, deleteTasks } from "../api/Functions";
 import { setVisible } from "../store/slice-reducers/Formslice";
 import { useSelector, useDispatch } from "react-redux";
 import OdinaryButton from "./OdinaryButton";
 import { Motion } from "@legendapp/motion";
 import { useRoute } from "@react-navigation/native";
 
-export default function JobCard({ isActive, id, name, tasks, duration }) {
+export default function JobCard({ isActive, id, name, duration, item }) {
   const [visible, setVisible] = useState(false);
   const route = useRoute();
-  //   console.log(route.name);
+  console.log(item);
 
   return (
     <View
@@ -30,9 +30,15 @@ export default function JobCard({ isActive, id, name, tasks, duration }) {
       <View className='text-left  w-[60%] pl-3'>
         <Text style={styles.text_md2} className='text-primary'>
           {name}
+          {item && item.matNo}
         </Text>
-        {tasks ? <Text>Tasks:{tasks}</Text> : null}
-        <Text>{duration}</Text>
+        {item.dept ? <Text>{item.dept}</Text> : null}
+        {/* {tasks ? <Text>Tasks:{tasks}</Text> : null} */}
+        <Text>
+          {/* {duration}
+          {item.job} */}
+          {item.status && item.status.status}
+        </Text>
       </View>
       <TouchableOpacity
         onPress={() => {
@@ -41,6 +47,8 @@ export default function JobCard({ isActive, id, name, tasks, duration }) {
       >
         <AntDesign name='delete' size={24} color='black' />
       </TouchableOpacity>
+
+      {/* // Delete iconp */}
       {visible ? (
         <TouchableOpacity
           className='bg-primary_light z-20  rounded-2xl justify-center w-[95%] h-[100%] absolute'
@@ -65,6 +73,10 @@ export default function JobCard({ isActive, id, name, tasks, duration }) {
                   : route.name == "jobs"
                   ? deleteJob(id).then((res) => {
                       console.log(res, "deleted job sucessfully");
+                    })
+                  : route.name == "activeJobs"
+                  ? deleteActiveJob(id).then((res) => {
+                      console.log(res, "deleted activejob sucessfully");
                     })
                   : null;
                 setVisible(!visible);

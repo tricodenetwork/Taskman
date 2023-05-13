@@ -15,7 +15,7 @@ export default function Menu({ navigation }) {
         initial={{ y: -1000 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 100, duration: 0.6 }}
-        className='h-[80vh] space-y-5 px-[10%] py-[20%] absolute e z-50 top-[1vh] border-r-4 border-primary bg-white left-0 w-[60vw]'
+        className='h-[80vh] space-y-5 px-[10%] py-[20%] absolute e z-50 top-[1vh] border-b-2 border-r-2 border-primary bg-white left-0 w-[60vw]'
       >
         <TouchableOpacity
           onPress={() => {
@@ -37,7 +37,7 @@ export default function Menu({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            navigation("jobs");
+            navigation("activeJobs");
           }}
         >
           <Text style={styles.text_md2} className='text-xl text-primary'>
@@ -53,6 +53,18 @@ export default function Menu({ navigation }) {
             Chats
           </Text>
         </TouchableOpacity>
+        <Text
+          style={styles.text_md2}
+          className=' text-primary_lights underline absolute bottom-[2%] right-[10%]'
+        >
+          Logout
+        </Text>
+        {/* <Text
+          style={styles.text_md2}
+          className='text-sm relative top-[67%] text-primary'
+        >
+          &copy; 2023
+        </Text> */}
       </Motion.View>
     );
 }

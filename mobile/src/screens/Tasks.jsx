@@ -33,10 +33,11 @@ export default function Tasks({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
 
   const { jobId, jobName, tasks, duration, category, no } = route.params;
+  const { activeJobDetails } = route.params;
 
   const [task, setTask] = useState(tasks);
 
-  console.log(route.params.jobId);
+  console.log(task);
 
   useEffect(() => {
     getJobDetails(jobId).then((res) => {
@@ -78,7 +79,7 @@ export default function Tasks({ navigation }) {
             no2: no,
           });
         }}
-        text2={task.length}
+        text2={task ? task.length : activeJobDetails.supervisor}
         text3={duration}
         text={jobName}
       />
@@ -91,7 +92,10 @@ export default function Tasks({ navigation }) {
           <SearchComponent />
         </View>
         <View>
-          <TaskDetails taskdata={task} jobId={jobId} />
+          <TaskDetails
+            taskdata={task ? task : activeJobDetails.tasks}
+            jobId={jobId}
+          />
         </View>
       </View>
       <LowerButton

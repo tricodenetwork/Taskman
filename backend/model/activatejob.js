@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 let statusSchema = new mongoose.Schema({
   status: {
     type: String,
-    enum: ["pending", "in-progress", "completed"],
-    default: "pending",
+    enum: ["Pending", "In-progress", "Completed"],
+    default: "Pending",
   },
 });
 
@@ -16,13 +16,16 @@ let taskSchema = new mongoose.Schema({
 });
 
 let schema = new mongoose.Schema({
-  name: String,
-  duration: String,
-  category: String,
+  matNo: String,
+  dept: String,
+  email: String,
   tasks: [taskSchema],
-  no: Number,
+  job: String,
+  supervisor: String,
+  status: statusSchema,
+  // handler: Array,
 });
 
-const jobDB = mongoose.model("jobs", schema);
+const activeJobsDB = mongoose.model("activejobs", schema);
 
-module.exports = jobDB;
+module.exports = activeJobsDB;

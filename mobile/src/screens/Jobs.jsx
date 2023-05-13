@@ -31,14 +31,14 @@ export default function Jobs({ navigation }) {
         </View>
         <View>
           <JobDetails
-            onPress={(id, name, tasks, duration, category, no) => {
+            onPress={(item) => {
               navigation.navigate("tasks", {
-                jobId: id,
-                jobName: name,
-                tasks: tasks,
-                duration: duration,
-                category: category,
-                no: no,
+                jobId: item._id,
+                jobName: item.name,
+                tasks: item.tasks,
+                duration: item.duration,
+                category: item.category,
+                no: item.no,
               });
             }}
           />

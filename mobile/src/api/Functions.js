@@ -1,13 +1,12 @@
 import axios from "axios";
 const publicIp = require("react-public-ip");
 
-export const sendUserDetails = async (formdata) => {
+export const getActiveJobs = async (id) => {
   try {
-    const res = await axios.post("http://192.168.115.209:2000/user", formdata, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
+    const res = await axios.get("http://192.168.205.209:2000/activate", {
+      params: { id: id },
     });
+    return res.data;
   } catch (err) {
     if (err.status === 500) {
       console.log("there was a problem with the server");
@@ -16,9 +15,49 @@ export const sendUserDetails = async (formdata) => {
     }
   }
 };
+
+export const activateJob = async (formdata, name) => {
+  console.log(formdata);
+  try {
+    const res = await axios.post(
+      "http://192.168.205.209:2000/activate",
+      formdata,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        params: { supervisor: name },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    if (err.status === 500) {
+      console.log("there was a problem with the server");
+    } else {
+      console.log(err || "error from post");
+    }
+  }
+};
+export const sendUserDetails = async (formdata) => {
+  console.log(formdata.dept);
+  // try {
+  //   const res = await axios.post("http://192.168.205.209:2000/user", formdata, {
+  //     headers: {
+  //       "Content-Type": "application/x-www-form-urlencoded",
+  //     },
+  //   });
+  //   return res.data;
+  // } catch (err) {
+  //   if (err.status === 500) {
+  //     console.log("there was a problem with the server");
+  //   } else {
+  //     console.log(err || "error from post");
+  //   }
+  // }
+};
 export const sendJobDetails = async (formdata) => {
   try {
-    const res = await axios.post("http://192.168.115.209:2000/job", formdata, {
+    const res = await axios.post("http://192.168.205.209:2000/job", formdata, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
@@ -41,7 +80,7 @@ export const sendJobDetails = async (formdata) => {
 
 export const getUserDetails = async (id) => {
   try {
-    const res = await axios.get("http://192.168.115.209:2000/user", {
+    const res = await axios.get("http://192.168.205.209:2000/user", {
       params: { id: id },
     });
     return res.data;
@@ -55,7 +94,7 @@ export const getUserDetails = async (id) => {
 };
 export const getJobDetails = async (id) => {
   try {
-    const res = await axios.get("http://192.168.115.209:2000/job", {
+    const res = await axios.get("http://192.168.205.209:2000/job", {
       params: { id: id },
     });
     return res.data;
@@ -72,7 +111,7 @@ export const addTask = async (formdata, id) => {
   // console.log(id);
   // console.log(formdata);
   try {
-    const res = await axios.put("http://192.168.115.209:2000/job", formdata, {
+    const res = await axios.put("http://192.168.205.209:2000/job", formdata, {
       params: { id: id },
     });
     return res.data;
@@ -89,7 +128,7 @@ export const editUser = async (param) => {
   // console.log(formdata);
   try {
     const res = await axios.patch(
-      "http://192.168.115.209:2000/user",
+      "http://192.168.205.209:2000/user",
       {
         name: param.name,
         email: param.email,
@@ -116,7 +155,7 @@ export const editJob = async (param) => {
   // console.log(formdata);
   try {
     const res = await axios.patch(
-      "http://192.168.115.209:2000/job",
+      "http://192.168.205.209:2000/job",
       {
         name: param.name,
         duration: param.duration,
@@ -143,7 +182,7 @@ export const deleteTasks = async (id, name, duration) => {
   // console.log(formdata);
   try {
     const res = await axios.patch(
-      "http://192.168.115.209:2000/job/tasks",
+      "http://192.168.205.209:2000/job/tasks",
       null,
       {
         params: { id: id, name: name, duration: duration },
@@ -162,7 +201,23 @@ export const deleteJob = async (id) => {
   // console.log(id);
   // console.log(formdata);
   try {
-    const res = await axios.delete("http://192.168.115.209:2000/job", {
+    const res = await axios.delete("http://192.168.205.209:2000/job", {
+      params: { id: id },
+    });
+    return res.data;
+  } catch (err) {
+    if (err.status === 500) {
+      console.log("there was a problem with the server");
+    } else {
+      console.log(err || "error from post");
+    }
+  }
+};
+export const deleteActiveJob = async (id) => {
+  // console.log(id);
+  // console.log(formdata);
+  try {
+    const res = await axios.delete("http://192.168.205.209:2000/activate", {
       params: { id: id },
     });
     return res.data;

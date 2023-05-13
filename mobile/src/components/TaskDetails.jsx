@@ -64,6 +64,7 @@ export default function TaskDetails({ jobId, onPress, taskdata }) {
                   id={jobId}
                   name={item.name}
                   duration={item.duration}
+                  item={item}
                 />
               </View>
             </TouchableOpacity>

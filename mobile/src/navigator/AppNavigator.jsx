@@ -13,6 +13,8 @@ import CreateJob from "../screens/CreateJob";
 import Jobs from "../screens/Jobs";
 import Tasks from "../screens/Tasks";
 import Taskman from "../screens/Taskman";
+import ActivateJob from "../screens/ActivateJob";
+import ActiveJobs from "../screens/ActiveJobs";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,6 +36,11 @@ export const MainStack = () => {
         <Stack.Screen name='tasks' component={Tasks} />
         <Stack.Screen name='CreateAccount' component={CreateAccount} />
         <Stack.Screen name='CreateJob' component={CreateJob} />
+
+        {/* //Supervisor */}
+        <Stack.Screen name='ActivateJob' component={ActivateJob} />
+        <Stack.Screen name='activeJobs' component={ActiveJobs} />
+
         {/* <Stack.Screen name='home' component={TabNav} /> */}
       </Stack.Navigator>
     </NavigationContainer>
