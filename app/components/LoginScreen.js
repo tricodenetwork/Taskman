@@ -39,6 +39,7 @@ export const LoginScreen = () => {
 
     try {
       // Register the user...
+      await app.functions.registerUser(email, password);
       await app.emailPasswordAuth.registerUser({ email, password });
       // ...then login with the newly created user
       const credentials = Realm.Credentials.emailPassword(email, password);

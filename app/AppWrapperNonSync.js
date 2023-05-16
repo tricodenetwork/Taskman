@@ -1,12 +1,12 @@
 import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 
-import { TaskRealmContext } from "./models";
 import colors from "./styles/colors";
 import { AppNonSync } from "./AppNonSync";
+import { AccountRealmContext } from "./models";
 
 export const AppWrapperNonSync = () => {
-  const { RealmProvider } = TaskRealmContext;
+  const { RealmProvider } = AccountRealmContext;
 
   // If sync is disabled, setup the app without any sync functionality and return early
   return (
