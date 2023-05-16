@@ -1,0 +1,16 @@
+export const category = [
+  "Automechanic",
+  "Appliance Repairs",
+  "Car Repairs",
+  "Generator Repairs",
+  "Electrical Repairs",
+  "Plumbing Repairs",
+  "Carpentry Repairs",
+  "Painting Repairs",
+  "Tiling Repairs",
+  "Welding",
+  "Catering",
+  "Cleaning",
+  "Gardening",
+  "Hair Dressing",
+];
