@@ -15,6 +15,7 @@ import Tasks from "../screens/Tasks";
 import Taskman from "../screens/Taskman";
 import ActivateJob from "../screens/ActivateJob";
 import ActiveJobs from "../screens/ActiveJobs";
+import Handler from "../screens/Handler";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -26,7 +27,7 @@ export const MainStack = () => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName='taskman'
+        initialRouteName='login'
       >
         <Stack.Screen name='taskman' component={Taskman} />
         <Stack.Screen name='profile' component={Profile} />
@@ -40,7 +41,8 @@ export const MainStack = () => {
         {/* //Supervisor */}
         <Stack.Screen name='ActivateJob' component={ActivateJob} />
         <Stack.Screen name='activeJobs' component={ActiveJobs} />
-
+        {/* Handler */}
+        <Stack.Screen name='handler' component={Handler} />
         {/* <Stack.Screen name='home' component={TabNav} /> */}
       </Stack.Navigator>
     </NavigationContainer>

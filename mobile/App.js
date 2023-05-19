@@ -8,7 +8,6 @@ import { Provider } from "react-redux";
 import { store, persistor } from "./src/store/store";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PersistGate } from "redux-persist/integration/react";
-import Menu from "./src/components/Menu";
 
 const App = () => {
   return (

@@ -12,10 +12,10 @@ export default function Menu({ navigation }) {
   } else
     return (
       <Motion.View
-        initial={{ y: -1000 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 100, duration: 0.6 }}
-        className='h-[80vh] space-y-5 px-[10%] py-[20%] absolute e z-50 top-[1vh] border-b-2 border-r-2 border-primary bg-white left-0 w-[60vw]'
+        initial={{ y: -100 }}
+        animate={{ y: -20 }}
+        transition={{ type: "spring", stiffness: 20 }}
+        className='h-[80vh] space-y-5 px-[10%] py-[30%] absolute e z-50 top-[1vh] border-b-2 border-r-2 border-primary bg-white left-0 w-[60vw]'
       >
         <TouchableOpacity
           onPress={() => {
@@ -46,7 +46,7 @@ export default function Menu({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            navigation("jobs");
+            navigation("handler");
           }}
         >
           <Text style={styles.text_md2} className='text-xl text-primary'>

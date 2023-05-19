@@ -35,18 +35,20 @@ export default function JobCard({ isActive, id, name, duration, item }) {
         {item.dept ? <Text>{item.dept}</Text> : null}
         {/* {tasks ? <Text>Tasks:{tasks}</Text> : null} */}
         <Text>
-          {/* {duration}
-          {item.job} */}
-          {item.status && item.status.status}
+          {duration}
+          {item.job}
+          {/* {item.status && item.status} */}
         </Text>
       </View>
-      <TouchableOpacity
-        onPress={() => {
-          setVisible(!visible);
-        }}
-      >
-        <AntDesign name='delete' size={24} color='black' />
-      </TouchableOpacity>
+      {item.matNo && (
+        <TouchableOpacity
+          onPress={() => {
+            setVisible(!visible);
+          }}
+        >
+          <AntDesign name='delete' size={24} color='black' />
+        </TouchableOpacity>
+      )}
 
       {/* // Delete iconp */}
       {visible ? (
@@ -86,6 +88,9 @@ export default function JobCard({ isActive, id, name, duration, item }) {
           </Motion.View>
         </TouchableOpacity>
       ) : null}
+      <Text className='text-[12px] absolute text-Handler3 bottom-1 left-[25%]'>
+        Supervisor:{item.supervisor}
+      </Text>
     </View>
   );
 }

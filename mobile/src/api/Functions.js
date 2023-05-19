@@ -1,5 +1,4 @@
 import axios from "axios";
-const publicIp = require("react-public-ip");
 
 export const getActiveJobs = async (id) => {
   try {

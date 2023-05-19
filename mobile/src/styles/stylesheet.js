@@ -1,4 +1,44 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, Platform, PixelRatio, StyleSheet } from "react-native";
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+const scale = SCREEN_WIDTH / 375;
+
+const scaleVertical = SCREEN_HEIGHT / 812;
+
+export function actuatedNormalize(size) {
+  const newSize = size * scale;
+  if (Platform.OS === "ios") {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize));
+  } else {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 1;
+  }
+}
+
+export function actuatedNormalizeVertical(size) {
+  const newSize = size * scaleVertical;
+  if (Platform.OS === "ios") {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize));
+  } else {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 1;
+  }
+}
+
+export function isTab() {
+  if (SCREEN_WIDTH > 550) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export function isScreenHeight770() {
+  if (SCREEN_HEIGHT > 740 && SCREEN_HEIGHT < 760) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 export const styles = StyleSheet.create({
   Pcard: {
@@ -24,11 +64,20 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  headingText: {
+    fontFamily: "AxiformaBold",
+    fontSize: actuatedNormalize(18),
+    lineHeight: actuatedNormalizeVertical(28),
+  },
   text: {
     // letterSpacing: 1.25,
     fontFamily: "AxiformaBold",
   },
   text_md: {
+    fontFamily: "AxiformaMedium",
+    fontSize: actuatedNormalize(14),
+  },
+  text_mdhandler: {
     fontFamily: "AxiformaMedium",
   },
   text_md2: {
@@ -37,6 +86,8 @@ export const styles = StyleSheet.create({
   },
   text_sm: {
     fontFamily: "AxiformaRegular",
+    fontSize: actuatedNormalize(14),
+    lineHeight: actuatedNormalize(20),
     // fontWeight:'400'
   },
   input2: {

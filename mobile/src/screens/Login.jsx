@@ -35,7 +35,7 @@ const Login = ({ navigation }) => {
         />
       </View>
       <LowerButton
-        navigate={() => navigation.navigate("accounts")}
+        navigate={() => navigation.navigate("taskman")}
         text={"Log in"}
       />
     </Background>

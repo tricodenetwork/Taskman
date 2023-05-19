@@ -10,6 +10,7 @@ import DraggableFlatList, {
   ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { RefreshControl } from "react-native-gesture-handler";
+import DetailsCard from "./DetailsCard";
 
 export default function TaskDetails({ jobId, onPress, taskdata }) {
   const [data, setData] = useState([]);
@@ -59,13 +60,23 @@ export default function TaskDetails({ jobId, onPress, taskdata }) {
               onPress={onPress}
             >
               <View>
-                <JobCard
-                  isActive={isActive}
-                  id={jobId}
-                  name={item.name}
-                  duration={item.duration}
-                  item={item}
-                />
+                {item.status ? (
+                  <DetailsCard
+                    isActive={isActive}
+                    id={jobId}
+                    name={item.name}
+                    duration={item.duration}
+                    item={item}
+                  />
+                ) : (
+                  <JobCard
+                    isActive={isActive}
+                    id={jobId}
+                    name={item.name}
+                    duration={item.duration}
+                    item={item}
+                  />
+                )}
               </View>
             </TouchableOpacity>
           </ScaleDecorator>

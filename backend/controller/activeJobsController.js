@@ -32,8 +32,8 @@ exports.activateJob = (req, res) => {
           res.status(404).send({ message: "Task not found" });
         } else {
           const toSet = `tasks.${index}`;
-          console.log(data._id);
-          console.log(data);
+          // console.log(data._id);
+          // console.log(data);
           activeJobsDB
             .updateOne(
               { matNo: matNo, job: job },
@@ -41,7 +41,6 @@ exports.activateJob = (req, res) => {
                 $set: {
                   [`${toSet}.handler`]: handler,
                   [`${toSet}.status`]: "Pending",
-                  [`${toSet}.date`]: new Date(),
                 },
               }
             )

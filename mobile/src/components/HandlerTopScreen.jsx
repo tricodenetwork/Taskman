@@ -1,13 +1,16 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Dimensions,
+  PixelRatio,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Notify from "../../assets/images/notify.svg";
-import {
-  actuatedNormalize,
-  actuatedNormalizeVertical,
-  styles,
-} from "../styles/stylesheet";
+import { actuatedNormalize, styles } from "../styles/stylesheet";
 import Svg, { Circle, Rect } from "react-native-svg";
 import ProfileCard from "./ProfileCard";
 import { Motion } from "@legendapp/motion";
@@ -17,7 +20,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMenu } from "../store/slice-reducers/Formslice";
 import Menu from "./Menu";
 
-const Topscreen = ({
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+const HandlerTopscreen = ({
   text,
   text2,
   text3,
@@ -29,6 +34,7 @@ const Topscreen = ({
   const route = useRoute();
   const dispatch = useDispatch();
   const { menu } = useSelector((state) => state.app);
+  // console.log(SCREEN_WIDTH, SCREEN_HEIGHT);
 
   const toggleMenu = () => {
     dispatch(setMenu());
@@ -42,10 +48,9 @@ const Topscreen = ({
     >
       <View
         // id='headerNav'
-        className='px-5  justify-between flex-row items-center h-[20%] bg-opacity-100 border- border-white mt-[6vh]  relative flex  rounded-bl-[35px]'
+        className='px-[5vw]  justify-between flex-row items-center h-[20%]  border- border-white mt-[7vh]  relative flex'
       >
-        <Menu navigation={navigation} />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           className={`z-[500]  ${menu && "relative "}`}
           onPress={route.name == "taskman" ? toggleMenu : onPress}
         >
@@ -56,7 +61,7 @@ const Topscreen = ({
                 name={!menu ? "ios-menu" : "ios-close"}
                 size={25}
                 style={styles.backArrow}
-                color={!menu ? "black" : "darkgreen"}
+                color={!menu ? "white" : "darkgreen"}
               />
             </Motion.View>
           ) : (
@@ -67,27 +72,19 @@ const Topscreen = ({
               color={!menu ? "white" : "darkgreen"}
             />
           )}
-        </TouchableOpacity>
-        <Text
-          style={styles.text_md}
-          className='text-white absolute w-[100vw] text-center top-[25%] text-xl'
-        >
-          {text}
-        </Text>
-        {route.name == "tasks" && (
+        </TouchableOpacity> */}
+        <View>
+          <Text style={styles.headingText} className='text-white  text-left '>
+            {text}
+          </Text>
+
           <Text
             style={styles.text_sm}
-            className='text-white absolute w-[100vw] text-center top-[95%]'
+            className='text-primary_light mt-1 `  text-left'
           >
-            Tasks:{text2}
+            {text3}
           </Text>
-        )}
-        <Text
-          style={styles.text_sm}
-          className='text-white absolute w-[100vw] text-center top-[145%]'
-        >
-          {text3}
-        </Text>
+        </View>
         {route.name == "tasks" ? (
           <TouchableOpacity onPress={Edit}>
             <AntDesign name='select1' size={24} color='white' />
@@ -122,9 +119,9 @@ const Topscreen = ({
 };
 
 const styls = StyleSheet.create({
-  topSection: { height: "40%", borderBottomLeftRadius: 35 },
+  topSection: { height: "50%", borderBottomLeftRadius: 35 },
   // backArrow:{position:'absolute',left:0,top:0, alignSelf:'flex-start', marginLeft: 20, marginTop: 20}
   // backArrow:{position:'absolute',left:0,top:0, alignSelf:'flex-start', marginLeft: 20, marginTop: 20}
 });
 
-export default Topscreen;
+export default HandlerTopscreen;

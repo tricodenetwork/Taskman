@@ -9,7 +9,6 @@ import {
   setFilter,
 } from "../store/slice-reducers/Formslice";
 import { AntDesign } from "@expo/vector-icons";
-import { SelectList } from "react-native-dropdown-select-list";
 import { accountsFilter } from "../api/Functions";
 import { Motion } from "@legendapp/motion";
 

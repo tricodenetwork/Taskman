@@ -12,7 +12,11 @@ let taskSchema = new mongoose.Schema({
   handler: String,
   name: String,
   duration: String,
-  statusSchema,
+  status: {
+    type: String,
+    enum: ["Pending", "In-progress", "Completed"],
+    default: "Pending",
+  },
 });
 
 let schema = new mongoose.Schema({
@@ -22,8 +26,11 @@ let schema = new mongoose.Schema({
   tasks: [taskSchema],
   job: String,
   supervisor: String,
-  status: statusSchema,
-  // handler: Array,
+  status: {
+    type: String,
+    enum: ["Pending", "In-progress", "Completed"],
+    default: "Pending",
+  },
 });
 
 const activeJobsDB = mongoose.model("activejobs", schema);
