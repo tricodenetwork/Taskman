@@ -1,9 +1,9 @@
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { getJobDetails, jobDetails } from "../api/Functions";
 import JobCard from "./JobCard";
 import { styles } from "../styles/stylesheet";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { replaceTask } from "../store/slice-reducers/JobSlice";
 import DraggableFlatList, {
@@ -11,36 +11,51 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { RefreshControl } from "react-native-gesture-handler";
 import DetailsCard from "./DetailsCard";
+import { AccountRealmContext } from "../models";
+import { log } from "react-native-reanimated";
 
-export default function TaskDetails({ jobId, onPress, taskdata }) {
-  const [data, setData] = useState([]);
+const { useRealm, useQuery } = AccountRealmContext;
+
+export default function TaskDetails({ jobId, reArrange, taskdata }) {
+  // const taskdata = realm.objectForPrimaryKey("job", jobId);
+  // console.log(taskdata);
+  console.log(taskdata);
+  const [data, setData] = useState(taskdata);
   const [refreshing, setRefreshing] = useState(false);
+  const realm = useRealm();
   const dispatch = useDispatch();
+  const route = useRoute();
 
   const isFocused = useIsFocused();
 
-  const { tasks } = useSelector((state) => state.job);
+  // const { tasks } = useSelector((state) => state.Job);
+
+  // const reArrange = useCallback((array) => {
+  //   const taskArray = realm.objectForPrimaryKey("job");
+
+  //   realm.write(() => {});
+  // });
 
   useEffect(() => {
-    getJobDetails(jobId).then((res) => {
-      setData(res.tasks);
-      dispatch(replaceTask(res.tasks));
-    });
+    // getJobDetails(jobId).then((res) => {
+    setData(taskdata);
+    //   dispatch(replaceTask(res.tasks));
+    // });
 
     return () => {
       setRefreshing(false);
     };
   }, [isFocused, refreshing, taskdata]);
 
-  useEffect(() => {
-    setData(data);
-    dispatch(replaceTask(data));
-  }, [data]);
+  // useEffect(() => {
+  //   setData(data);
+  //   dispatch(replaceTask(data));
+  // }, [data]);
   return (
     <DraggableFlatList
-      containerStyle={{ height: "95%" }}
+      containerStyle={{ height: "91%" }}
       onDragEnd={({ data }) => {
-        setData(data);
+        reArrange(data);
       }}
       refreshControl={
         <RefreshControl
@@ -50,21 +65,21 @@ export default function TaskDetails({ jobId, onPress, taskdata }) {
           }}
         />
       }
-      data={data || taskdata}
+      data={taskdata}
       renderItem={({ item, drag, isActive }) => {
         return (
           <ScaleDecorator>
             <TouchableOpacity
               onLongPress={drag}
               activeOpacity={0.9}
-              onPress={onPress}
+              // onPress={}
             >
               <View>
-                {item.status ? (
+                {route.name == "activetasks" ? (
                   <DetailsCard
                     isActive={isActive}
-                    id={jobId}
-                    name={item.name}
+                    // id={jobId}
+                    // name={item.name}
                     duration={item.duration}
                     item={item}
                   />

@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, applyMiddleware } from "@reduxjs/toolkit";
 import formReducer from "./slice-reducers/Formslice";
 import dbreducer from "./slice-reducers/Database";
 import userSlice from "./slice-reducers/userSlice";
@@ -17,12 +17,22 @@ import jobreducer from "./slice-reducers/JobSlice";
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
+  whitelist: ["ActiveJob"],
 };
+const middlewares = [
+  /* other middlewares */
+  thunk,
+];
+
+if (__DEV__) {
+  const createDebugger = require("redux-flipper").default;
+  middlewares.push(createDebugger());
+}
 
 const allReducers = combineReducers({
   app: formReducer,
   DB: dbreducer,
-  job: jobreducer,
+  Job: jobreducer,
   user: userSlice,
   ActiveJob: ActiveJob,
   Admin: adminReducer,
@@ -33,7 +43,7 @@ const persistedReducer = persistReducer(persistConfig, allReducers);
 export const store = configureStore({
   // reducer: allReducers,
   reducer: persistedReducer,
-  middleware: [thunk],
+  middleware: [...middlewares],
 });
 export const persistor = persistStore(store);
 

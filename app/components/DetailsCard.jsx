@@ -1,10 +1,12 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
-import { styles } from "../styles/stylesheet";
+import { actuatedNormalize, styles } from "../styles/stylesheet";
 import Svg, { Circle, Rect } from "react-native-svg";
 import { useIsFocused, useRoute } from "@react-navigation/native";
+import { Fragment as MainBox } from "react";
 
 export default function DetailsCard({ item }) {
+  const route = useRoute();
   const status =
     item.status === "Pending"
       ? "gray"
@@ -39,13 +41,12 @@ export default function DetailsCard({ item }) {
 
     return { textColor, statusColor, backgroundColor, status };
   };
-  const route = useRoute();
-  console.log(item.status);
+  // console.log(item.status);
 
   return (
     <View
       style={styles.Pcard}
-      className='bg-white flex-row   rounded-2xl mb-5 self-center w-[90vw] h-[12vh] px-[7] items-center justify-between'
+      className='bg-white flex-row   rounded-2xl mb-4 self-center w-[90vw] h-[14vh] px-[7] items-center justify-between'
     >
       <View
         style={{
@@ -55,15 +56,33 @@ export default function DetailsCard({ item }) {
           item.role ? dynamicColor().textColor : null
         } absolute w-[1vw] rounded-full left-[-2px] h-[60%]`}
       ></View>
-      {!item.status && (
-        <Image source={require("../../assets/images/user_pic.png")} />
-      )}
-
-      <View className='text-left  w-[60%] pl-3'>
-        <Text style={styles.text_md2} className='text-primary'>
+      <View
+        id='LEFT_SECTION'
+        className='text-left w-[70%] space-y-[1vh] relative border- h-full justify-center pl-[2vw]'
+      >
+        <Text
+          style={[styles.text_md2, { fontSize: actuatedNormalize(14) }]}
+          className='text-primary'
+        >
           {item.name}
         </Text>
-        <Text>{item.duration}</Text>
+        <Text
+          style={[styles.text_sm, { fontSize: actuatedNormalize(14) }]}
+          className='text-primary'
+        >
+          {item.dept ? item.dept : item.handler || "Not assigned"}
+        </Text>
+        {item.duration && (
+          <Text
+            id='TIMER'
+            className='absolute top-[1vh] left-[30%]'
+            style={[styles.text_sm, { fontSize: actuatedNormalize(12) }]}
+          >
+            {item.duration.length === 1
+              ? `0${item.duration}:00`
+              : `${item.duration}:00`}
+          </Text>
+        )}
       </View>
       <View
         style={{
@@ -74,19 +93,22 @@ export default function DetailsCard({ item }) {
         className={` rounded-md  py-2 w-[21vw]`}
       >
         <Text
-          style={styles.text_md}
+          style={[styles.text_md, { fontSize: actuatedNormalize(10) }]}
           className={`${
             item.role ? dynamicColor().textColor : status
-          } text-center text-[10px]`}
+          } text-center`}
         >
-          {(route.name = "accounts" ? item.role.toUpperCase() : item.status)}
+          {item.role ? item.role.toUpperCase() : null}
 
           {item.status && item.status.toUpperCase()}
         </Text>
       </View>
-      <Text className='text-[12px] absolute text-Handler3 bottom-1 left-[25%]'>
+      {/* <Text
+        style={[{ fontSize: actuatedNormalize(12) }]}
+        className='absolute text-Handler3 bottom-1 left-[25%]'
+      >
         Handler:{item.handler || "Not Assigned"}
-      </Text>
+      </Text> */}
     </View>
   );
 }

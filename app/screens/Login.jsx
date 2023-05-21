@@ -22,14 +22,14 @@ const Login = ({ navigation }) => {
   const handleLogin = useCallback(async () => {
     console.log("logging in");
     setAuthState(AuthState.Loading);
-    const credentials = Realm.Credentials.anonymous();
-    // const credentials = Realm.Credentials.function({
-    //   username: usermail,
-    //   password: password,
-    // });
+    // const credentials = Realm.Credentials.anonymous();
+    const credentials = Realm.Credentials.function({
+      name: usermail,
+      password: password,
+    });
     try {
       const user = await app.logIn(credentials);
-      console.log(user);
+      console.log(user.id);
       setAuthState(AuthState.None);
     } catch (e) {
       console.log("Error logging in", e);
@@ -41,8 +41,7 @@ const Login = ({ navigation }) => {
   // console.log(users);
 
   return (
-    // <Background>
-    <>
+    <Background bgColor='bg-primary'>
       {/* <Topscreen>
         <Text
           style={styles.text}
@@ -51,9 +50,9 @@ const Login = ({ navigation }) => {
           Fill in Details
         </Text>
       </Topscreen> */}
-      <View className='w-[90vw] mt-[10vh] self-center'>
-        <Text style={styles.text_md2} className='text-amber-950 mb-[1vh]'>
-          Username/Email
+      <View className='w-[90vw] mt-[7vh] self-center'>
+        <Text style={styles.text_md} className='text-primary_light mb-[1vh]'>
+          Name
         </Text>
         <TextInput
           value={usermail}
@@ -62,7 +61,7 @@ const Login = ({ navigation }) => {
         />
       </View>
       <View className='w-[90vw] mt-[3vh] self-center'>
-        <Text style={styles.text_md2} className='text-amber-950 mb-[1vh]'>
+        <Text style={styles.text_md} className='text-primary_light mb-[1vh]'>
           Password
         </Text>
         <TextInput
@@ -89,8 +88,7 @@ const Login = ({ navigation }) => {
         }}
         text={"Log in"}
       />
-    </>
-    // </Background>
+    </Background>
   );
 };
 

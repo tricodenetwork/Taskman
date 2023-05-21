@@ -4,17 +4,14 @@ import { styles } from "../styles/stylesheet";
 
 const LowerButton = ({ text, navigate, disabled }) => {
   return (
-    <View className='absolute bottom-[2%] self-center  mx-auto'>
+    <View className='absolute bottom-[1vh] self-center  mx-auto'>
       <TouchableOpacity
         style={{ opacity: disabled ? 0.5 : 1 }}
         disabled={disabled}
         onPress={navigate}
-        className='bg-[#77E6B6] self-center rounded-2xl w-[90vw]  px-8 py-3'
+        className='bg-slate-900 self-center rounded-lg w-[90vw] py-2'
       >
-        <Text
-          style={styles.text_md2}
-          className='font-extrabold text-center text-Blue'
-        >
+        <Text style={styles.text_md2} className='text-center text-slate-100'>
           {text}
         </Text>
       </TouchableOpacity>

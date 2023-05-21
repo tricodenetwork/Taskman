@@ -8,6 +8,11 @@
     ],
     "android": {
       "package": "tasks.uniben.vic"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8e39c5ba-8a9b-44b4-8b67-00fe923da1c6"
+      }
     }
   }
 }

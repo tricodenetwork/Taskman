@@ -28,7 +28,7 @@ export default function Accounts({ navigation }) {
         text={"Accounts"}
       />
       <View
-        className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
+        className='bg-slate-200 h-[80vh] rounded-t-3xl  pt-[3vh] w-full absolute bottom-0
       '
       >
         <View className='mb-1'>
@@ -36,36 +36,17 @@ export default function Accounts({ navigation }) {
         </View>
         <View>
           <UserDetails
-            onPress={(item) => {
-              navigation.navigate("CreateAccount", { item: item });
-            }}
+          // onPress={(item) => {
+          //   navigation.navigate("CreateAccount", { item: item });
+          // }}
           />
-          {/* <FlatList
-            // getItemLayout={(data, index) => ({
-            //   length: 100,
-            //   offset: 100 * index,
-            //   index,
-            // })}
-            // removeClippedSubviews={true}
-            // maxToRenderPerBatch={8}
-            // windowSize={8}
-            style={{ height: "85%" }}
-            showsVerticalScrollIndicator
-            horizontal={false}
-            keyExtractor={(item) => item.id}
-            // contentContainerStyle={{
-            //   flexGrow: 1,
-            // }}
-            data={accounts}
-            renderItem={render}
-          /> */}
         </View>
       </View>
       <LowerButton
         navigate={() => {
           navigation.navigate("CreateAccount");
         }}
-        text={"New User"}
+        text={"Add"}
       />
     </Background>
   );

@@ -16,12 +16,7 @@ export default function Jobs({ navigation }) {
   const dispatch = useDispatch();
   return (
     <Background>
-      <Topscreen
-        onPress={() => {
-          navigation.goBack();
-        }}
-        text={"Jobs"}
-      />
+      <Topscreen text={"Jobs"} />
       <View
         className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
@@ -30,18 +25,7 @@ export default function Jobs({ navigation }) {
           <SearchComponent />
         </View>
         <View>
-          <JobDetails
-            onPress={(item) => {
-              navigation.navigate("tasks", {
-                jobId: item._id,
-                jobName: item.name,
-                tasks: item.tasks,
-                duration: item.duration,
-                category: item.category,
-                no: item.no,
-              });
-            }}
-          />
+          <JobDetails />
           {/* <FlatList
             // getItemLayout={(data, index) => ({
             //   length: 100,

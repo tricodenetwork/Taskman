@@ -16,8 +16,8 @@ import { Realm } from "@realm/react";
 // };
 
 export class Account extends Realm.Object {
-  constructor(realm, name, email, dept, phone, role, password) {
-    super(realm, { description, name, email, dept, phone, role, password });
+  constructor(realm, user) {
+    super(realm, user);
   }
 
   // To use a class as a Realm object type in JS, define the object schema on the static property "schema".

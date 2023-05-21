@@ -42,7 +42,7 @@ export function isScreenHeight770() {
 
 export const styles = StyleSheet.create({
   Pcard: {
-    shadowColor: "#000",
+    shadowColor: "white",
     shadowOffset: { height: 50, width: 20 },
     shadowOpacity: 1,
     shadowRadius: 3.84,
@@ -66,20 +66,42 @@ export const styles = StyleSheet.create({
   },
   headingText: {
     fontFamily: "AxiformaBold",
+    fontSize: actuatedNormalize(18),
+    lineHeight: actuatedNormalizeVertical(28),
   },
   text: {
     // letterSpacing: 1.25,
     fontFamily: "AxiformaBold",
+    fontSize: actuatedNormalize(20),
   },
   text_md: {
+    fontFamily: "AxiformaMedium",
+    fontSize: actuatedNormalize(16),
+  },
+  text_mdhandler: {
     fontFamily: "AxiformaMedium",
   },
   text_md2: {
     fontFamily: "AxiformaSemiBold",
     fontWeight: "600",
+    fontSize: actuatedNormalize(16),
+  },
+  text_tiny: {
+    fontFamily: "AxiformaThin",
+    fontSize: actuatedNormalize(10),
+    lineHeight: actuatedNormalize(18),
+    // fontWeight:'400'
   },
   text_sm: {
     fontFamily: "AxiformaRegular",
+    fontSize: actuatedNormalize(14),
+    lineHeight: actuatedNormalize(20),
+    // fontWeight:'400'
+  },
+  text_sm2: {
+    fontFamily: "AxiformaRegular",
+    fontSize: actuatedNormalize(16),
+    lineHeight: actuatedNormalize(24),
     // fontWeight:'400'
   },
   input2: {
@@ -93,8 +115,9 @@ export const styles = StyleSheet.create({
   box: {
     position: "absolute",
     right: 0,
-    bottom: 40,
+    bottom: 0,
     padding: 5,
+    zIndex: 50,
   },
   box2: {
     width: "87%",
@@ -102,7 +125,7 @@ export const styles = StyleSheet.create({
     // right: 0,
   },
   averageText: {
-    fontSize: 15,
+    fontSize: actuatedNormalize(15),
     paddingLeft: 5,
   },
 });
