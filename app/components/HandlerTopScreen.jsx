@@ -10,7 +10,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Notify from "../../assets/images/notify.svg";
-import { styles } from "../styles/stylesheet";
+import { actuatedNormalize, styles } from "../styles/stylesheet";
 import Svg, { Circle, Rect } from "react-native-svg";
 import ProfileCard from "./ProfileCard";
 import { Motion } from "@legendapp/motion";
@@ -34,7 +34,7 @@ const HandlerTopscreen = ({
   const route = useRoute();
   const dispatch = useDispatch();
   const { menu } = useSelector((state) => state.app);
-  console.log(SCREEN_WIDTH, SCREEN_HEIGHT);
+  // console.log(SCREEN_WIDTH, SCREEN_HEIGHT);
 
   const toggleMenu = () => {
     dispatch(setMenu());
@@ -48,9 +48,9 @@ const HandlerTopscreen = ({
     >
       <View
         // id='headerNav'
-        className='px-5 pt-[4vh] justify-between flex-row items-center h-[20%] bg-opacity-100 border- border-white mt-[4vh]  relative flex  rounded-bl-[35px]'
+        className='px-[5vw]  justify-between flex-row items-center h-[20%]  border- border-white mt-[7vh]  relative flex'
       >
-        <TouchableOpacity
+        {/* <TouchableOpacity
           className={`z-[500]  ${menu && "relative "}`}
           onPress={route.name == "taskman" ? toggleMenu : onPress}
         >
@@ -72,12 +72,9 @@ const HandlerTopscreen = ({
               color={!menu ? "white" : "darkgreen"}
             />
           )}
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <View>
-          <Text
-            style={styles.headingText}
-            className='text-white  text-left  text-lg'
-          >
+          <Text style={styles.headingText} className='text-white  text-left '>
             {text}
           </Text>
 
@@ -93,25 +90,27 @@ const HandlerTopscreen = ({
             <AntDesign name='select1' size={24} color='white' />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity className='relative border- border-white'>
-            <Svg
-              className='absolute  bottom-2 right-[-1vw]'
-              height='50%'
-              width='50%'
-              viewBox='0 0 100 100'
-            >
-              <Circle
-                cx='50'
-                cy='50'
-                r='40'
-                stroke='blue'
-                strokeWidth='0'
-                fill='#77e6b6'
-              />
-            </Svg>
+          <View className='relative border-  border-white'>
+            <TouchableOpacity>
+              <Svg
+                className='absolute top-[-5] right-[-3]'
+                height='50%'
+                width='50%'
+                viewBox='0 0 100 100'
+              >
+                <Circle
+                  cx='50'
+                  cy='50'
+                  r='30'
+                  stroke='blue'
+                  strokeWidth='0'
+                  fill='#77e6b6'
+                />
+              </Svg>
 
-            <Notify width={20} height={22} />
-          </TouchableOpacity>
+              <Notify width={actuatedNormalize(20)} />
+            </TouchableOpacity>
+          </View>
         )}
       </View>
       {children}
@@ -120,7 +119,7 @@ const HandlerTopscreen = ({
 };
 
 const styls = StyleSheet.create({
-  topSection: { height: "45%", borderBottomLeftRadius: 35 },
+  topSection: { height: "50%", borderBottomLeftRadius: 35 },
   // backArrow:{position:'absolute',left:0,top:0, alignSelf:'flex-start', marginLeft: 20, marginTop: 20}
   // backArrow:{position:'absolute',left:0,top:0, alignSelf:'flex-start', marginLeft: 20, marginTop: 20}
 });

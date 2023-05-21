@@ -1,13 +1,20 @@
 import { View, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-import React from "react";
+import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { Motion } from "@legendapp/motion";
 import { styles } from "../styles/stylesheet";
+import { useApp, useUser } from "@realm/react";
 
 export default function Menu({ navigation }) {
   const { menu } = useSelector((state) => state.app);
+
+  const user = useUser();
+
+  const handleLogout = useCallback(() => {
+    user?.logOut();
+  }, [user]);
 
   if (!menu) {
     return null;
@@ -17,7 +24,7 @@ export default function Menu({ navigation }) {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 20 }}
-        className='h-[80vh]  pt-[7vh] absolute   top-0 border-b-2 border-r-2 border-primary bg-white left-0 w-[60vw]'
+        className='h-[80vh]  pt-[7vh] absolute top-[-1vh] border-b-2 border-r-2 border-primary bg-white left-0 w-[60vw]'
       >
         <View className='relative w-auto z-50 h-[100%] gap-3 mx-[2vw]'>
           <TouchableOpacity
@@ -40,7 +47,7 @@ export default function Menu({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation("activeJobs");
+              navigation("jobs");
             }}
           >
             <Text style={styles.text_md2} className='text-xl text-primary'>
@@ -49,15 +56,15 @@ export default function Menu({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation("handler");
+              navigation("supervisor");
             }}
           >
             <Text style={styles.text_md2} className='text-xl text-primary'>
               Chats
             </Text>
           </TouchableOpacity>
-          <View className='absolute flex flex-row-reverse items-center justify-between w-full border- bottom-[0%] self-center px-[2vw]'>
-            <TouchableOpacity>
+          <View className='absolute flex flex-row-reverse items-center justify-between w-full border- bottom-[-2%] self-center px-[2vw]'>
+            <TouchableOpacity onPress={handleLogout}>
               <Text
                 style={styles.text_md2}
                 className=' text-primary underline '

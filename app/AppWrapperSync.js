@@ -26,7 +26,26 @@ export const AppWrapperSync = ({ appId }) => {
               flexible: true,
               initialSubscriptions: {
                 update(subs, realm) {
-                  subs.add(realm.objects("account"));
+                  const subscriptionConfigs = [
+                    { object: realm.objects("account"), name: "Acounts" },
+                    { object: realm.objects("job"), name: "Jobs" },
+                    { object: realm.objects("activejob"), name: "ActiveJobs" },
+                    // Add more subscription configurations as needed
+                  ];
+
+                  const subscriptionPromises = subscriptionConfigs.map(
+                    ({ object, name }) => {
+                      return subs.add(object, { name });
+                    }
+                  );
+
+                  Promise.all(subscriptionPromises)
+                    .then(() => {
+                      console.log("All subscriptions added successfully");
+                    })
+                    .catch((error) => {
+                      console.error("Failed to add subscriptions:", error);
+                    });
                 },
               },
 

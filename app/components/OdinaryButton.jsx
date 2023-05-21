@@ -1,17 +1,17 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
-import { styles } from "../styles/stylesheet";
+import { actuatedNormalize, styles } from "../styles/stylesheet";
 
 export default function OdinaryButton({ navigate, text, style }) {
   return (
     <View className={` ${style}  self-center  mx-auto`}>
       <TouchableOpacity
         onPress={navigate}
-        className='bg-[#77E6B6] self-center rounded-2xl   px-8 py-3'
+        className='bg-[#E59F71] self-center rounded-md px-[5vw] py-[1vh]'
       >
         <Text
-          style={styles.text_md2}
-          className='font-extrabold text-center text-Blue'
+          style={[styles.text_md2, { fontSize: actuatedNormalize(13) }]}
+          className='font-extrabold text-center text-slate-900'
         >
           {text}
         </Text>

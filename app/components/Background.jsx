@@ -52,7 +52,7 @@ const Background = ({ children, bgColor = "bg-slate-200" }) => {
       <DismissKeyboard>
         <View
           style={[{ minHeight: Math.round(windowHeight) }]}
-          className={`h-full ${bgColor} border-2 border-red- w-full relative`}
+          className={`h-full ${bgColor} border-2 border-red-  w-full relative`}
         >
           {children}
         </View>

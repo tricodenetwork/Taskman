@@ -4,11 +4,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { setVisible } from "../store/slice-reducers/Formslice";
 
 const DismissKeyboard = ({ children }) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   return (
     <TouchableWithoutFeedback
-      onPress={() => Keyboard.dismiss() & dispatch(setVisible(false))}
+      onPress={
+        () => Keyboard.dismiss()
+        // & dispatch(setVisible(false))
+      }
     >
       {children}
     </TouchableWithoutFeedback>

@@ -1,6 +1,6 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
-import { styles } from "../styles/stylesheet";
+import React, { useCallback, useState } from "react";
+import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { AntDesign } from "@expo/vector-icons";
 import { deleteActiveJob, deleteJob, deleteTasks } from "../api/Functions";
 import { setVisible } from "../store/slice-reducers/Formslice";
@@ -8,16 +8,30 @@ import { useSelector, useDispatch } from "react-redux";
 import OdinaryButton from "./OdinaryButton";
 import { Motion } from "@legendapp/motion";
 import { useRoute } from "@react-navigation/native";
+import { AccountRealmContext } from "../models";
+
+const { useRealm, useQuery } = AccountRealmContext;
 
 export default function JobCard({ isActive, id, name, duration, item }) {
   const [visible, setVisible] = useState(false);
   const route = useRoute();
-  console.log(item);
+  const realm = useRealm();
+  // console.log(item);
+
+  const deleteJob = useCallback(() => {
+    realm.write(() => {
+      // realm.delete(route.params.item);
+  
+      // Alternatively if passing the ID as the argument to handleDeleteTask:
+      realm?.delete(realm?.objectForPrimaryKey("job", id));
+    });
+  }, [realm]);
+
 
   return (
     <View
       style={[styles.Pcard, { backgroundColor: isActive ? "pink" : "white" }]}
-      className='bg-white flex-row   rounded-2xl mb-5 self-center w-[90vw] h-[12vh] px-[7] items-center justify-between'
+      className='bg-white flex-row   rounded-2xl mb-5 self-center w-[90vw] h-[14vh] px-[7] items-center justify-between'
     >
       <View
         style={{
@@ -27,26 +41,27 @@ export default function JobCard({ isActive, id, name, duration, item }) {
       ></View>
       {/* <Image source={require("../../assets/images/user_pic.png")} /> */}
 
-      <View className='text-left  w-[60%] pl-3'>
+      <View className='text-left  w-[70%] pl-[1vw]'>
         <Text style={styles.text_md2} className='text-primary'>
-          {name}
-          {item && item.matNo}
+          {item.name && item.name}
+          {item.matNo && item.matNo}
         </Text>
-        {item.dept ? <Text>{item.dept}</Text> : null}
+        {/* {item.dept ? <Text>{item.dept}</Text> : null} */}
         {/* {tasks ? <Text>Tasks:{tasks}</Text> : null} */}
-        <Text>
-          {duration}
-          {item.job}
-          {/* {item.status && item.status} */}
+        <Text style={[styles.text_sm]}>
+          {item.duration && `${item.duration} hrs`}
+          {/* {item.name} */}
+          {item.status && item.status}
         </Text>
       </View>
-      {item.matNo && (
+
+      {route.name == "jobs" && (
         <TouchableOpacity
           onPress={() => {
             setVisible(!visible);
           }}
         >
-          <AntDesign name='delete' size={24} color='black' />
+          <AntDesign name='delete' size={actuatedNormalize(23)} color='black' />
         </TouchableOpacity>
       )}
 
@@ -69,17 +84,9 @@ export default function JobCard({ isActive, id, name, duration, item }) {
               style={"rounded-md text-blue-800"}
               navigate={() => {
                 route.name == "tasks"
-                  ? deleteTasks(id, name, duration).then((res) => {
-                      console.log(res, "deleted task sucessfully");
-                    })
+                  ? deleteTask()
                   : route.name == "jobs"
-                  ? deleteJob(id).then((res) => {
-                      console.log(res, "deleted job sucessfully");
-                    })
-                  : route.name == "activeJobs"
-                  ? deleteActiveJob(id).then((res) => {
-                      console.log(res, "deleted activejob sucessfully");
-                    })
+                  ? deleteJob(id)
                   : null;
                 setVisible(!visible);
               }}
@@ -89,8 +96,9 @@ export default function JobCard({ isActive, id, name, duration, item }) {
         </TouchableOpacity>
       ) : null}
       <Text className='text-[12px] absolute text-Handler3 bottom-1 left-[25%]'>
-        Supervisor:{item.supervisor}
+        {item.supervisor && item.supervisor}
       </Text>
     </View>
   );
 }
+;

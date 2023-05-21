@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { styles } from "../styles/stylesheet";
+import { actuatedNormalize, styles } from "../styles/stylesheet";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import Menu from "../components/Menu";
@@ -24,7 +24,7 @@ export default function Taskman({ navigation }) {
       {/* <Menu /> */}
       <View className='flex-1 z-10'>
         <Text
-          style={styles.text}
+          style={[styles.text, { fontSize: actuatedNormalize(18) }]}
           className='absolute top-[50vh] bg-slate-300 z-0 rounded-3xl px-4 py-1  text-2xl text-primary self-center'
         >
           Taskman

@@ -22,7 +22,6 @@ export const AppSync = () => {
   const realm = useRealm();
   const user = useUser();
   const app = useApp();
-  const result = useQuery(Account);
 
   // const tasks = useMemo(() => result.sorted("createdAt"), [result]);
   // useEffect(() => {
@@ -31,10 +30,11 @@ export const AppSync = () => {
   //   });
   // }, [realm, result]);
 
-  const subs = realm.subscriptions;
-  console.log(result);
+  // const subs = realm.subscriptions;
+  // console.log(subs);
   // const users = realm.objects("account");
-  // console.log(users);
+  console.log(user.identities[0].id);
+  // console.log(user.id);
 
   // const handleLogout = useCallback(() => {
   //   user?.logOut();

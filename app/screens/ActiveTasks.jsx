@@ -28,7 +28,7 @@ import { AccountRealmContext } from "../models";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
-export default function Tasks({ navigation }) {
+export default function ActiveTasks({ navigation }) {
   //--------------------------------------------------------------------------------------STATE AND VARIABLES
   const route = useRoute();
   const realm = useRealm();
@@ -37,7 +37,7 @@ export default function Tasks({ navigation }) {
   const [edit, setEdit] = useState({ name: "", duration: "" });
   const [durations, setDurations] = useState("");
   const [refreshing, setRefreshing] = useState(false);
-  const job = realm.objectForPrimaryKey("job", route.params.id);
+  const job = realm.objectForPrimaryKey("activejob", route.params.id);
   const [task, setTask] = useState(job.tasks);
   const value = job.tasks.filtered(
     `name == $0 AND duration == $1`,
@@ -166,17 +166,17 @@ export default function Tasks({ navigation }) {
           navigation.goBack();
         }}
         Edit={() => {
-          navigation.navigate("CreateJob", {
+          navigation.navigate("ActivateJob", {
             id: route.params.id,
           });
         }}
         text2={job ? job.tasks.length : item.supervisor}
         text3={job.duration}
-        text={job.name}
+        text={job.job}
       />
 
       <View
-        className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
+        className='bg-slate-200 h-[80vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
       >
         <View className='mb-1'>

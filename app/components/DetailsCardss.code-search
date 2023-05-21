@@ -1,0 +1,46 @@
+# Query: DetailsCard
+# ContextLines: 1
+
+14 results - 6 files
+
+manager\app\components\TaskCard.jsx:
+  7  
+  8: export default function TaskCard({ item }) {
+  9    const route = useRoute();
+
+manager\app\components\TaskDetails.jsx:
+  12  import { RefreshControl } from "react-native-gesture-handler";
+  13: import TaskCard from "./TaskCard";
+  14  import { AccountRealmContext } from "../models";
+
+  73                  {item.status ? (
+  74:                   <TaskCard
+  75                      isActive={isActive}
+
+manager\app\components\UserDetails.jsx:
+  12  import { FlatList } from "react-native";
+  13: import TaskCard from "./TaskCard";
+  14  import { useDispatch, useSelector } from "react-redux";
+
+  78              >
+  79:               <TaskCard item={item} />
+  80              </TouchableOpacity>
+
+manager\app\screens\Accounts.jsx:
+   8  import SearchComponent from "../components/SearchComponent";
+   9: import TaskCard from "../components/TaskCard";
+  10  import JobCategory from "../components/UserDetails";
+
+  18      // </View>
+  19:     <TaskCard Name={item.name} Dept={item.dept} Role={item.role} />
+  20    );
+
+manager\app\screens\Jobs.jsx:
+  8  import SearchComponent from "../components/SearchComponent";
+  9: import TaskCard from "../components/TaskCard";
+  10  import UserDetails from "../components/UserDetails";
+
+manager\app\screens\Tasks.jsx:
+  16  import SearchComponent from "../components/SearchComponent";
+  17: import TaskCard from "../components/TaskCard";
+  18  import UserDetails from "../components/UserDetails";

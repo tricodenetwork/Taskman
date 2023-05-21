@@ -1,6 +1,6 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import React from "react";
-import { styles } from "../styles/stylesheet";
+import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -18,24 +18,38 @@ export default function SearchComponent() {
   const { visible, filter } = useSelector((state) => state.app);
 
   return (
-    <View className='bg-slate-400 w-[90%] self-center relative rounded-lg space-x-2 h-max flex flex-row items-center px-2'>
-      <MaterialCommunityIcons name='account-search' size={24} color='#004343' />
+    <View
+      style={{ borderRadius: actuatedNormalize(6) }}
+      className={`bg-slate-400 w-[90%] self-center relative h-max py-[1vh] flex flex-row items-center px-[1vw]`}
+    >
+      <MaterialCommunityIcons
+        name='account-search'
+        size={actuatedNormalize(23)}
+        color='#004343'
+      />
       <TextInput
         onChangeText={(value) => {
           dispatch(setSearch(value));
         }}
+        style={[styles.averageText, { color: "#004343" }]}
         placeholder={filter || "Name"}
-        placeholderTextColor={"#004343"}
+        placeholderTextColor={"rgba(0, 67,67,0.6)"}
         className='w-[80%] h-[5vh] bg-slate-400 rounded-sm self-center'
       />
-      <TouchableOpacity
-        onPress={() => {
-          dispatch(setVisible(!visible));
-        }}
-        className=''
-      >
-        <AntDesign name='filter' size={24} color='black' />
-      </TouchableOpacity>
+      <View className='absolute right-[1vw]'>
+        <TouchableOpacity
+          onPress={() => {
+            dispatch(setVisible(!visible));
+          }}
+          className=''
+        >
+          <AntDesign
+            name='filter'
+            size={actuatedNormalize(23)}
+            color='#004343'
+          />
+        </TouchableOpacity>
+      </View>
       {visible && (
         <Motion.View
           initial={{ x: 100 }}

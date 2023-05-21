@@ -7,9 +7,11 @@ const ActiveJob = createSlice({
     matNo: "",
     dept: "",
     handler: "",
-    tasks: [{ name: "", handler: "", duration: "", status: "" }],
+    tasks: [],
+    currenttask: "",
     job: "",
     email: "",
+    supervisor: "",
   },
   reducers: {
     setMatNo: (state, action) => {
@@ -33,6 +35,9 @@ const ActiveJob = createSlice({
     setTasks: (state, action) => {
       state.tasks = action.payload;
     },
+    setCurrentTask: (state, action) => {
+      state.currenttask = action.payload;
+    },
   },
 });
 
@@ -44,6 +49,7 @@ export const {
   setEmail,
   setId,
   setTasks,
+  setCurrentTask,
 } = ActiveJob.actions;
 
 export default ActiveJob.reducer;

@@ -1,4 +1,7 @@
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign } from "@expo/vector-icons";
@@ -16,13 +19,18 @@ import Taskman from "../screens/Taskman";
 import ActivateJob from "../screens/ActivateJob";
 import ActiveJobs from "../screens/ActiveJobs";
 import Handler from "../screens/Handler";
+import { useFlipper } from "@react-navigation/devtools";
+import Supervisor from "../components/Supervisor";
+import ActiveTasks from "../screens/ActiveTasks";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export const MainStack = () => {
+  const navRef = useNavigationContainerRef();
+  useFlipper(navRef);
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navRef}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -39,8 +47,10 @@ export const MainStack = () => {
         <Stack.Screen name='CreateJob' component={CreateJob} />
 
         {/* //Supervisor */}
+        <Stack.Screen name='supervisor' component={Supervisor} />
         <Stack.Screen name='ActivateJob' component={ActivateJob} />
         <Stack.Screen name='activeJobs' component={ActiveJobs} />
+        <Stack.Screen name='activetasks' component={ActiveTasks} />
         {/* Handler */}
         <Stack.Screen name='handler' component={Handler} />
         {/* <Stack.Screen name='home' component={TabNav} /> */}

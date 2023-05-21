@@ -14,15 +14,25 @@ import DetailsCard from "./DetailsCard";
 import { useDispatch, useSelector } from "react-redux";
 import { accounts, getUserDetails } from "../api/Functions";
 import { setUsers } from "../store/slice-reducers/Database";
+import Realm from "realm";
+import { AccountRealmContext } from "../models";
+import { Account } from "../models/Account";
+import { useNavigation } from "@react-navigation/native";
+
+const { useRealm, useQuery } = AccountRealmContext;
 
 export default function UserDetails({ onPress, set }) {
   const { search, filter } = useSelector((state) => state.app);
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
+  const realm = useRealm();
+  const accounts = useQuery(Account);
+  const navigation = useNavigation();
+  const cloneAccounts = Object.assign({}, accounts);
 
-  const col = filter.toLowerCase();
-  // console.log(col);
+  const col = filter && filter.toLowerCase();
+  // console.log(col, accounts);
 
   useEffect(() => {
     getUserDetails().then((res) => {
@@ -45,17 +55,25 @@ export default function UserDetails({ onPress, set }) {
             }}
           />
         }
-        data={data.filter(
+        // data={
+        //   data
+        //     ? data.filter(
+        //         (item, index) =>
+        //           item[col] &&
+        //           item[col].toLowerCase().includes(search.toLowerCase())
+        //       )
+        //     : accounts
+        // }
+        data={accounts.filter(
           (item, index) =>
             item[col] && item[col].toLowerCase().includes(search.toLowerCase())
         )}
-        // data={data}
         renderItem={({ item }) => {
           return (
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => {
-                onPress(item);
+                navigation.navigate("CreateAccount", { id: item._id });
               }}
             >
               <DetailsCard item={item} />
@@ -64,7 +82,7 @@ export default function UserDetails({ onPress, set }) {
         }}
         showsVerticalScrollIndicator
         keyExtractor={(item) => item._id}
-        style={{ height: "85%" }}
+        style={{ height: "80%" }}
       />
     )
   );

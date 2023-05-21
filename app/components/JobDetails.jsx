@@ -9,25 +9,32 @@ import React, { useEffect, useState } from "react";
 import { getActiveJobs, getJobDetails, jobDetails } from "../api/Functions";
 import JobCard from "./JobCard";
 import { styles } from "../styles/stylesheet";
-import { useIsFocused, useRoute } from "@react-navigation/native";
+import {
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+import { AccountRealmContext } from "../models";
+import { activejob, job } from "../models/Task";
 
+const { useRealm, useQuery } = AccountRealmContext;
 export default function JobDetails({ onPress, search = "" }) {
-  const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const route = useRoute();
+  const jobs = useQuery(job);
+  const activeJobs = useQuery(activejob);
+  const [data, setData] = useState(
+    route.name == "activeJobs" ? activeJobs : jobs
+  );
+  const navigation = useNavigation();
 
   const isFocused = useIsFocused();
 
   useEffect(() => {
     if (route.name == "activeJobs") {
-      getActiveJobs().then((res) => {
-        setData(res);
-        console.log(res);
-      });
+      setData(activeJobs);
     } else {
-      getJobDetails().then((res) => {
-        setData(res);
-      });
+      setData(jobs);
     }
 
     return () => {
@@ -50,14 +57,16 @@ export default function JobDetails({ onPress, search = "" }) {
           <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => {
-              onPress(item);
+              route.name == "jobs"
+                ? navigation.navigate("tasks", { id: item._id })
+                : navigation.navigate("activetasks", { id: item._id });
             }}
           >
             <JobCard
               id={item._id}
-              name={item.name}
+              // name={item.name}
               tasks={item.tasks.length}
-              duration={item.duration}
+              // duration={item.duration}
               item={item}
             />
           </TouchableOpacity>
@@ -65,7 +74,7 @@ export default function JobDetails({ onPress, search = "" }) {
       }}
       showsVerticalScrollIndicator
       keyExtractor={(item) => item._id}
-      style={{ height: "85%" }}
+      style={{ height: "83%" }}
     />
   );
 }

@@ -24,11 +24,7 @@ export default function ActiveJobs({ navigation }) {
         </View>
         <View>
           <JobDetails
-            onPress={(item) => {
-              navigation.navigate("tasks", {
-                activeJobDetails: item,
-              });
-            }}
+
           />
         </View>
       </View>
