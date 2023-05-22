@@ -22,6 +22,7 @@ import Handler from "../screens/Handler";
 import { useFlipper } from "@react-navigation/devtools";
 import Supervisor from "../components/Supervisor";
 import ActiveTasks from "../screens/ActiveTasks";
+import MyTasks from "../screens/MyTasks";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -53,6 +54,7 @@ export const MainStack = () => {
         <Stack.Screen name='activetasks' component={ActiveTasks} />
         {/* Handler */}
         <Stack.Screen name='handler' component={Handler} />
+        <Stack.Screen name='mytasks' component={MyTasks} />
         {/* <Stack.Screen name='home' component={TabNav} /> */}
       </Stack.Navigator>
     </NavigationContainer>

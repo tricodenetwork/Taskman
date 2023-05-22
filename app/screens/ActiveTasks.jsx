@@ -37,7 +37,10 @@ export default function ActiveTasks({ navigation }) {
   const [edit, setEdit] = useState({ name: "", duration: "" });
   const [durations, setDurations] = useState("");
   const [refreshing, setRefreshing] = useState(false);
-  const job = realm.objectForPrimaryKey("activejob", route.params.id);
+  const job = realm.objectForPrimaryKey(
+    "activejob",
+    Realm.BSON.ObjectId(route.params.id)
+  );
   const [task, setTask] = useState(job.tasks);
   const value = job.tasks.filtered(
     `name == $0 AND duration == $1`,
@@ -162,9 +165,6 @@ export default function ActiveTasks({ navigation }) {
   return (
     <Background>
       <Topscreen
-        onPress={() => {
-          navigation.goBack();
-        }}
         Edit={() => {
           navigation.navigate("ActivateJob", {
             id: route.params.id,

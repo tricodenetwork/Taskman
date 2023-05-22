@@ -27,15 +27,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
-const Topscreen = ({
-  text,
-  text2,
-  text3,
-  children,
-  // onPress,
-  navigation,
-  Edit,
-}) => {
+const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
   const route = useRoute();
   const dispatch = useDispatch();
   const { menu, notify } = useSelector((state) => state.app);
@@ -55,11 +47,7 @@ const Topscreen = ({
     dispatch(openNotification());
   };
 
-  const deleteActiveJob = useCallback(() => {
-    realm.write(() => {
-      realm.delete(realm.objectForPrimaryKey("activejob", route.params.id));
-    });
-  });
+  //
 
   const deleteAccount = useCallback(() => {
     realm.write(() => {
@@ -78,10 +66,10 @@ const Topscreen = ({
       end={{ x: 1, y: 1 }}
     >
       <View
-        // id='headerNav'
+        id='HEADER_NAV'
         className='px-[4vw]  justify-between flex-row items-center max-h-max bg-opacity-100 border- border-white mt-[6vh]  relative flex  rounded-bl-[35px]'
       >
-        <Menu navigation={navigation} />
+        <Menu />
         <View id='LEFT_OPTION'>
           <TouchableOpacity
             className={`${menu && "relative "}`}
@@ -206,7 +194,7 @@ const Topscreen = ({
                       console.log(res, "deleted job sucessfully");
                     })
                   : route.name == "ActivateJob"
-                  ? deleteActiveJob() & nav.navigate("activeJobs")
+                  ? del() & nav.navigate("activeJobs")
                   : route.name == "CreateAccount"
                   ? deleteAccount() &
                     console.log("deleted account sucessfully") &

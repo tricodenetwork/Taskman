@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { getActiveJobs, getJobDetails, jobDetails } from "../api/Functions";
 import JobCard from "./JobCard";
 import { styles } from "../styles/stylesheet";
 import {
@@ -16,18 +15,19 @@ import {
 } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import { activejob, job } from "../models/Task";
+import { useSelector } from "react-redux";
 
 const { useRealm, useQuery } = AccountRealmContext;
-export default function JobDetails({ onPress, search = "" }) {
+
+export default function JobDetails({ onPress }) {
   const [refreshing, setRefreshing] = useState(false);
+  const { search, filter } = useSelector((state) => state.app);
   const route = useRoute();
   const jobs = useQuery(job);
   const activeJobs = useQuery(activejob);
-  const [data, setData] = useState(
-    route.name == "activeJobs" ? activeJobs : jobs
-  );
+  const [data, setData] = useState([]);
   const navigation = useNavigation();
-
+  const col = filter && filter.toLowerCase();
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function JobDetails({ onPress, search = "" }) {
     return () => {
       setRefreshing(false);
     };
-  }, [isFocused, refreshing]);
+  }, [isFocused, refreshing, activeJobs]);
   return (
     <FlatList
       refreshControl={
@@ -51,21 +51,23 @@ export default function JobDetails({ onPress, search = "" }) {
           }}
         />
       }
-      data={data}
+      data={data.filter(
+        (item, index) => item == item
+        // item[col] && item[col].toLowerCase().includes(search.toLowerCase())
+      )}
       renderItem={({ item }) => {
         return (
           <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => {
-              route.name == "jobs"
-                ? navigation.navigate("tasks", { id: item._id })
-                : navigation.navigate("activetasks", { id: item._id });
+              const screenName =
+                route.name === "jobs" ? "tasks" : "activetasks";
+              navigation.navigate(screenName, { id: item._id.toString() });
             }}
           >
             <JobCard
-              id={item._id}
               // name={item.name}
-              tasks={item.tasks.length}
+              // tasks={item.tasks.length}
               // duration={item.duration}
               item={item}
             />

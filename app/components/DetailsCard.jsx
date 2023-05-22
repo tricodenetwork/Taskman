@@ -6,6 +6,7 @@ import { useIsFocused, useRoute } from "@react-navigation/native";
 import { Fragment as MainBox } from "react";
 
 export default function DetailsCard({ item }) {
+  // console.log(item);
   const route = useRoute();
   const status =
     item.status === "Pending"
@@ -41,7 +42,7 @@ export default function DetailsCard({ item }) {
 
     return { textColor, statusColor, backgroundColor, status };
   };
-  // console.log(item.status);
+  // console.log(item);
 
   return (
     <View

@@ -25,10 +25,11 @@ import { updateAddress } from "../store/slice-reducers/Database";
 import { getJobDetails, addTask } from "../api/Functions";
 import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
+import { activejob } from "../models/Task";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
-export default function Tasks({ navigation }) {
+export default function MyTasks({ navigation }) {
   //--------------------------------------------------------------------------------------STATE AND VARIABLES
   const route = useRoute();
   const realm = useRealm();
@@ -37,93 +38,29 @@ export default function Tasks({ navigation }) {
   const [edit, setEdit] = useState({ name: "", duration: "" });
   const [durations, setDurations] = useState("");
   const [refreshing, setRefreshing] = useState(false);
-  const job = realm.objectForPrimaryKey(
-    "job",
-    Realm.BSON.ObjectId(route.params.id)
-  );
-  const [task, setTask] = useState(job.tasks);
-  const value = job.tasks.filtered(
-    `name == $0 AND duration == $1`,
-    edit.name,
-    edit.duration
-  );
+  const ActiveJobs = useQuery(activejob);
+
+  const myTasks = ActiveJobs.map((job) => {
+    const assigned = job.tasks.filter(
+      (obj) => obj.handler === "Justina Emelife"
+    );
+    assigned.map((obj) => {
+      obj.id = job._id;
+      obj.job = job.job;
+    });
+    // const useThis = assigned.unshift(job._id);
+    console.log(assigned);
+    return assigned;
+  });
+  const mergedTasks = myTasks.reduce((acc, obj) => acc.concat(obj), []);
+
+  //   console.log(myTasks);
+  //   const myTask = myTasks.filter((obj) => obj.handler == "Justina Emelife");
+  //   console.log(myTasks);
+
+  const [task, setTask] = useState([]);
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
-
-  useEffect(() => {
-    setEdit({ name: "", duration: "" });
-    return () => {
-      setRefreshing(false);
-    };
-  }, [refreshing, modalVisible]);
-
-  const addTask = useCallback(
-    (item) => {
-      if (item.name == "") {
-        alert("Name cannot be empty");
-        return;
-      }
-      const index = job.tasks.findIndex((obj) => obj.name == item.name);
-
-      if (value.length !== 0) {
-        realm.write(() => {
-          if (item.name)
-            job.tasks.map((task) => {
-              const { name, duration } = task;
-
-              if (name == edit.name && duration == edit.duration) {
-                task.name = item.name;
-                task.duration = item.duration;
-                alert("Task edited successfully!");
-
-                return;
-              }
-            });
-        });
-      } else if (index == -1) {
-        realm.write(() => {
-          job.tasks.push(item);
-          alert("Task added successfully!");
-        });
-      } else {
-        alert("Task already exist");
-        return;
-      }
-
-      setTask(job.tasks);
-    },
-    [realm, edit]
-  );
-  const deleteTask = useCallback(() => {
-    realm.write(() => {
-      // Alternatively if passing the ID as the argument to handleDeleteTask:
-      // realm?.delete(value);
-
-      const index = job.tasks.findIndex(
-        (obj) => obj.name == edit.name && obj.duration == edit.duration
-      );
-      // setTask(job.tasks);
-      console.log(index);
-
-      if (index !== -1) {
-        job.tasks.splice(index, 1);
-        alert("Task deleted successfully!");
-
-        setTask(job.tasks);
-      }
-    });
-  }, [realm, edit]);
-  const reArrange = useCallback(
-    (array) => {
-      if (!array) {
-        return;
-      }
-      realm.write(() => {
-        job.tasks = array;
-      });
-    },
-    [realm]
-  );
 
   const render = ({ item }) => {
     return (
@@ -165,21 +102,16 @@ export default function Tasks({ navigation }) {
   return (
     <Background>
       <Topscreen
-        onPress={() => {
-          navigation.goBack();
-        }}
-        Edit={() => {
-          navigation.navigate("CreateJob", {
-            id: route.params.id,
-          });
-        }}
-        text2={job ? job.tasks.length : item.supervisor}
-        text3={job.duration}
-        text={job.name}
+
+      // Edit={() => {
+      //   navigation.navigate("ActivateJob", {
+      //     id: route.params.id,
+      //   });
+      // }}
       />
 
       <View
-        className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
+        className='bg-slate-200 h-[80vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
       >
         <View className='mb-1'>
@@ -190,8 +122,8 @@ export default function Tasks({ navigation }) {
             reArrange={(e) => {
               reArrange(e);
             }}
-            taskdata={task}
-            jobId={route.params.id}
+            taskdata={mergedTasks}
+            // jobId={route.params.id}
           />
         </View>
       </View>

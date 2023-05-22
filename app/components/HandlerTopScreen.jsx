@@ -17,28 +17,24 @@ import { Motion } from "@legendapp/motion";
 import { useRoute } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { setMenu } from "../store/slice-reducers/Formslice";
-import Menu from "./Menu";
+import { setMenu, openNotification } from "../store/slice-reducers/Formslice";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-const HandlerTopscreen = ({
-  text,
-  text2,
-  text3,
-  children,
-  onPress,
-  navigation,
-  Edit,
-}) => {
+const HandlerTopscreen = ({ text, text2, text3, children, Edit }) => {
   const route = useRoute();
   const dispatch = useDispatch();
-  const { menu } = useSelector((state) => state.app);
+  const { menu, notify } = useSelector((state) => state.app);
   // console.log(SCREEN_WIDTH, SCREEN_HEIGHT);
 
   const toggleMenu = () => {
     dispatch(setMenu());
   };
+
+  const toggleNotification = () => {
+    dispatch(openNotification());
+  };
+
   return (
     <LinearGradient
       style={styls.topSection}
@@ -91,7 +87,7 @@ const HandlerTopscreen = ({
           </TouchableOpacity>
         ) : (
           <View className='relative border-  border-white'>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={toggleNotification}>
               <Svg
                 className='absolute top-[-5] right-[-3]'
                 height='50%'
@@ -113,6 +109,28 @@ const HandlerTopscreen = ({
           </View>
         )}
       </View>
+      {notify ? (
+        <Motion.View
+          initial={{ x: 500 }}
+          animate={{ x: 0 }}
+          id='NOTIFICATION_MENU'
+          style={([], { borderRadius: actuatedNormalize(10) })}
+          className='h-[90vh] absolute flex py-[2vh] px-[2vw] top-[4vh] right-0 w-[65%] bg-[#69DC9E]'
+        >
+          <View className='self-end mb-[2vh]'>
+            <TouchableOpacity onPress={toggleNotification}>
+              <Ionicons
+                name='ios-close'
+                color={"darkgreen"}
+                size={actuatedNormalize(25)}
+              />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity>
+            <Text style={[styles.text_sm]}>You have just recieved a Task!</Text>
+          </TouchableOpacity>
+        </Motion.View>
+      ) : null}
       {children}
     </LinearGradient>
   );

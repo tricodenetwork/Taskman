@@ -38,14 +38,14 @@ const allReducers = combineReducers({
   Admin: adminReducer,
 });
 
-const persistedReducer = persistReducer(persistConfig, allReducers);
+// const persistedReducer = persistReducer(persistConfig, allReducers);
 
 export const store = configureStore({
-  // reducer: allReducers,
-  reducer: persistedReducer,
+  reducer: allReducers,
+  // reducer: persistedReducer,
   middleware: [...middlewares],
 });
-export const persistor = persistStore(store);
+// export const persistor = persistStore(store);
 
 // console.log(store.getState());
 // console.log(names)

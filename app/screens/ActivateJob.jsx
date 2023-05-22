@@ -10,6 +10,7 @@ import {
   setId,
   setTasks,
   setCurrentTask,
+  Replace,
 } from "../store/slice-reducers/ActiveJob";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
@@ -33,6 +34,8 @@ import Realm from "realm";
 const { useRealm, useQuery } = AccountRealmContext;
 
 const ActivateJob = ({ navigation }) => {
+  //--------------------------------------------------------------------------------------STATE AND VARIABLES
+
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const route = useRoute();
@@ -41,7 +44,6 @@ const ActivateJob = ({ navigation }) => {
   const activeJobs = useQuery(activejob);
   const allJobs = useQuery(jobSchema);
   const handlers = useQuery(Account).filtered(`role == "Handler"`);
-  const allTasks = realm.objectForPrimaryKey("activejob", route.params.id);
 
   const oid = user.identities[0].id;
   const cleanedOid = oid.replace(/[^0-9a-fA-F]/g, "");
@@ -51,16 +53,24 @@ const ActivateJob = ({ navigation }) => {
     Realm.BSON.ObjectId(cleanedOid)
   ).name;
 
-  const { matNo, dept, handler, job, email, id } = useSelector(
+  const { matNo, dept, handler, job, email, tasks, id } = useSelector(
     (state) => state.ActiveJob
   );
   const { visible, visible2, visible3 } = useSelector((state) => state.app);
   const { ActiveJob } = useSelector((state) => state);
 
+  //-------------------------------------------------------------EFFECTS AND FUNCTIONS
+
   useEffect(() => {
-    if (route.params.id) {
-      const useThis = realm.objectForPrimaryKey("activejob", route.params.id);
-      dispatch(setTasks(useThis.tasks));
+    if (route.params) {
+      const useThis = realm.objectForPrimaryKey(
+        "activejob",
+        Realm.BSON.ObjectId(route.params?.id)
+      );
+      useThis && dispatch(Replace(useThis));
+    } else {
+      dispatch(Replace());
+      return;
     }
   }, []);
 
@@ -71,7 +81,7 @@ const ActivateJob = ({ navigation }) => {
         try {
           const project = realm.objectForPrimaryKey(
             "activejob",
-            route.params.id
+            Realm.BSON.ObjectId(route.params.id)
           );
 
           project.job = item.job;
@@ -100,14 +110,21 @@ const ActivateJob = ({ navigation }) => {
   );
   const activateJob = useCallback(
     (item) => {
+      if (item.supervisor) {
+        alert("No supervisor");
+        return;
+      }
+
       realm.write(() => {
         try {
-          const project = new activejob(realm, item);
+          const { tasks, ...rest } = item;
+          const tasksArray = JSON.parse(JSON.stringify(tasks));
 
+          const project = new activejob(realm, rest);
+          project.tasks = tasksArray;
           project.tasks[0].handler = item.handler;
           project.supervisor = supervisor;
-
-          console.log("Added successully!");
+          alert("Job Activated");
         } catch (error) {
           console.log({ error, msg: "Error writing to realm" });
         }
@@ -115,14 +132,24 @@ const ActivateJob = ({ navigation }) => {
     },
     [realm]
   );
+  const deleteActiveJob = useCallback(() => {
+    realm.write(() => {
+      realm.delete(
+        realm.objectForPrimaryKey(
+          "activejob",
+          Realm.BSON.ObjectId(route.params.id)
+        )
+      );
+    });
+  });
+
+  //----------------------------------------------------RENDERED COMPONENT
 
   return (
     <Background>
       <Topscreen
-        onPress={() => {
-          navigation.goBack();
-        }}
-        text={"Activate Job"}
+        del={deleteActiveJob}
+        text={route.params ? "Edit Job" : "Activate Job"}
       />
       {isLoading ? (
         <Text>Loading...</Text>
@@ -166,11 +193,11 @@ const ActivateJob = ({ navigation }) => {
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           onPress={() => {
-                            console.log(item.name);
+                            // console.log(item.name);
                             dispatch(setJob(item.name));
                             dispatch(setTasks(item.tasks));
 
-                            console.log(item._id.getTimestamp());
+                            console.log(item.tasks);
                             dispatch(setVisible2());
                           }}
                         >
@@ -197,12 +224,12 @@ const ActivateJob = ({ navigation }) => {
                 onPress={() => {
                   dispatch(setVisible2());
                 }}
-                className='absolute right-0'
+                className='absolute right-[1vw]'
               >
                 <AntDesign
-                  name='select1'
-                  size={actuatedNormalize(20)}
-                  color='black'
+                  name='caretdown'
+                  size={actuatedNormalize(18)}
+                  color='gray'
                 />
               </TouchableOpacity>
             </View>
@@ -242,6 +269,7 @@ const ActivateJob = ({ navigation }) => {
                           onPress={() => {
                             dispatch(setCurrentTask(item.name));
                             dispatch(setVisible3());
+                            console.log(ActiveJob.currenttask);
                           }}
                         >
                           <Text
@@ -256,7 +284,7 @@ const ActivateJob = ({ navigation }) => {
                   </Motion.View>
                 )}
                 <TextInput
-                  // defaultValue={}
+                  defaultValue={ActiveJob.tasks[0]?.name}
                   editable={false}
                   style={[styles.averageText, { color: "black" }]}
                   value={ActiveJob.currenttask}
@@ -267,12 +295,12 @@ const ActivateJob = ({ navigation }) => {
                 onPress={() => {
                   dispatch(setVisible3());
                 }}
-                className='absolute right-0'
+                className='absolute right-[1vw]'
               >
                 <AntDesign
-                  name='select1'
-                  size={actuatedNormalize(20)}
-                  color='black'
+                  name='caretdown'
+                  size={actuatedNormalize(18)}
+                  color='gray'
                 />
               </TouchableOpacity>
             </View>
@@ -314,7 +342,7 @@ const ActivateJob = ({ navigation }) => {
                   </Motion.View>
                 )}
                 <TextInput
-                  defaultValue={handler}
+                  defaultValue={ActiveJob.tasks[0]?.handler}
                   editable={false}
                   style={[styles.averageText, { color: "black" }]}
                   value={handler}
@@ -325,12 +353,12 @@ const ActivateJob = ({ navigation }) => {
                 onPress={() => {
                   dispatch(setVisible());
                 }}
-                className='absolute right-0'
+                className='absolute right-[1vw]'
               >
                 <AntDesign
-                  name='select1'
-                  size={actuatedNormalize(20)}
-                  color='black'
+                  name='caretdown'
+                  size={actuatedNormalize(18)}
+                  color='gray'
                 />
               </TouchableOpacity>
             </View>

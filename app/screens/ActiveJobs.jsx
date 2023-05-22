@@ -9,12 +9,7 @@ import LowerButton from "../components/LowerButton";
 export default function ActiveJobs({ navigation }) {
   return (
     <Background>
-      <Topscreen
-        onPress={() => {
-          navigation.goBack();
-        }}
-        text={"ActiveJobs"}
-      />
+      <Topscreen text={"ActiveJobs"} />
       <View
         className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
@@ -23,9 +18,7 @@ export default function ActiveJobs({ navigation }) {
           <SearchComponent />
         </View>
         <View>
-          <JobDetails
-
-          />
+          <JobDetails />
         </View>
       </View>
       <LowerButton

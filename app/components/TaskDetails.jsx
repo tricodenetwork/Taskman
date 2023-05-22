@@ -19,7 +19,6 @@ const { useRealm, useQuery } = AccountRealmContext;
 export default function TaskDetails({ jobId, reArrange, taskdata }) {
   // const taskdata = realm.objectForPrimaryKey("job", jobId);
   // console.log(taskdata);
-  console.log(taskdata);
   const [data, setData] = useState(taskdata);
   const [refreshing, setRefreshing] = useState(false);
   const realm = useRealm();
@@ -71,28 +70,37 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
           <ScaleDecorator>
             <TouchableOpacity
               onLongPress={drag}
-              activeOpacity={0.9}
+              activeOpacity={0.1}
               // onPress={}
             >
-              <View>
-                {route.name == "activetasks" ? (
-                  <DetailsCard
-                    isActive={isActive}
-                    // id={jobId}
-                    // name={item.name}
-                    duration={item.duration}
-                    item={item}
-                  />
-                ) : (
-                  <JobCard
-                    isActive={isActive}
-                    id={jobId}
-                    name={item.name}
-                    duration={item.duration}
-                    item={item}
-                  />
-                )}
-              </View>
+              {!item.name ? (
+                <Text
+                  style={[styles.text_sm2]}
+                  className='self-center mb-[1vh]'
+                >
+                  {item.toString()}
+                </Text>
+              ) : (
+                <View>
+                  {route.name == "activetasks" || route.name == "mytasks" ? (
+                    <DetailsCard
+                      isActive={isActive}
+                      // id={jobId}
+                      // name={item.name}
+                      duration={item.duration}
+                      item={item}
+                    />
+                  ) : (
+                    <JobCard
+                      isActive={isActive}
+                      id={jobId}
+                      name={item.name}
+                      duration={item.duration}
+                      item={item}
+                    />
+                  )}
+                </View>
+              )}
             </TouchableOpacity>
           </ScaleDecorator>
         );

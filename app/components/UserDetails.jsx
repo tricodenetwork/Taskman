@@ -20,6 +20,7 @@ import { Account } from "../models/Account";
 import { useNavigation } from "@react-navigation/native";
 
 const { useRealm, useQuery } = AccountRealmContext;
+  //-------------------------------------------------------------------------------------------------STATE AND VARIABLES
 
 export default function UserDetails({ onPress, set }) {
   const { search, filter } = useSelector((state) => state.app);
@@ -34,36 +35,28 @@ export default function UserDetails({ onPress, set }) {
   const col = filter && filter.toLowerCase();
   // console.log(col, accounts);
 
+  //__________________________________________________________________________________________________USE EFFECTS AND FUNCTIONS
   useEffect(() => {
-    getUserDetails().then((res) => {
-      setData(res);
-      dispatch(setUsers(res));
-    });
+   
     return () => {
       setRefreshing(false);
     };
   }, [refreshing]);
+
+//_____________________________________________________________________________________________________RENDERED COMPONENT
 
   return (
     data !== [] && (
       <FlatList
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
+          refreshing={refreshing}
             onRefresh={() => {
               setRefreshing(true);
             }}
           />
         }
-        // data={
-        //   data
-        //     ? data.filter(
-        //         (item, index) =>
-        //           item[col] &&
-        //           item[col].toLowerCase().includes(search.toLowerCase())
-        //       )
-        //     : accounts
-        // }
+   
         data={accounts.filter(
           (item, index) =>
             item[col] && item[col].toLowerCase().includes(search.toLowerCase())

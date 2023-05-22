@@ -43,18 +43,19 @@ export const AppSync = () => {
   return (
     <>
       <Provider store={store}>
-        <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <StatusBar
-              style='light'
-              backgroundColor='#004343'
-              animated={true}
-              //  hidden
-            />
-            <RealmPlugin realms={[realm]} />
-            <MainStack />
-          </GestureHandlerRootView>
-        </PersistGate>
+        {/* <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}> */}
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <StatusBar
+            style='light'
+            backgroundColor='#004343'
+            animated={true}
+            //  hidden
+          />
+          <RealmPlugin realms={[realm]} />
+
+          <MainStack />
+        </GestureHandlerRootView>
+        {/* </PersistGate> */}
       </Provider>
     </>
   );
