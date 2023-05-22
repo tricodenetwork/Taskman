@@ -1,32 +1,30 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
 import HandlerTopscreen from "../components/HandlerTopScreen";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
 } from "../styles/stylesheet";
-import Tasks from "../../assets/images/tasks.svg";
-import Subtract from "../../assets/images/Subtract.svg";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import OptionsCard from "./OptionsCard";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { TouchableHighlight } from "react-native-gesture-handler";
 import LowerButton from "./LowerButton";
 
-export default function Supervisor({ navigation }) {
+export default function Supervisor() {
   // prettier-ignore
   //   -------------------------------------------------------------------------VARIABLES AND STATES
   const route = useRoute();
+  const navigation = useNavigation();
+
+  console.log("kols");
 
   return (
     <Background>
       <HandlerTopscreen
         text3={"Monday, 27 Jan 2023"}
         text={"Hello, Ovodo Ohwovoriole"}
-        onPress={() => navigation.goBack()}
       >
         <View className=' absolute bottom-[12vh]  w-full  flex flex-row justify-between px-[5vw]'>
           <View className='relative'>
@@ -129,7 +127,12 @@ export default function Supervisor({ navigation }) {
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity activeOpacity={0.5}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("profile");
+          }}
+          activeOpacity={0.5}
+        >
           <OptionsCard
             icon={
               <FontAwesome5

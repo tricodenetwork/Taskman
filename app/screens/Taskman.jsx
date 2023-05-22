@@ -15,12 +15,7 @@ export default function Taskman({ navigation }) {
   // console.log(users);
   return (
     <Background>
-      <Topscreen
-        navigation={(e) => {
-          navigation.navigate(e);
-          dispatch(setMenu());
-        }}
-      />
+      <Topscreen />
       {/* <Menu /> */}
       <View className='flex-1 z-10'>
         <Text

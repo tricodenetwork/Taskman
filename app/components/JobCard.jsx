@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { AntDesign } from "@expo/vector-icons";
 import { deleteActiveJob, deleteJob, deleteTasks } from "../api/Functions";
@@ -18,15 +18,22 @@ export default function JobCard({ isActive, id, name, duration, item }) {
   const realm = useRealm();
   // console.log(item);
 
+  // useEffect(() => {
+  //   realm.write(() => {
+  //     realm.delete(realm.objects("activejob"));
+  //   });
+  //   console.log("kpp;z");
+  //   realm.refresh();
+  // });
+
   const deleteJob = useCallback(() => {
     realm.write(() => {
       // realm.delete(route.params.item);
-  
+
       // Alternatively if passing the ID as the argument to handleDeleteTask:
       realm?.delete(realm?.objectForPrimaryKey("job", id));
     });
   }, [realm]);
-
 
   return (
     <View

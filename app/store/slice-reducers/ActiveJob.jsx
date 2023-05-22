@@ -1,18 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const initialState = {
+  id: "",
+  matNo: "",
+  dept: "",
+  handler: "",
+  tasks: [{ handler: "", status: "Pending", name: "", duration: "" }],
+  currenttask: "",
+  job: "",
+  email: "",
+  supervisor: "",
+};
+
 const ActiveJob = createSlice({
   name: "ActiveJob",
-  initialState: {
-    id: "",
-    matNo: "",
-    dept: "",
-    handler: "",
-    tasks: [],
-    currenttask: "",
-    job: "",
-    email: "",
-    supervisor: "",
-  },
+  initialState,
+
   reducers: {
     setMatNo: (state, action) => {
       state.matNo = action.payload;
@@ -22,6 +25,7 @@ const ActiveJob = createSlice({
     },
     setHandler: (state, action) => {
       state.handler = action.payload;
+      return state;
     },
     setJob: (state, action) => {
       state.job = action.payload;
@@ -36,7 +40,15 @@ const ActiveJob = createSlice({
       state.tasks = action.payload;
     },
     setCurrentTask: (state, action) => {
-      state.currenttask = action.payload;
+      state.currenttask = action.payload || "";
+      return state;
+    },
+    Replace: (state, action) => {
+      if (action.payload) {
+        return action.payload;
+      } else {
+        return initialState;
+      }
     },
   },
 });
@@ -50,6 +62,7 @@ export const {
   setId,
   setTasks,
   setCurrentTask,
+  Replace,
 } = ActiveJob.actions;
 
 export default ActiveJob.reducer;

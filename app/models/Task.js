@@ -50,23 +50,22 @@ export class job extends Realm.Object {
 
 
 export class task extends Realm.Object {
-
-    constructor(realm,task) {
-        super(realm, task);
-    }
-    static schema = {
-        name: "task",
-        embedded:true,
-        properties: {
-            name: "string",
-            handler: {type:"string",optional:true,default:"Not Assigned"},
-            duration: "string",
-            status: {type: "string", default: "Pending"},
-            timer: {type: "string?", default: "00:00"},
-            completedIn: {type: "date?"},
-            inProgress:{type: "date?"},
-        },
-    };
+  constructor(realm, task) {
+    super(realm, task);
+  }
+  static schema = {
+    name: "task",
+    embedded: true,
+    properties: {
+      name: "string",
+      handler: "string?",
+      duration: "string",
+      status: { type: "string", default: "Pending" },
+      timer: { type: "string?", default: "00:00" },
+      completedIn: { type: "date?" },
+      inProgress: { type: "date?" },
+    },
+  };
 }
 
 

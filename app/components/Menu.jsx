@@ -2,13 +2,17 @@ import { View, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Motion } from "@legendapp/motion";
 import { styles } from "../styles/stylesheet";
 import { useApp, useUser } from "@realm/react";
+import { setMenu } from "../store/slice-reducers/Formslice";
+import { useNavigation } from "@react-navigation/native";
 
-export default function Menu({ navigation }) {
+export default function Menu() {
   const { menu } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const user = useUser();
 
@@ -29,7 +33,8 @@ export default function Menu({ navigation }) {
         <View className='relative w-auto z-50 h-[100%] gap-3 mx-[2vw]'>
           <TouchableOpacity
             onPress={() => {
-              navigation("profile");
+              navigation.navigate("profile");
+              dispatch(setMenu());
             }}
           >
             <Text style={styles.text_md2} className='text-xl text-primary'>
@@ -38,7 +43,8 @@ export default function Menu({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation("accounts");
+              navigation.navigate("accounts");
+              dispatch(setMenu());
             }}
           >
             <Text style={styles.text_md2} className='text-xl text-primary'>
@@ -47,7 +53,8 @@ export default function Menu({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation("jobs");
+              navigation.navigate("supervisor");
+              dispatch(setMenu());
             }}
           >
             <Text style={styles.text_md2} className='text-xl text-primary'>
@@ -56,7 +63,8 @@ export default function Menu({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation("supervisor");
+              navigation.navigate("handler");
+              dispatch(setMenu());
             }}
           >
             <Text style={styles.text_md2} className='text-xl text-primary'>

@@ -10,6 +10,8 @@ import {
 } from "../styles/stylesheet";
 import Tasks from "../../assets/images/tasks.svg";
 import Subtract from "../../assets/images/Subtract.svg";
+import OptionsCard from "../components/OptionsCard";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function Handler({ navigation }) {
   return (
@@ -100,40 +102,56 @@ export default function Handler({ navigation }) {
           </View>
         </View>
       </HandlerTopscreen>
-      {/* <View className='px-5 border-2 relative bottom-[10vh] flex flex-row justify-between flex-wrap border-emerald-500 w-[full]  h-[55vh]'>
-        <View className='bg-white p-4 rounded-2xl w-[48%]  h-[48%]'>
-          <TouchableOpacity>
-            <Subtract />
-            <Tasks />
+      <View className='absolute self-center top-[52vh]'>
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("mytasks");
+            }}
+            activeOpacity={0.5}
+          >
+            <OptionsCard
+              icon={
+                <FontAwesome5
+                  name='tasks'
+                  size={actuatedNormalize(25)}
+                  color='black'
+                />
+              }
+              text={"Tasks"}
+            />
           </TouchableOpacity>
-          <Text>My Tasks</Text>
-          <Text>34 new tasks added</Text>
         </View>
-        <View className='bg-white p-4 rounded-2xl w-[48%] h-[48%]'>
-          <TouchableOpacity>
-            <Subtract />
-            <Tasks />
-          </TouchableOpacity>
-          <Text>My Tasks</Text>
-          <Text>34 new tasks added</Text>
-        </View>
-        <View className='bg-white p-4 rounded-2xl w-[48%] h-[48%]'>
-          <TouchableOpacity>
-            <Subtract />
-            <Tasks />
-          </TouchableOpacity>
-          <Text>My Tasks</Text>
-          <Text>34 new tasks added</Text>
-        </View>
-        <View className='bg-white p-4 rounded-2xl w-[48%] h-[48%]'>
-          <TouchableOpacity>
-            <Subtract />
-            <Tasks />
-          </TouchableOpacity>
-          <Text>My Tasks</Text>
-          <Text>34 new tasks added</Text>
-        </View>
-      </View> */}
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("profile");
+          }}
+          activeOpacity={0.5}
+        >
+          <OptionsCard
+            icon={
+              <FontAwesome5
+                name='user'
+                size={actuatedNormalize(25)}
+                color='black'
+              />
+            }
+            text={"Profile"}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity activeOpacity={0.5}>
+          <OptionsCard
+            icon={
+              <FontAwesome5
+                name='rocketchat'
+                size={actuatedNormalize(25)}
+                color='black'
+              />
+            }
+            text={"Messages"}
+          />
+        </TouchableOpacity>
+      </View>
     </Background>
   );
 }
