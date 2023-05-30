@@ -42,14 +42,16 @@ export default function MyTasks({ navigation }) {
 
   const myTasks = ActiveJobs.map((job) => {
     const assigned = job.tasks.filter(
-      (obj) => obj.handler === "Justina Emelife"
+      (obj) => obj.handler === "Fumilayo Joseph"
     );
     assigned.map((obj) => {
       obj.id = job._id;
       obj.job = job.job;
+      obj.supervisor = job.supervisor;
+      obj.matNo = job.matNo;
     });
     // const useThis = assigned.unshift(job._id);
-    console.log(assigned);
+    // console.log(assigned);
     return assigned;
   });
   const mergedTasks = myTasks.reduce((acc, obj) => acc.concat(obj), []);
@@ -119,9 +121,6 @@ export default function MyTasks({ navigation }) {
         </View>
         <View>
           <TaskDetails
-            reArrange={(e) => {
-              reArrange(e);
-            }}
             taskdata={mergedTasks}
             // jobId={route.params.id}
           />

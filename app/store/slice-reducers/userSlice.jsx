@@ -8,12 +8,16 @@ const initialState = {
   role: "",
   email: " ",
   password: " ",
+  category: { name: "" },
 };
 
 const userSlice = createSlice({
   name: "names",
   initialState,
   reducers: {
+    setCategory(state, action) {
+      state.category = action.payload;
+    },
     setName(state, action) {
       state.name = action.payload;
     },
@@ -56,6 +60,7 @@ export const {
   setPassword,
   setId,
   setUser,
+  setCategory,
 } = userSlice.actions;
 
 export default userSlice.reducer;

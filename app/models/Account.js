@@ -33,6 +33,7 @@ export class Account extends Realm.Object {
       password: "string?",
       phone: "string?",
       role: "string?",
+      jobcategory: "category",
     },
   };
 }

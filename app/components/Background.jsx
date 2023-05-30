@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
+  KeyboardAvoidingView,
 } from "react-native";
 // import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
@@ -51,8 +52,8 @@ const Background = ({ children, bgColor = "bg-slate-200" }) => {
     return (
       <DismissKeyboard>
         <View
-          style={[{ minHeight: Math.round(windowHeight) }]}
-          className={`h-full ${bgColor} border-2 border-red-  w-full relative`}
+          // style={[{ maxHeight: Math.round(windowHeight) }]}
+          className={`h-full ${bgColor} border- border-red-  w-full relative`}
         >
           {children}
         </View>

@@ -10,11 +10,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
-import {
-  actuatedNormalize,
-  actuatedNormalizeVertical,
-  styles,
-} from "../styles/stylesheet";
+import { actuatedNormalizeVertical, styles } from "../styles/stylesheet";
 import { FontAwesome5 } from "@expo/vector-icons";
 import LowerButton from "../components/LowerButton";
 import SearchComponent from "../components/SearchComponent";
@@ -30,32 +26,28 @@ import { getJobDetails, addTask } from "../api/Functions";
 import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import SelectComponent from "../components/SelectComponent";
-import { Account } from "../models/Account";
-import { useDispatch, useSelector } from "react-redux";
-import { setCurrentTask, setHandler } from "../store/slice-reducers/ActiveJob";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
-export default function ActiveTasks({ navigation }) {
+export default function Tasks2({ navigation }) {
   //--------------------------------------------------------------------------------------STATE AND VARIABLES
   const route = useRoute();
   const realm = useRealm();
-  const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
-  const [isNextTaskModalOpen, setIsNextTaskModalOpen] = useState(false);
-
   const [name, setName] = useState("");
   const [edit, setEdit] = useState({ name: "", duration: "" });
   const [durations, setDurations] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const job = realm.objectForPrimaryKey(
-    "activejob",
+    "job",
     Realm.BSON.ObjectId(route.params.id)
   );
   const [task, setTask] = useState(job.tasks);
-  const value = job.tasks.filtered(`name == $0 `, edit.name);
-  const Accounts = useQuery(Account);
-  const { currenttask, handler } = useSelector((state) => state.ActiveJob);
+  const value = job.tasks.filtered(
+    `name == $0 AND duration == $1`,
+    edit.name,
+    edit.duration
+  );
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
 
@@ -65,37 +57,6 @@ export default function ActiveTasks({ navigation }) {
       setRefreshing(false);
     };
   }, [refreshing, modalVisible]);
-
-  const handleNextTaskSubmit = useCallback(() => {
-    // Perform the necessary actions to assign the next task and handler
-    // based on the values of nextTask and nextHandler
-
-    realm.write(() => {
-      try {
-        job.tasks.map((task) => {
-          const { name } = task;
-
-          if ((name == taskInfo.name) & (task.handler == taskInfo.handler)) {
-            task.status = "Completed";
-            task.completedIn = new Date(Date.now());
-          }
-          if (name == currenttask) {
-            task.handler = handler;
-            alert("Next Task Assigned!");
-
-            return;
-          }
-        });
-
-        console.log("Assigned successully!");
-      } catch (error) {
-        console.log({ error, msg: "Error Assigning next task" });
-      }
-    });
-
-    navigation.navigate("mytasks");
-    setIsNextTaskModalOpen(false);
-  }, [realm, currenttask, handler]);
 
   const addTask = useCallback(
     (item) => {
@@ -159,7 +120,8 @@ export default function ActiveTasks({ navigation }) {
         return;
       }
       realm.write(() => {
-        job.tasks = array;
+        // job.tasks = array;
+        console.log(typeof array);
       });
     },
     [realm]
@@ -205,18 +167,21 @@ export default function ActiveTasks({ navigation }) {
   return (
     <Background>
       <Topscreen
+        onPress={() => {
+          navigation.goBack();
+        }}
         Edit={() => {
-          navigation.navigate("ActivateJob", {
+          navigation.navigate("CreateJob", {
             id: route.params.id,
           });
         }}
         text2={job ? job.tasks.length : item.supervisor}
         text3={job.duration}
-        text={job.job}
+        text={job.name}
       />
 
       <View
-        className='bg-slate-200 h-[80vh] rounded-t-3xl  p-2 w-full absolute bottom-0
+        className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
       >
         <View className='mb-1'>
@@ -236,52 +201,128 @@ export default function ActiveTasks({ navigation }) {
         navigate={() => {
           setModalVisible(true);
         }}
-        text={"Assign Task"}
+        text={"Add Task"}
       />
-      <Modal visible={modalVisible}>
-        <Background>
-          <View className=' h-[70%] pt-[5vh] self-center flex justify-between items-center'>
-            <Text
-              className='self-center text-center w-[50vw]'
-              style={[styles.text_sm2, { fontSize: actuatedNormalize(20) }]}
-            >
-              Assign Task
-            </Text>
-
-            <View className='h-[30vh] self-start px-[5vw] flex justify-around'>
-              <SelectComponent
-                value={currenttask}
-                title={"Tasks:"}
-                placeholder={"Assign Next Task"}
-                data={job.tasks.filter((obj) => obj.status == "Pending")}
-                setData={(params) => {
-                  dispatch(setCurrentTask(params));
+      <Modal
+        animationType='slide'
+        className='h-[50vh]'
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+        visible={modalVisible}
+      >
+        <View className='bg-primary pt-10 h-full'>
+          <View className=' mb-[2vh]'>
+            <View className='flex items-center justify-between self-center mb-[2vh] w-[90%] flex-row'>
+              <Text className='text-Handler2' style={styles.text_md2}>
+                Name:
+              </Text>
+              <TextInput
+                value={name}
+                style={[
+                  styles.averageText,
+                  { height: actuatedNormalizeVertical(50) },
+                ]}
+                onChangeText={(value) => {
+                  setName(value);
                 }}
-              />
-              <SelectComponent
-                value={handler}
-                title={"Handler:"}
-                placeholder={"Assign Next Handler"}
-                data={Accounts.filter((obj) => obj.role == "Handler")}
-                setData={(params) => {
-                  dispatch(setHandler(params));
-                }}
+                className='w-[65vw] bg-slate-300 mb-2 rounded-sm h-10'
               />
             </View>
-            <View
-              id='BUTTONS'
-              className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
-            >
-              <Button title='Submit' onPress={handleNextTaskSubmit} />
-              <Button
-                title='Cancel'
-                onPress={() => {
-                  setModalVisible(false);
+            <View className='flex items-center justify-between self-center w-[90%] flex-row'>
+              <Text className='text-Handler2' style={styles.text_md2}>
+                Duration:
+              </Text>
+              <View className='flex flex-row items-center'>
+                <Text className='text-Handler2' style={[styles.text_md2]}>
+                  D
+                </Text>
+                <SelectComponent
+                  data={[...Array(20)].map((_, index) => {
+                    const obj = { name: (index + 1).toString() };
+                    return obj;
+                  })}
+                  visibleStyles='w-[15vw]'
+                  inputStyles='w-[11vw]'
+                />
+              </View>
+              <View className='flex flex-row items-center'>
+                <Text className='text-Handler2' style={[styles.text_md2]}>
+                  H
+                </Text>
+                <SelectComponent
+                  data={[...Array(24)].map((_, index) => {
+                    const obj = { name: (index + 1).toString() };
+                    return obj;
+                  })}
+                  visibleStyles='w-[15vw]'
+                  inputStyles='w-[11vw]'
+                />
+              </View>
+              <View className='flex flex-row items-center'>
+                <Text className='text-Handler2' style={[styles.text_md2]}>
+                  M
+                </Text>
+                <SelectComponent
+                  data={[...Array(60)].map((_, index) => {
+                    const obj = { name: (index + 1).toString() };
+                    return obj;
+                  })}
+                  visibleStyles='w-[15vw]'
+                  inputStyles='w-[11vw]'
+                />
+              </View>
+              {/* <TextInput
+                value={durations}
+                keyboardType='numeric'
+                style={[
+                  styles.averageText,
+                  { height: actuatedNormalizeVertical(50) },
+                ]}
+                onChangeText={(value) => {
+                  setDurations(value);
                 }}
+                className='w-[65vw] bg-slate-300 mb-2 rounded-sm h-10'
+              /> */}
+            </View>
+            <View className='flex flex-row' style={[styles.Pcard]}>
+              <OdinaryButton
+                text={"ADD"}
+                navigate={() => {
+                  addTask({ name: name, duration: durations });
+                }}
+                style={"mt-5 relative bg-[#E59F71] left-[15%]"}
+              />
+              <OdinaryButton
+                text={"DEL"}
+                navigate={() => {
+                  deleteTask();
+                }}
+                style={"mt-5 relative bg-[#B22222] left-[15%]"}
               />
             </View>
           </View>
-        </Background>
+          <View id='TASKS_CONTAINER' className='mx-[4vw]'>
+            <Text className='text-white underline' style={styles.text}>
+              Tasks
+            </Text>
+            <FlatList
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={() => {
+                    setRefreshing(true);
+                  }}
+                />
+              }
+              data={task}
+              renderItem={render}
+              keyExtractor={(item) => item.name}
+              style={{ height: "55%" }}
+            />
+          </View>
+          <LowerButton text={"Done"} navigate={() => setModalVisible(false)} />
+        </View>
       </Modal>
     </Background>
   );

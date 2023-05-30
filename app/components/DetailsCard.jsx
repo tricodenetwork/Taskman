@@ -4,6 +4,8 @@ import { actuatedNormalize, styles } from "../styles/stylesheet";
 import Svg, { Circle, Rect } from "react-native-svg";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import { Fragment as MainBox } from "react";
+import { Completed } from "../api/Functions";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function DetailsCard({ item }) {
   // console.log(item);
@@ -11,8 +13,8 @@ export default function DetailsCard({ item }) {
   const status =
     item.status === "Pending"
       ? "gray"
-      : item.status === "In-Progress"
-      ? "blue"
+      : item.status === "InProgress"
+      ? "#FFD700"
       : item.status === "Completed"
       ? "green"
       : null;
@@ -43,6 +45,7 @@ export default function DetailsCard({ item }) {
     return { textColor, statusColor, backgroundColor, status };
   };
   // console.log(item);
+  const Time = Completed(item.completedIn, item.inProgress);
 
   return (
     <View
@@ -61,6 +64,15 @@ export default function DetailsCard({ item }) {
         id='LEFT_SECTION'
         className='text-left w-[70%] space-y-[1vh] relative border- h-full justify-center pl-[2vw]'
       >
+        {route.name !== "accounts" && (
+          <View className='absolute top-[11%] left-[22%]'>
+            <MaterialIcons
+              name='timer'
+              size={actuatedNormalize(15)}
+              color='#004343'
+            />
+          </View>
+        )}
         <Text
           style={[styles.text_md2, { fontSize: actuatedNormalize(14) }]}
           className='text-primary'
@@ -73,15 +85,28 @@ export default function DetailsCard({ item }) {
         >
           {item.dept ? item.dept : item.handler || "Not assigned"}
         </Text>
-        {item.duration && (
+        {item.timer == "00:00" ? (
           <Text
             id='TIMER'
             className='absolute top-[1vh] left-[30%]'
-            style={[styles.text_sm, { fontSize: actuatedNormalize(12) }]}
+            style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
           >
-            {item.duration.length === 1
-              ? `0${item.duration}:00`
-              : `${item.duration}:00`}
+            {`${item.duration.days == null ? 0 : item.duration.days}d ${
+              item.duration.hours == null ? 0 : item.duration.hours
+            }h ${item.duration.minutes == null ? 0 : item.duration.minutes}m`}
+          </Text>
+        ) : (
+          <Text
+            id='TIMER'
+            className='absolute text-primary top-[1vh] left-[30%]'
+            style={[
+              styles.text_sm,
+              { fontSize: actuatedNormalize(15), fontWeight: 900 },
+            ]}
+          >
+            {item.status == "Completed"
+              ? `${Time.hours}:${Time.minutes}`
+              : item.timer}
           </Text>
         )}
       </View>

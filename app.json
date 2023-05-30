@@ -3,16 +3,32 @@
     "name": "manager",
     "slug": "manager",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "android": {
-      "package": "tasks.uniben.vic"
+      "package": "tasks.uniben.vic",
+      "googleServicesFile": "./android/app/google-services.json",
+      "softwareKeyboardLayoutMode": "pan"
     },
     "extra": {
       "eas": {
         "projectId": "8e39c5ba-8a9b-44b4-8b67-00fe923da1c6"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 31,
+            "targetSdkVersion": 31,
+            "buildToolsVersion": "31.0.0"
+          },
+          "ios": {
+            "deploymentTarget": "13.0"
+          }
+        }
+      ],
+      ["react-native-flipper-performance-plugin"]
+    ]
   }
 }

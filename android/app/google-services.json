@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "704139097438",
+    "project_id": "african-producers",
+    "storage_bucket": "african-producers.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:704139097438:android:02628e870b86b6e0ec8bcf",
+        "android_client_info": {
+          "package_name": "tasks.uniben.vic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "704139097438-0r081l07jdsiru0ktse80r813pm6mlm3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDE6auD7WZCAPaYMz26YUyfzHJsqybHpNw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "704139097438-0r081l07jdsiru0ktse80r813pm6mlm3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

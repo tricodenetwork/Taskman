@@ -66,7 +66,9 @@ export default function UserDetails({ onPress, set }) {
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => {
-                navigation.navigate("CreateAccount", { id: item._id });
+                navigation.navigate("CreateAccount", {
+                  id: item._id.toString(),
+                });
               }}
             >
               <DetailsCard item={item} />

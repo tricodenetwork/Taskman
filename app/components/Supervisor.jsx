@@ -11,21 +11,24 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import OptionsCard from "./OptionsCard";
 import { FontAwesome5 } from "@expo/vector-icons";
 import LowerButton from "./LowerButton";
+import { AccountRealmContext } from "../models";
+import { useSelector } from "react-redux";
+import { formattedDate } from "../api/Functions";
+
+const { useRealm, useQuery, useObject } = AccountRealmContext;
 
 export default function Supervisor() {
   // prettier-ignore
   //   -------------------------------------------------------------------------VARIABLES AND STATES
   const route = useRoute();
   const navigation = useNavigation();
-
-  console.log("kols");
+  const realm = useRealm();
+  const { id } = useSelector((state) => state.user);
+  const account = useObject("account", Realm.BSON.ObjectId(id));
 
   return (
     <Background>
-      <HandlerTopscreen
-        text3={"Monday, 27 Jan 2023"}
-        text={"Hello, Ovodo Ohwovoriole"}
-      >
+      <HandlerTopscreen text3={formattedDate} text={`Hello, ${account?.name}`}>
         <View className=' absolute bottom-[12vh]  w-full  flex flex-row justify-between px-[5vw]'>
           <View className='relative'>
             <Text
@@ -107,7 +110,7 @@ export default function Supervisor() {
           </View>
         </View>
       </HandlerTopscreen>
-      <View className='absolute self-center top-[52vh]'>
+      <View className='absolute self-center pt-[3vh] top-[52vh]'>
         <View>
           <TouchableOpacity
             onPress={() => {

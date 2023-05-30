@@ -25,7 +25,7 @@ export default function ActiveJobs({ navigation }) {
         navigate={() => {
           navigation.navigate("ActivateJob");
         }}
-        text={"ActivateJob"}
+        text={"Activate"}
       />
     </Background>
   );

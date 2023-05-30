@@ -45,13 +45,14 @@ const ActivateJob = ({ navigation }) => {
   const allJobs = useQuery(jobSchema);
   const handlers = useQuery(Account).filtered(`role == "Handler"`);
 
-  const oid = user.identities[0].id;
-  const cleanedOid = oid.replace(/[^0-9a-fA-F]/g, "");
+  // const oid = user.identities[0].id;
+  // const cleanedOid = oid.replace(/[^0-9a-fA-F]/g, "");
 
-  const supervisor = realm.objectForPrimaryKey(
-    "account",
-    Realm.BSON.ObjectId(cleanedOid)
-  ).name;
+  // const supervisor = realm.objectForPrimaryKey(
+  //   "account",
+  //   Realm.BSON.ObjectId(cleanedOid)
+  // ).name;
+  const supervisor = "Justin Stone";
 
   const { matNo, dept, handler, job, email, tasks, id } = useSelector(
     (state) => state.ActiveJob
@@ -72,7 +73,7 @@ const ActivateJob = ({ navigation }) => {
       dispatch(Replace());
       return;
     }
-  }, []);
+  }, [route.params]);
 
   const EditActiveJob = useCallback(
     (item) => {
@@ -110,7 +111,7 @@ const ActivateJob = ({ navigation }) => {
   );
   const activateJob = useCallback(
     (item) => {
-      if (item.supervisor) {
+      if (!item.supervisor) {
         alert("No supervisor");
         return;
       }
@@ -146,7 +147,7 @@ const ActivateJob = ({ navigation }) => {
   //----------------------------------------------------RENDERED COMPONENT
 
   return (
-    <Background>
+    <Background bgColor='min-h-[100vh]'>
       <Topscreen
         del={deleteActiveJob}
         text={route.params ? "Edit Job" : "Activate Job"}
@@ -216,7 +217,7 @@ const ActivateJob = ({ navigation }) => {
                   defaultValue={ActiveJob.job}
                   editable={false}
                   style={[styles.averageText, { color: "black" }]}
-                  //   value={job}
+                  value={job}
                   className='w-[60vw] bg-slate-300  rounded-sm h-10'
                 />
               </View>
@@ -286,9 +287,10 @@ const ActivateJob = ({ navigation }) => {
                 <TextInput
                   defaultValue={ActiveJob.tasks[0]?.name}
                   editable={false}
+                  multiline={true}
                   style={[styles.averageText, { color: "black" }]}
                   value={ActiveJob.currenttask}
-                  className='w-[60vw] bg-slate-300  rounded-sm h-10'
+                  className='w-[56vw] bg-slate-300  rounded-sm h-10'
                 />
               </View>
               <TouchableOpacity
@@ -406,3 +408,4 @@ const ActivateJob = ({ navigation }) => {
 };
 
 export default ActivateJob;
+  

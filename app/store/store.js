@@ -5,7 +5,7 @@ import userSlice from "./slice-reducers/userSlice";
 // import { reducer as network } from "react-native-offline";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ActiveJob from "./slice-reducers/ActiveJob";
-import adminReducer from "./slice-reducers/Admin";
+import ChatReducer from "./slice-reducers/ChatSlice";
 
 // import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
@@ -35,7 +35,7 @@ const allReducers = combineReducers({
   Job: jobreducer,
   user: userSlice,
   ActiveJob: ActiveJob,
-  Admin: adminReducer,
+  Chat: ChatReducer,
 });
 
 // const persistedReducer = persistReducer(persistConfig, allReducers);

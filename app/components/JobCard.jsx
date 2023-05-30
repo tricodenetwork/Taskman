@@ -2,38 +2,31 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { AntDesign } from "@expo/vector-icons";
-import { deleteActiveJob, deleteJob, deleteTasks } from "../api/Functions";
-import { setVisible } from "../store/slice-reducers/Formslice";
-import { useSelector, useDispatch } from "react-redux";
 import OdinaryButton from "./OdinaryButton";
 import { Motion } from "@legendapp/motion";
 import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
+import { sumField, formatDuration, convertToMinutes } from "../api/Functions";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
-export default function JobCard({ isActive, id, name, duration, item }) {
+export default function JobCard({ isActive, id, name, item }) {
   const [visible, setVisible] = useState(false);
   const route = useRoute();
   const realm = useRealm();
-  // console.log(item);
 
   // useEffect(() => {
-  //   realm.write(() => {
-  //     realm.delete(realm.objects("activejob"));
-  //   });
-  //   console.log("kpp;z");
-  //   realm.refresh();
+  //   // realm.write(() => {
+  //   //   realm.delete(realm.objects("activejob"));
+  //   // });
+  //   // realm.refresh();
   // });
 
-  const deleteJob = useCallback(() => {
-    realm.write(() => {
-      // realm.delete(route.params.item);
-
-      // Alternatively if passing the ID as the argument to handleDeleteTask:
-      realm?.delete(realm?.objectForPrimaryKey("job", id));
-    });
-  }, [realm]);
+  const sumAll = sumField(item.tasks ? item.tasks : [], "duration");
+  const convert = convertToMinutes(sumAll);
+  const sum = formatDuration(convert);
+  // const sum = { days: 19, hours: 3, minutes: 45 };
+  // console.log(item);
 
   return (
     <View
@@ -55,10 +48,17 @@ export default function JobCard({ isActive, id, name, duration, item }) {
         </Text>
         {/* {item.dept ? <Text>{item.dept}</Text> : null} */}
         {/* {tasks ? <Text>Tasks:{tasks}</Text> : null} */}
-        <Text style={[styles.text_sm]}>
-          {item.duration && `${item.duration} hrs`}
+        <Text style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}>
+          {!item.tasks
+            ? `${`${item.duration.days == null ? 0 : item.duration.days}d ${
+                item.duration.hours == null ? 0 : item.duration.hours
+              }h ${
+                item.duration.minutes == null ? 0 : item.duration.minutes
+              }m`}`
+            : `${`${sum.days == null ? 0 : sum.days}d ${
+                sum.hours == null ? 0 : sum.hours
+              }h ${sum.minutes == null ? 0 : sum.minutes}m`}`}
           {/* {item.name} */}
-          {item.status && item.status}
         </Text>
       </View>
 
@@ -88,7 +88,7 @@ export default function JobCard({ isActive, id, name, duration, item }) {
               Press Ok to confirm
             </Text>
             <OdinaryButton
-              style={"rounded-md text-blue-800"}
+              style={"rounded-md mt-4 bg-primary text-slate-200"}
               navigate={() => {
                 route.name == "tasks"
                   ? deleteTask()

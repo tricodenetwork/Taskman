@@ -1,18 +1,20 @@
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import { getJobDetails, jobDetails } from "../api/Functions";
 import JobCard from "./JobCard";
 import { styles } from "../styles/stylesheet";
-import { useIsFocused, useRoute } from "@react-navigation/native";
+import {
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { replaceTask } from "../store/slice-reducers/JobSlice";
 import DraggableFlatList, {
   ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import { RefreshControl } from "react-native-gesture-handler";
 import DetailsCard from "./DetailsCard";
 import { AccountRealmContext } from "../models";
-import { log } from "react-native-reanimated";
+import HandlerCard from "./HandlerCard";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -24,7 +26,7 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
   const realm = useRealm();
   const dispatch = useDispatch();
   const route = useRoute();
-
+  const navigation = useNavigation();
   const isFocused = useIsFocused();
 
   // const { tasks } = useSelector((state) => state.Job);
@@ -54,13 +56,13 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
     <DraggableFlatList
       containerStyle={{ height: "91%" }}
       onDragEnd={({ data }) => {
-        reArrange(data);
+        route.name !== "mytasks" && reArrange(data);
       }}
       refreshControl={
         <RefreshControl
-          refreshing={refreshing}
+          // refreshing={refreshing}
           onRefresh={() => {
-            setRefreshing(true);
+            // setRefreshing(true);
           }}
         />
       }
@@ -69,9 +71,16 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
         return (
           <ScaleDecorator>
             <TouchableOpacity
-              onLongPress={drag}
-              activeOpacity={0.1}
-              // onPress={}
+              onLongPress={() => {
+                route.name !== "mytasks" ? drag() : null;
+                isActive && setRefreshing(false);
+              }}
+              activeOpacity={0.8}
+              onPress={() => {
+                // item contains non_serializable values. id
+                route.name == "mytasks" &&
+                  navigation.navigate("taskdetailsscreen", { taskInfo: item });
+              }}
             >
               {!item.name ? (
                 <Text
@@ -82,12 +91,19 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
                 </Text>
               ) : (
                 <View>
-                  {route.name == "activetasks" || route.name == "mytasks" ? (
+                  {route.name == "activetasks" ? (
                     <DetailsCard
                       isActive={isActive}
                       // id={jobId}
                       // name={item.name}
                       duration={item.duration}
+                      item={item}
+                    />
+                  ) : route.name == "mytasks" ? (
+                    <HandlerCard
+                      isActive={isActive}
+                      // id={jobId}
+                      // name={item.name}
                       item={item}
                     />
                   ) : (

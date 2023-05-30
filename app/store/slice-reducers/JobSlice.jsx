@@ -1,11 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { category } from "../../components/data";
 
 const initialState = {
   name: "",
   no: 0,
   duration: "",
-  category: "",
+  category: { name: "" },
   id: "",
   tasks: [],
 };
