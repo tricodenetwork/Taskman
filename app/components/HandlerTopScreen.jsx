@@ -18,14 +18,20 @@ import { useRoute } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setMenu, openNotification } from "../store/slice-reducers/Formslice";
+import { AccountRealmContext } from "../models";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+const { useRealm, useQuery, useObject } = AccountRealmContext;
 
 const HandlerTopscreen = ({ text, text2, text3, children, Edit }) => {
   const route = useRoute();
   const dispatch = useDispatch();
+  const realm = useRealm();
+  const { id } = useSelector((state) => state.user);
+  const account = useObject("account", Realm.BSON.ObjectId(id));
   const { menu, notify } = useSelector((state) => state.app);
-  // console.log(SCREEN_WIDTH, SCREEN_HEIGHT);
+  console.log(account);
 
   const toggleMenu = () => {
     dispatch(setMenu());
@@ -71,7 +77,7 @@ const HandlerTopscreen = ({ text, text2, text3, children, Edit }) => {
         </TouchableOpacity> */}
         <View>
           <Text style={styles.headingText} className='text-white  text-left '>
-            {text}
+            {`Hello, ${account?.name}`}
           </Text>
 
           <Text
@@ -104,7 +110,7 @@ const HandlerTopscreen = ({ text, text2, text3, children, Edit }) => {
                 />
               </Svg>
 
-              <Notify width={actuatedNormalize(20)} />
+              <Notify width={actuatedNormalize(25)} />
             </TouchableOpacity>
           </View>
         )}

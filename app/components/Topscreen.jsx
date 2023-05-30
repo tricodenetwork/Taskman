@@ -38,6 +38,8 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
   const back = () => {
     nav.goBack();
   };
+  const id = route.params ? route.params.id : null;
+  // console.log(route.params ? route.params.id : null);
 
   const toggleMenu = () => {
     dispatch(setMenu());
@@ -54,7 +56,23 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
       // realm.delete(route.params.item);
 
       // Alternatively if passing the ID as the argument to handleDeleteTask:
-      realm?.delete(realm?.objectForPrimaryKey("account", route.params.id));
+      realm?.delete(
+        realm?.objectForPrimaryKey(
+          "account",
+          Realm.BSON.ObjectId(route.params.id)
+        )
+      );
+    });
+  }, [realm]);
+
+  const deleteJob = useCallback(() => {
+    realm.write(() => {
+      // realm.delete(route.params.item);
+
+      // Alternatively if passing the ID as the argument to handleDeleteTask:
+      realm?.delete(realm?.objectForPrimaryKey("job", Realm.BSON.ObjectId(id)));
+
+      alert("Deleted Successfully!");
     });
   }, [realm]);
 
@@ -131,7 +149,9 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
                 color='white'
               />
             </TouchableOpacity>
-          ) : route.name == "CreateAccount" || route.name == "ActivateJob" ? (
+          ) : route.name == "CreateJob" ||
+            route.name == "CreateAccount" ||
+            route.name == "ActivateJob" ? (
             <TouchableOpacity
               onPress={() => {
                 setVisible(!visible);
@@ -144,7 +164,7 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
               />
             </TouchableOpacity>
           ) : (
-            <View className='relative border-  border-white'>
+            <View className='relative border- scale-125 border-white'>
               <TouchableOpacity onPress={toggleNotifications}>
                 <Svg
                   className='absolute top-[-5] right-[-3]'
@@ -183,16 +203,14 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
               Press Ok to confirm
             </Text>
             <OdinaryButton
-              style={"rounded-sm text-blue-800"}
+              style={"rounded-sm mt-4 bg-primary"}
               navigate={() => {
                 route.name == "tasks"
                   ? deleteTasks(id).then((res) => {
                       console.log(res, "deleted task sucessfully");
                     })
-                  : route.name == "jobs"
-                  ? deleteJob(id).then((res) => {
-                      console.log(res, "deleted job sucessfully");
-                    })
+                  : route.name == "CreateJob"
+                  ? deleteJob() & nav.navigate("jobs")
                   : route.name == "ActivateJob"
                   ? del() & nav.navigate("activeJobs")
                   : route.name == "CreateAccount"

@@ -22,35 +22,35 @@ export const AppWrapperSync = ({ appId }) => {
       <AppProvider id={appId}>
         <UserProvider fallback={Login}>
           <RealmProvider
-            sync={{
-              flexible: true,
-              initialSubscriptions: {
-                update(subs, realm) {
-                  const subscriptionConfigs = [
-                    { object: realm.objects("account"), name: "Acounts" },
-                    { object: realm.objects("job"), name: "Jobs" },
-                    { object: realm.objects("activejob"), name: "ActiveJobs" },
-                    // Add more subscription configurations as needed
-                  ];
+          // sync={{
+          //   flexible: true,
+          //   initialSubscriptions: {
+          //     update(subs, realm) {
+          //       const subscriptionConfigs = [
+          //         { object: realm.objects("account"), name: "Acounts" },
+          //         { object: realm.objects("job"), name: "Jobs" },
+          //         { object: realm.objects("activejob"), name: "ActiveJobs" },
+          //         // Add more subscription configurations as needed
+          //       ];
 
-                  const subscriptionPromises = subscriptionConfigs.map(
-                    ({ object, name }) => {
-                      return subs.add(object, { name });
-                    }
-                  );
+          //       const subscriptionPromises = subscriptionConfigs.map(
+          //         ({ object, name }) => {
+          //           return subs.add(object, { name });
+          //         }
+          //       );
 
-                  Promise.all(subscriptionPromises)
-                    .then(() => {
-                      console.log("All subscriptions added successfully");
-                    })
-                    .catch((error) => {
-                      console.error("Failed to add subscriptions:", error);
-                    });
-                },
-              },
+          //       Promise.all(subscriptionPromises)
+          //         .then(() => {
+          //           console.log("All subscriptions added successfully");
+          //         })
+          //         .catch((error) => {
+          //           console.error("Failed to add subscriptions:", error);
+          //         });
+          //     },
+          //   },
 
-              onError: console.error,
-            }}
+          //   onError: console.error,
+          // }}
           >
             <AppSync />
           </RealmProvider>

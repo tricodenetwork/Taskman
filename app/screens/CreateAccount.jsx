@@ -5,6 +5,7 @@ import {
   TextInput,
   Text,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
@@ -14,15 +15,10 @@ import {
   styles,
 } from "../styles/stylesheet";
 import LowerButton from "../components/LowerButton";
-import {
-  editJob,
-  editUser,
-  generatePassword,
-  sendUserDetails,
-} from "../api/Functions";
+import { generatePassword, sendUserDetails } from "../api/Functions";
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { setVisible } from "../store/slice-reducers/Formslice";
+import { setVisible, setVisible2 } from "../store/slice-reducers/Formslice";
 import { Motion } from "@legendapp/motion";
 import {
   setName,
@@ -31,7 +27,7 @@ import {
   setPhone,
   setRole,
   setPassword,
-  setId,
+  setCategory,
   setUser,
 } from "../store/slice-reducers/userSlice";
 import { useRoute } from "@react-navigation/native";
@@ -41,13 +37,17 @@ import { Account } from "../models/Account";
 const { useRealm, useQuery } = AccountRealmContext;
 
 const CreateAccount = ({ navigation }) => {
-  const dispatch = useDispatch();
-  const { visible } = useSelector((state) => state.app);
-  const { user } = useSelector((state) => state);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { visible, visible2 } = useSelector((state) => state.app);
+  const { user } = useSelector((state) => state);
+  const { Job } = useSelector((state) => state);
+  const { id, name, category, no, duration } = Job;
   const route = useRoute();
   const realm = useRealm();
   const accounts = useQuery(Account);
+  const Cat = useQuery("category");
+
   //  console.log(item);
 
   const editAccount = useCallback(
@@ -62,7 +62,11 @@ const CreateAccount = ({ navigation }) => {
         account.password = user.password;
         account.role = user.role;
         account.phone = user.phone;
+        account.category = user.category;
       });
+
+      alert("success!!");
+      navigation.navigate("accounts");
     },
     [realm]
   );
@@ -73,7 +77,10 @@ const CreateAccount = ({ navigation }) => {
         return;
       }
       realm.write(() => {
-        return new Account(realm, user);
+        const newAccount = new Account(realm, user);
+        // Send email to the newly created user
+        sendUserDetails(user.email, user); // Assuming `sendUserDetails` is a function that sends the email
+        return newAccount;
       });
     },
     [realm]
@@ -82,7 +89,10 @@ const CreateAccount = ({ navigation }) => {
   const initialUser = () => {
     if (route.params) {
       // const { item } = route.params;
-      const item = realm?.objectForPrimaryKey("account", route.params.id);
+      const item = realm?.objectForPrimaryKey(
+        "account",
+        Realm.BSON.ObjectId(route.params.id)
+      );
       console.log(item);
       dispatch(setUser(item));
       // dispatch(setName(item.name));
@@ -100,7 +110,7 @@ const CreateAccount = ({ navigation }) => {
     initialUser();
   }, []);
   return (
-    <Background>
+    <Background bgColor='min-h-[100vh]'>
       <Topscreen
         onPress={() => {
           navigation.goBack();
@@ -113,7 +123,7 @@ const CreateAccount = ({ navigation }) => {
         <View className='bg-slate-200 h-[80vh] rounded-t-3xl justify-start   w-full absolute bottom-0'>
           <View className='flex items-center mt-[5vh] justify-between h-[80%]'>
             <View className='flex items-center justify-between w-[90%] flex-row'>
-              <Text style={styles.text}>Name:</Text>
+              <Text style={styles.text_md2}>Name:</Text>
               <TextInput
                 defaultValue={user.name}
                 style={[
@@ -127,7 +137,7 @@ const CreateAccount = ({ navigation }) => {
               />
             </View>
             <View className='flex items-center justify-between w-[90%] flex-row'>
-              <Text style={styles.text}>Role:</Text>
+              <Text style={styles.text_md2}>Role:</Text>
               <View className='w-[65vw] relative bg-slate-300  rounded-sm '>
                 {visible && (
                   <Motion.View
@@ -202,7 +212,63 @@ const CreateAccount = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             <View className='flex items-center justify-between w-[90%] flex-row'>
-              <Text style={styles.text}>Phone:</Text>
+              <Text style={styles.text_md2}>Category:</Text>
+              <View className='w-[65vw] relative bg-slate-300  rounded-sm h-10'>
+                {visible2 && (
+                  <Motion.View
+                    initial={{ x: 100 }}
+                    animate={{ x: 0 }}
+                    transition={{ duration: 0.2 }}
+                    style={styles.box}
+                    className='bg-white absolute bottom-0 right-0  space-y-1  border-2 border-black w-[65vw] flex justify-around rounded-md'
+                  >
+                    <FlatList
+                      data={Cat}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity
+                          onPress={() => {
+                            dispatch(setCategory(item));
+                            dispatch(setVisible2(!visible));
+                          }}
+                        >
+                          <Text
+                            style={styles.averageText}
+                            className='border-b-[1px] border-b-slate-700'
+                          >
+                            {item.name}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    />
+                  </Motion.View>
+                )}
+                <TextInput
+                  // defaultValue={user.category.name}
+                  editable={false}
+                  style={[
+                    styles.averageText,
+                    { color: "black", height: actuatedNormalizeVertical(50) },
+                  ]}
+                  // value={user.category.name}
+                  className='w-[65vw] bg-slate-300  rounded-sm h-10'
+                />
+              </View>
+              <View className='absolute right-[1vw]'>
+                <TouchableOpacity
+                  onPress={() => {
+                    dispatch(setVisible2(!visible));
+                  }}
+                >
+                  <AntDesign
+                    name='caretdown'
+                    size={actuatedNormalize(18)}
+                    color='black'
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View className='flex items-center justify-between w-[90%] flex-row'>
+              <Text style={styles.text_md2}>Phone:</Text>
               <TextInput
                 defaultValue={user.phone}
                 style={[
@@ -216,7 +282,7 @@ const CreateAccount = ({ navigation }) => {
               />
             </View>
             <View className='flex items-center justify-between w-[90%] flex-row'>
-              <Text style={styles.text}>Dept:</Text>
+              <Text style={styles.text_md2}>Dept:</Text>
               <TextInput
                 defaultValue={user.dept}
                 style={[
@@ -230,7 +296,7 @@ const CreateAccount = ({ navigation }) => {
               />
             </View>
             <View className='flex items-center justify-between w-[90%] flex-row'>
-              <Text style={styles.text}>Email:</Text>
+              <Text style={styles.text_md2}>Email:</Text>
               <TextInput
                 defaultValue={user.email}
                 style={[
@@ -238,7 +304,7 @@ const CreateAccount = ({ navigation }) => {
                   { height: actuatedNormalizeVertical(50) },
                 ]}
                 onChangeText={(value) => {
-                  dispatch(setEmail(value));
+                  dispatch(setEmail(value.trim()));
                 }}
                 className='w-[65vw] bg-slate-300  rounded-sm'
               />
@@ -283,10 +349,11 @@ const CreateAccount = ({ navigation }) => {
                 editAccount(user);
               } else {
                 createAccount(user);
+                navigation.navigate("accounts");
               }
               setIsLoading(false);
 
-              navigation.navigate("accounts");
+              // navigation.navigate("accounts");
               //   console.log(job.id);
             }}
             text={route.params ? "Edit" : "Create"}

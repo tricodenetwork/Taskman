@@ -12,12 +12,13 @@ import Tasks from "../../assets/images/tasks.svg";
 import Subtract from "../../assets/images/Subtract.svg";
 import OptionsCard from "../components/OptionsCard";
 import { FontAwesome5 } from "@expo/vector-icons";
-
+import moment from "moment";
+import { formattedDate } from "../api/Functions";
 export default function Handler({ navigation }) {
   return (
     <Background>
       <HandlerTopscreen
-        text3={"Monday, 27 Jan 2023"}
+        text3={formattedDate}
         text={"Hello, Ovodo Ohwovoriole"}
         onPress={() => navigation.goBack()}
       >
@@ -102,7 +103,7 @@ export default function Handler({ navigation }) {
           </View>
         </View>
       </HandlerTopscreen>
-      <View className='absolute self-center top-[52vh]'>
+      <View className='absolute self-center pt-[3vh] top-[52vh]'>
         <View>
           <TouchableOpacity
             onPress={() => {
@@ -139,7 +140,12 @@ export default function Handler({ navigation }) {
             text={"Profile"}
           />
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.5}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("messages");
+          }}
+          activeOpacity={0.5}
+        >
           <OptionsCard
             icon={
               <FontAwesome5

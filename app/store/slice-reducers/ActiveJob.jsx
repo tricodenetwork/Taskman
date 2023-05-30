@@ -45,7 +45,8 @@ const ActiveJob = createSlice({
     },
     Replace: (state, action) => {
       if (action.payload) {
-        return action.payload;
+        const result = JSON.parse(JSON.stringify(action.payload));
+        return result;
       } else {
         return initialState;
       }

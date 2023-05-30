@@ -25,9 +25,9 @@ export default function Menu() {
   } else
     return (
       <Motion.View
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ type: "spring", stiffness: 20 }}
+        initial={{ x: -100 }}
+        animate={{ x: 0 }}
+        transition={{ type: "spring", stiffness: 100 }}
         className='h-[80vh]  pt-[7vh] absolute top-[-1vh] border-b-2 border-r-2 border-primary bg-white left-0 w-[60vw]'
       >
         <View className='relative w-auto z-50 h-[100%] gap-3 mx-[2vw]'>
@@ -53,7 +53,7 @@ export default function Menu() {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("supervisor");
+              navigation.navigate("jobs");
               dispatch(setMenu());
             }}
           >
@@ -63,12 +63,22 @@ export default function Menu() {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
+              navigation.navigate("supervisor");
+              dispatch(setMenu());
+            }}
+          >
+            <Text style={styles.text_md2} className='text-xl text-primary'>
+              Supervisor
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
               navigation.navigate("handler");
               dispatch(setMenu());
             }}
           >
             <Text style={styles.text_md2} className='text-xl text-primary'>
-              Chats
+              Handler
             </Text>
           </TouchableOpacity>
           <View className='absolute flex flex-row-reverse items-center justify-between w-full border- bottom-[-2%] self-center px-[2vw]'>

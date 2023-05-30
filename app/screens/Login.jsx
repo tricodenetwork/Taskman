@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, Text, TextInput } from "react-native";
+import { View, StyleSheet, Text, TextInput, SafeAreaView } from "react-native";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import { styles } from "../styles/stylesheet";
@@ -41,8 +41,9 @@ const Login = ({ navigation }) => {
   // console.log(users);
 
   return (
-    <Background bgColor='bg-primary'>
-      {/* <Topscreen>
+    <SafeAreaView>
+      <Background bgColor='bg-primary'>
+        {/* <Topscreen>
         <Text
           style={styles.text}
           className='text-2xl  text-white absolute bottom-[3vh] ml-[5vw]'
@@ -50,45 +51,46 @@ const Login = ({ navigation }) => {
           Fill in Details
         </Text>
       </Topscreen> */}
-      <View className='w-[90vw] mt-[7vh] self-center'>
-        <Text style={styles.text_md} className='text-primary_light mb-[1vh]'>
-          Name
-        </Text>
-        <TextInput
-          value={usermail}
-          onChangeText={setUsermail}
-          className='w-full h-[5vh] bg-slate-400 rounded-sm self-center'
+        <View className='w-[90vw] mt-[7vh] self-center'>
+          <Text style={styles.text_md} className='text-primary_light mb-[1vh]'>
+            Name
+          </Text>
+          <TextInput
+            value={usermail.trimStart()}
+            onChangeText={setUsermail}
+            className='w-full h-[5vh] bg-slate-400 rounded-sm self-center'
+          />
+        </View>
+        <View className='w-[90vw] mt-[3vh] self-center'>
+          <Text style={styles.text_md} className='text-primary_light mb-[1vh]'>
+            Password
+          </Text>
+          <TextInput
+            onChangeText={setPassword}
+            value={password.trim()}
+            // secureTextEntry
+            className='w-full h-[5vh] bg-slate-400 rounded-sm self-center'
+          />
+        </View>
+        {authState === AuthState.LoginError && (
+          <Text style={[styles.error]}>
+            There was an error logging in, please try again
+          </Text>
+        )}
+        {authState === AuthState.RegisterError && (
+          <Text style={[styles.error]}>
+            There was an error registering, please try again
+          </Text>
+        )}
+        <LowerButton
+          navigate={() => {
+            handleLogin();
+            // navigation.navigate("accounts");
+          }}
+          text={"Log in"}
         />
-      </View>
-      <View className='w-[90vw] mt-[3vh] self-center'>
-        <Text style={styles.text_md} className='text-primary_light mb-[1vh]'>
-          Password
-        </Text>
-        <TextInput
-          onChangeText={setPassword}
-          value={password}
-          // secureTextEntry
-          className='w-full h-[5vh] bg-slate-400 rounded-sm self-center'
-        />
-      </View>
-      {authState === AuthState.LoginError && (
-        <Text style={[styles.error]}>
-          There was an error logging in, please try again
-        </Text>
-      )}
-      {authState === AuthState.RegisterError && (
-        <Text style={[styles.error]}>
-          There was an error registering, please try again
-        </Text>
-      )}
-      <LowerButton
-        navigate={() => {
-          handleLogin();
-          // navigation.navigate("accounts");
-        }}
-        text={"Log in"}
-      />
-    </Background>
+      </Background>
+    </SafeAreaView>
   );
 };
 

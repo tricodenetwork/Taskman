@@ -1,335 +1,58 @@
-import axios from "axios";
-const publicIp = require("react-public-ip");
+import moment from "moment";
+// import * as MailComposer from "expo-mail-composer";
+import { Linking } from "react-native";
+import qs from "qs";
 
-export const getActiveJobs = async (id) => {
-  try {
-    const res = await axios.get("http://192.168.105.209:2000/activate", {
-      params: { id: id },
-    });
-    return res.data;
-  } catch (err) {
-    if (err.status === 500) {
-      console.log("there was a problem with the server");
-    } else {
-      console.log(err || "error from post");
-    }
-  }
-};
+export const sendUserDetails = async (recipient, userDetails) => {
+  const { name, email, dept, phone, password, role } = userDetails;
+  let url = `mailto:${recipient}`;
+  console.log(recipient);
 
-export const activateJob = async (formdata, name) => {
-  console.log(formdata);
-  try {
-    const res = await axios.post(
-      "http://192.168.105.209:2000/activate",
-      formdata,
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        params: { supervisor: name },
-      }
-    );
-    return res.data;
-  } catch (err) {
-    if (err.status === 500) {
-      console.log("there was a problem with the server");
-    } else {
-      console.log(err || "error from post");
-    }
+  const subject = "Welcome to MyApp"; // Specify the email subject
+  const body = `
+    Hello ${name},
+
+    Welcome! Your account details are as follows:
+
+    Name:${name}
+    Email: ${email}
+    Department: ${dept}
+    Phone: ${phone}
+    Password: ${password}
+    Role:${role}
+
+    Thank you for joining!
+
+    Best regards,
+    The Team
+  `;
+  // Create email link query
+  const query = qs.stringify({
+    subject: subject,
+    body: body,
+  });
+
+  if (query.length) {
+    url += `?${query}`;
   }
-};
-export const sendUserDetails = async (formdata) => {
-  console.log(formdata.dept);
-  // try {
-  //   const res = await axios.post("http://192.168.105.209:2000/user", formdata, {
-  //     headers: {
-  //       "Content-Type": "application/x-www-form-urlencoded",
-  //     },
-  //   });
-  //   return res.data;
-  // } catch (err) {
-  //   if (err.status === 500) {
-  //     console.log("there was a problem with the server");
-  //   } else {
-  //     console.log(err || "error from post");
-  //   }
+
+  // check if we can use this link
+  const canOpen = await Linking.canOpenURL(url);
+  console.log(canOpen);
+
+  // if (!canOpen) {
+  //   throw new Error("Provided URL can not be handled");
   // }
-};
-export const sendJobDetails = async (formdata) => {
-  try {
-    const res = await axios.post("http://192.168.105.209:2000/job", formdata, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
-    return res.data;
-  } catch (err) {
-    if (err.status === 500) {
-      console.log("there was a problem with the server");
-    } else {
-      console.log(err || "error from post");
-    }
-  }
-  // publicIp.v4().then((ip) => {
-  //   console.log(ip);
+
+  return Linking.openURL(url);
+
+  // Compose the email
+  // MailComposer.composeAsync({
+  //   recipients: [recipient],
+  //   subject,
+  //   body,
   // });
-
-  // const ipv4 = (await publicIp.v4()) || "";
-  // console.log(ipv4);
 };
-
-export const getUserDetails = async (id) => {
-  try {
-    const res = await axios.get("http://192.168.105.209:2000/user", {
-      params: { id: id },
-    });
-    return res.data;
-  } catch (err) {
-    if (err.status === 500) {
-      console.log("there was a problem with the server");
-    } else {
-      console.log(err || "error from post");
-    }
-  }
-};
-export const getJobDetails = async (id) => {
-  try {
-    const res = await axios.get("http://192.168.105.209:2000/job", {
-      params: { id: id },
-    });
-    return res.data;
-  } catch (err) {
-    if (err.status === 500) {
-      console.log("there was a problem with the server");
-    } else {
-      console.log(err || "error from post");
-    }
-  }
-};
-
-export const addTask = async (formdata, id) => {
-  // console.log(id);
-  // console.log(formdata);
-  try {
-    const res = await axios.put("http://192.168.105.209:2000/job", formdata, {
-      params: { id: id },
-    });
-    return res.data;
-  } catch (err) {
-    if (err.status === 500) {
-      console.log("there was a problem with the server");
-    } else {
-      console.log(err || "error from post");
-    }
-  }
-};
-export const editUser = async (param) => {
-  // console.log(id);
-  // console.log(formdata);
-  try {
-    const res = await axios.patch(
-      "http://192.168.105.209:2000/user",
-      {
-        name: param.name,
-        email: param.email,
-        phone: param.phone,
-        role: param.role,
-        dept: param.dept,
-        password: param.password,
-      },
-      {
-        params: { id: param.id },
-      }
-    );
-    return res.data;
-  } catch (err) {
-    if (err.status === 500) {
-      console.log("there was a problem with the server");
-    } else {
-      console.log(err || "error from post");
-    }
-  }
-};
-export const editJob = async (param) => {
-  // console.log(id);
-  // console.log(formdata);
-  try {
-    const res = await axios.patch(
-      "http://192.168.105.209:2000/job",
-      {
-        name: param.name,
-        duration: param.duration,
-        category: param.category,
-        tasks: param.tasks,
-        password: param.no,
-      },
-      {
-        params: { id: param.id },
-      }
-    );
-    return res.data;
-  } catch (err) {
-    if (err.status === 500) {
-      console.log("there was a problem with the server");
-    } else {
-      console.log(err || "error from post");
-    }
-  }
-};
-
-export const deleteTasks = async (id, name, duration) => {
-  // console.log(id);
-  // console.log(formdata);
-  try {
-    const res = await axios.patch(
-      "http://192.168.105.209:2000/job/tasks",
-      null,
-      {
-        params: { id: id, name: name, duration: duration },
-      }
-    );
-    return res.data;
-  } catch (err) {
-    if (err.status === 500) {
-      console.log("there was a problem with the server");
-    } else {
-      console.log(err || "error from post");
-    }
-  }
-};
-export const deleteJob = async (id) => {
-  // console.log(id);
-  // console.log(formdata);
-  try {
-    const res = await axios.delete("http://192.168.105.209:2000/job", {
-      params: { id: id },
-    });
-    return res.data;
-  } catch (err) {
-    if (err.status === 500) {
-      console.log("there was a problem with the server");
-    } else {
-      console.log(err || "error from post");
-    }
-  }
-};
-export const deleteActiveJob = async (id) => {
-  // console.log(id);
-  // console.log(formdata);
-  try {
-    const res = await axios.delete("http://192.168.105.209:2000/activate", {
-      params: { id: id },
-    });
-    return res.data;
-  } catch (err) {
-    if (err.status === 500) {
-      console.log("there was a problem with the server");
-    } else {
-      console.log(err || "error from post");
-    }
-  }
-};
-
-export const accounts = [
-  {
-    id: 1,
-    name: "Alhassan Yahaya",
-    dept: "Exams and Records",
-    role: "ADMIN",
-  },
-  { id: 2, name: "Owvigho Omotuna", dept: "Fishery", role: "SUPERVISOR" },
-  {
-    id: 3,
-    name: "Patience Utumba",
-    dept: "Exams and Records",
-    role: "ADMIN",
-  },
-  {
-    id: 4,
-    name: "Adams Oshomiole",
-    dept: "Political Science",
-    role: "HANDLER",
-  },
-  {
-    id: 5,
-    name: "Faith Ehikioya",
-    dept: "Exams and Records",
-    role: "SUPERVISOR",
-  },
-  {
-    id: 6,
-    name: "Funsho Ibukun",
-    dept: "Mechanical Engineering",
-    role: "ADMIN",
-  },
-  { id: 7, name: "Ese Ilaya", dept: "Social Works", role: "HANDLER" },
-  { id: 8, name: "John Snow", dept: "Exams and Records", role: "ADMIN" },
-  { id: 9, name: "Otoms Idiom", dept: "Exams and Records", role: "ADMIN" },
-  {
-    id: 10,
-    name: "Gbona Alimosho",
-    dept: "Exams and Records",
-    role: "SUPERVISOR",
-  },
-  {
-    id: 11,
-    name: "Alhassan Yahaya",
-    dept: "Exams and Records",
-    role: "ADMIN",
-  },
-  { id: 12, name: "Owvigho Omotuna", dept: "Fishery", role: "SUPERVISOR" },
-  {
-    id: 13,
-    name: "Patience Utumba",
-    dept: "Exams and Records",
-    role: "ADMIN",
-  },
-  {
-    id: 14,
-    name: "Adams Oshomiole",
-    dept: "Political Science",
-    role: "HANDLER",
-  },
-  {
-    id: 15,
-    name: "Faith Ehikioya",
-    dept: "Exams and Records",
-    role: "SUPERVISOR",
-  },
-  {
-    id: 16,
-    name: "Funsho Ibukun",
-    dept: "Mechanical Engineering",
-    role: "ADMIN",
-  },
-  { id: 17, name: "Ese Ilaya", dept: "Social Works", role: "HANDLER" },
-  { id: 18, name: "John Snow", dept: "Exams and Records", role: "ADMIN" },
-  { id: 19, name: "Otoms Idiom", dept: "Exams and Records", role: "ADMIN" },
-  {
-    id: 20,
-    name: "Gbona Alimosho",
-    dept: "Exams and Records",
-    role: "SUPERVISOR",
-  },
-];
-
-export const jobDetails = [
-  {
-    name: "Cross-check scores",
-    tasks: 15,
-    duration: "2 weeks",
-  },
-  {
-    name: "Vet Transcript",
-    tasks: 10,
-    duration: "1 week",
-  },
-  {
-    name: "Submit Results",
-    tasks: 12,
-    duration: "5 days",
-  },
-];
 
 export function generatePassword(length) {
   var charset =
@@ -340,4 +63,94 @@ export function generatePassword(length) {
     password += charset.charAt(randomIndex);
   }
   return password;
+}
+
+export function Completed(date1, date2) {
+  if (date1 == null || date2 == null) {
+    return;
+  }
+  const millisecondsDiff =
+    (date1 !== null || date2 !== null) && date1?.getTime() - date2?.getTime();
+  const hoursDiff = Math.floor(millisecondsDiff / (1000 * 60 * 60));
+  const minutesDiff = Math.floor(
+    (millisecondsDiff % (1000 * 60 * 60)) / (1000 * 60)
+  );
+
+  return {
+    hours: hoursDiff,
+    minutes: minutesDiff,
+  };
+}
+
+// Example usage
+const date1 = new Date();
+const date2 = new Date("2023-05-22T14:39:34.527+00:00");
+
+const difference = Completed(date1, date2);
+console.log(difference.hours, "hours", difference.minutes, "minutes");
+
+const date = moment(); // Assuming you want the current date
+export const formattedDate = date.format("dddd, D MMM YYYY");
+
+export function sumFieldbad(array, fieldName) {
+  let totalDays = 0;
+  let totalHours = 0;
+  let totalMinutes = 0;
+
+  array.forEach((obj) => {
+    if (
+      fieldName in obj &&
+      typeof obj[fieldName] === "object" &&
+      typeof obj[fieldName].days === "number" &&
+      typeof obj[fieldName].hours === "number" &&
+      typeof obj[fieldName].minutes === "number"
+    ) {
+      const { days, hours, minutes } = obj[fieldName];
+      totalDays += days;
+      totalHours += hours;
+      totalMinutes += minutes;
+    }
+  });
+
+  totalHours += Math.floor(totalMinutes / 60);
+  totalMinutes %= 60;
+  totalDays += Math.floor(totalHours / 24);
+  totalHours %= 24;
+
+  return { days: totalDays, hours: totalHours, minutes: totalMinutes };
+}
+
+export function sumField(array, fieldName) {
+  return array.reduce(
+    (total, obj) => {
+      if (fieldName in obj && typeof obj[fieldName] === "object") {
+        const { days = 0, hours = 0, minutes = 0 } = obj[fieldName];
+        total.days += days;
+        total.hours += hours;
+        total.minutes += minutes;
+      }
+      return total;
+    },
+    { days: 0, hours: 0, minutes: 0 }
+  );
+}
+export function formatDuration(duration) {
+  const days = Math.floor(duration / (24 * 60));
+  const hours = Math.floor((duration % (24 * 60)) / 60);
+  const minutes = duration % 60;
+  return { days, hours, minutes };
+}
+export function convertToMinutes(duration) {
+  const { days = 0, hours = 0, minutes = 0 } = duration;
+
+  // Convert null values to zeros
+  const normalizedDays = days !== null && !isNaN(days) ? days : 0;
+  const normalizedHours = hours !== null && !isNaN(hours) ? hours : 0;
+  const normalizedMinutes = minutes !== null && !isNaN(minutes) ? minutes : 0;
+
+  // Convert to minutes
+  const totalMinutes =
+    normalizedDays * 24 * 60 + normalizedHours * 60 + normalizedMinutes;
+
+  return totalMinutes;
 }

@@ -23,12 +23,28 @@ import { useFlipper } from "@react-navigation/devtools";
 import Supervisor from "../components/Supervisor";
 import ActiveTasks from "../screens/ActiveTasks";
 import MyTasks from "../screens/MyTasks";
+import TaskDetailsPage from "../screens/TaskDetailsPage";
+import ChatScreen from "../screens/ChatScreen";
+import MessageScreen from "../screens/MessageScreen";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { setId } from "../store/slice-reducers/userSlice";
+import { useUser } from "@realm/react";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export const MainStack = () => {
   const navRef = useNavigationContainerRef();
+  const dispatch = useDispatch();
+  const user = useUser();
+
+  useEffect(() => {
+    const oid = user.identities[0].id;
+    const cleanedOid = oid.replace(/[^0-9a-fA-F]/g, "");
+    dispatch(setId(cleanedOid));
+  }, []);
+
   useFlipper(navRef);
   return (
     <NavigationContainer ref={navRef}>
@@ -55,6 +71,9 @@ export const MainStack = () => {
         {/* Handler */}
         <Stack.Screen name='handler' component={Handler} />
         <Stack.Screen name='mytasks' component={MyTasks} />
+        <Stack.Screen name='chats' component={ChatScreen} />
+        <Stack.Screen name='messages' component={MessageScreen} />
+        <Stack.Screen name='taskdetailsscreen' component={TaskDetailsPage} />
         {/* <Stack.Screen name='home' component={TabNav} /> */}
       </Stack.Navigator>
     </NavigationContainer>

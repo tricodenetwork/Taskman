@@ -3,16 +3,13 @@ import React from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
-import Menu from "../components/Menu";
-import { useDispatch } from "react-redux";
-import { setMenu } from "../store/slice-reducers/Formslice";
-import Realm from "realm";
+import Constants from "expo-constants";
 
 export default function Taskman({ navigation }) {
-  const dispatch = useDispatch();
-
   // const users = Realm.objects("Account");
-  // console.log(users);
+  // console.log(new Realm.BSON.ObjectId());
+  console.log(Constants.systemFonts);
+
   return (
     <Background>
       <Topscreen />

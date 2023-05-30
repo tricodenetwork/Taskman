@@ -16,13 +16,15 @@ import {
 import { AccountRealmContext } from "../models";
 import { activejob, job } from "../models/Task";
 import { useSelector } from "react-redux";
+import { Realm } from "@realm/react";
 
-const { useRealm, useQuery } = AccountRealmContext;
+const { useRealm, useQuery, useObject } = AccountRealmContext;
 
 export default function JobDetails({ onPress }) {
   const [refreshing, setRefreshing] = useState(false);
   const { search, filter } = useSelector((state) => state.app);
   const route = useRoute();
+  const realm = useRealm();
   const jobs = useQuery(job);
   const activeJobs = useQuery(activejob);
   const [data, setData] = useState([]);
@@ -56,6 +58,8 @@ export default function JobDetails({ onPress }) {
         // item[col] && item[col].toLowerCase().includes(search.toLowerCase())
       )}
       renderItem={({ item }) => {
+        const vals = realm.objectForPrimaryKey("job", item._id);
+        // console.log(vals);
         return (
           <TouchableOpacity
             activeOpacity={0.9}
