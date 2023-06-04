@@ -17,6 +17,7 @@ import * as MediaLibrary from "expo-media-library";
 import RNHTMLtoPDF from "react-native-html-to-pdf";
 import * as FileSystem from "expo-file-system";
 import { PermissionsAndroid } from "react-native";
+import { StorageAccessFramework } from "expo-file-system";
 
 async function checkExternalStoragePermissions() {
   try {
@@ -110,17 +111,50 @@ export default function Stats() {
     return taskStats;
   }
 
+  async function savePDFToDirectory(filePath) {
+    const permissions =
+      await StorageAccessFramework.requestDirectoryPermissionsAsync();
+    if (!permissions.granted) {
+      return;
+    }
+
+    const fileName = "statistics";
+    const directoryUri = permissions.directoryUri;
+
+    try {
+      const fileContents = await FileSystem.readAsStringAsync(filePath, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const uri = await StorageAccessFramework.createFileAsync(
+        directoryUri,
+        fileName,
+        "application/pdf"
+      );
+
+      await FileSystem.writeAsStringAsync(uri, fileContents, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      console.log("File created and base64 data written successfully");
+      console.log("PDF file saved:", uri);
+    } catch (e) {
+      console.log("Error:", e);
+    }
+  }
+
   async function generatePDF(data) {
     // checkExternalStoragePermissions();
 
     try {
       if (permissionResponse.status !== "granted") {
         const perm = await requestPermission();
-        // if (perm.status != "granted") {
-        console.log("permissions not granted");
-        return;
-        // }
+        if (perm.status != "granted") {
+          console.log("permissions not granted");
+          return;
+        }
       }
+
       // Create the HTML content dynamically based on the data
       let htmlContent = "<h1>Task Statistics</h1>";
       data.forEach((item) => {
@@ -138,51 +172,26 @@ export default function Stats() {
       };
 
       const pdf = await RNHTMLtoPDF.convert(options);
-      const fileUri =
-        "file:///storage/emulated/0/Android/data/tasks.uniben.vic/files/Documents/statistics.pdf";
 
       const sourcePath =
         "file:///storage/emulated/0/Android/data/tasks.uniben.vic/files/Documents/stats.pdf";
       const destinationPath =
         "file:///data/user/0/tasks.uniben.vic/files/stats.pdf";
 
-      const path = "file:///storage/emulated/0/Documents/stats.pdf";
-      const fileinfo = await FileSystem.getInfoAsync(
-        "file://storage/emulated/0/DCIM/stats.pdf"
-        // destinationPath
-      );
-
-      // FileSystem.copyAsync({
-      //   from: sourcePath,
-      //   to: destinationPath,
-      // })
-      //   .then(() => {
-      //     console.log("File moved successfully");
-      //   })
-      //   .catch((error) => {
-      //     console.log("Error moving file:", error);
-      //   });
-      MediaLibrary.createAssetAsync(sourcePath)
-        .then(() => {
-          console.log("File moved successfully");
-        })
-        .catch((error) => {
-          console.log("Error moving file:", error);
-        });
-
-      // console.log(fileinfo);
+      savePDFToDirectory(sourcePath);
       // const asset = await MediaLibrary.createAssetAsync(sourcePath);
 
       // asset && console.log("Asset created:", asset);
-      // const album = await MediaLibrary.getAlbumAsync("Documents");
+
+      // const album = await MediaLibrary.getAlbumAsync("Taskman");
       // if (album == null) {
-      //   await MediaLibrary.createAlbumAsync("Documents", asset, false);
+      //   await MediaLibrary.createAlbumAsync("Taskman", asset, false);
       // } else {
       //   await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
       // }
 
-      // console.log("Pdf Saved Succesfully", pdf.filePath);
-      // alert("Pdf Saved ", pdf.filePath);
+      console.log("Pdf Saved Succesfully", pdf.filePath);
+      alert("Pdf Saved ", pdf.filePath);
     } catch (error) {
       console.log("Error generating PDF:", error);
     }
