@@ -6,7 +6,7 @@ import {
   Modal,
   RefreshControl,
 } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import { actuatedNormalizeVertical, styles } from "../styles/stylesheet";
@@ -24,6 +24,7 @@ import { TextInput } from "react-native";
 import { AccountRealmContext } from "../models";
 import { category } from "../models/Task";
 import { Object } from "realm";
+import { setFilter } from "../store/slice-reducers/Formslice";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -34,10 +35,8 @@ export default function Jobs({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const realm = useRealm();
   const Cat = useQuery(category);
-  const value = realm.objectForPrimaryKey(
-    "category",
-    Realm.BSON.ObjectId(edit.id)
-  );
+  const value =
+    realm.objectForPrimaryKey("category", Realm.BSON.ObjectId(edit.id)) || [];
 
   const dispatch = useDispatch();
 
@@ -94,6 +93,11 @@ export default function Jobs({ navigation }) {
     [realm]
   );
 
+  useEffect(() => {
+    dispatch(setFilter("Name"));
+    // dispatch(setvi)
+  }, []);
+
   const render = ({ item }) => {
     return (
       <TouchableOpacity
@@ -120,36 +124,17 @@ export default function Jobs({ navigation }) {
   };
 
   return (
-    <Background>
+    <Background bgColor='min-h-[98vh]'>
       <Topscreen text={"Jobs"} />
       <View
         className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
       >
         <View className='mb-1'>
-          <SearchComponent />
+          <SearchComponent filterItems={["Name", "Category"]} />
         </View>
         <View>
           <JobDetails />
-          {/* <FlatList
-            // getItemLayout={(data, index) => ({
-            //   length: 100,
-            //   offset: 100 * index,
-            //   index,
-            // })}
-            // removeClippedSubviews={true}
-            // maxToRenderPerBatch={8}
-            // windowSize={8}
-            style={{ height: "85%" }}
-            showsVerticalScrollIndicator
-            horizontal={false}
-            keyExtractor={(item) => item.id}
-            // contentContainerStyle={{
-            //   flexGrow: 1,
-            // }}
-            data={accounts}
-            renderItem={render}
-          /> */}
         </View>
       </View>
       <View className='flex-row flex justify-around self-center absolute bottom-[2vh] w-[100vw]'>
@@ -176,7 +161,7 @@ export default function Jobs({ navigation }) {
         }}
         visible={modalVisible}
       >
-        <View className='bg-primary pt-10 h-full'>
+        <View className='bg-primary min-h-[97vh] pt-10 h-full'>
           <View className=' mb-[2vh]'>
             <View className='flex items-center justify-between self-center mb-[2vh] w-[90%] flex-row'>
               <Text className='text-Handler2' style={styles.text_md2}>

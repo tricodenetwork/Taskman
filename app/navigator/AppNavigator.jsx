@@ -20,7 +20,7 @@ import ActivateJob from "../screens/ActivateJob";
 import ActiveJobs from "../screens/ActiveJobs";
 import Handler from "../screens/Handler";
 import { useFlipper } from "@react-navigation/devtools";
-import Supervisor from "../components/Supervisor";
+import Supervisor from "../screens/Supervisor";
 import ActiveTasks from "../screens/ActiveTasks";
 import MyTasks from "../screens/MyTasks";
 import TaskDetailsPage from "../screens/TaskDetailsPage";
@@ -28,22 +28,33 @@ import ChatScreen from "../screens/ChatScreen";
 import MessageScreen from "../screens/MessageScreen";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { setId } from "../store/slice-reducers/userSlice";
+import { setId, setUser } from "../store/slice-reducers/userSlice";
 import { useUser } from "@realm/react";
+import Stats from "../screens/Stats";
+import Security from "../screens/Security";
+import ClientScreen from "../screens/ClientScreen";
+import { AccountRealmContext } from "../models";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+const { useObject, useQuery } = AccountRealmContext;
 
 export const MainStack = () => {
   const navRef = useNavigationContainerRef();
   const dispatch = useDispatch();
   const user = useUser();
+  const oid = user.identities[0].id;
+  const cleanedOid = oid.replace(/[^0-9a-zA-Z]/g, "");
+
+  const account =
+    cleanedOid.length > 10
+      ? useObject("account", Realm.BSON.ObjectId(cleanedOid))
+      : useObject("client", cleanedOid);
 
   useEffect(() => {
-    const oid = user.identities[0].id;
-    const cleanedOid = oid.replace(/[^0-9a-fA-F]/g, "");
-    dispatch(setId(cleanedOid));
-  }, []);
+    dispatch(setUser(account));
+  }, [account, cleanedOid]);
 
   useFlipper(navRef);
   return (
@@ -52,7 +63,17 @@ export const MainStack = () => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName='taskman'
+        initialRouteName={
+          account.role == "Admin"
+            ? "taskman"
+            : account.role == "Handler"
+            ? "handler"
+            : account.role == "Supervisor"
+            ? "supervisor"
+            : account.role == "Client"
+            ? "client"
+            : "login"
+        }
       >
         <Stack.Screen name='taskman' component={Taskman} />
         <Stack.Screen name='profile' component={Profile} />
@@ -62,19 +83,21 @@ export const MainStack = () => {
         <Stack.Screen name='tasks' component={Tasks} />
         <Stack.Screen name='CreateAccount' component={CreateAccount} />
         <Stack.Screen name='CreateJob' component={CreateJob} />
+        <Stack.Screen name='security' component={Security} />
 
         {/* //Supervisor */}
         <Stack.Screen name='supervisor' component={Supervisor} />
         <Stack.Screen name='ActivateJob' component={ActivateJob} />
         <Stack.Screen name='activeJobs' component={ActiveJobs} />
         <Stack.Screen name='activetasks' component={ActiveTasks} />
+        <Stack.Screen name='stats' component={Stats} />
         {/* Handler */}
         <Stack.Screen name='handler' component={Handler} />
         <Stack.Screen name='mytasks' component={MyTasks} />
         <Stack.Screen name='chats' component={ChatScreen} />
         <Stack.Screen name='messages' component={MessageScreen} />
         <Stack.Screen name='taskdetailsscreen' component={TaskDetailsPage} />
-        {/* <Stack.Screen name='home' component={TabNav} /> */}
+        <Stack.Screen name='client' component={ClientScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

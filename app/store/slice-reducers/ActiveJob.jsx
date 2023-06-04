@@ -5,9 +5,8 @@ const initialState = {
   matNo: "",
   dept: "",
   handler: "",
-  tasks: [{ handler: "", status: "Pending", name: "", duration: "" }],
   currenttask: "",
-  job: "",
+  job: {},
   email: "",
   supervisor: "",
 };
@@ -37,7 +36,7 @@ const ActiveJob = createSlice({
       state.id = action.payload;
     },
     setTasks: (state, action) => {
-      state.tasks = action.payload;
+      state.job.tasks = action.payload;
     },
     setCurrentTask: (state, action) => {
       state.currenttask = action.payload || "";

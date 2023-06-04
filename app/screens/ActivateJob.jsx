@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { View, Text, TextInput, Button, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import {
   setMatNo,
@@ -27,11 +34,13 @@ import { useRoute } from "@react-navigation/native";
 import LowerButton from "../components/LowerButton";
 import { AccountRealmContext } from "../models";
 import { activejob, job as jobSchema } from "../models/Task";
-import { Account } from "../models/Account";
+import { Account, client } from "../models/Account";
 import { useUser } from "@realm/react";
 import Realm from "realm";
+import { sendClientDetails, sendPushNotification } from "../api/Functions";
+import OdinaryButton from "../components/OdinaryButton";
 
-const { useRealm, useQuery } = AccountRealmContext;
+const { useRealm, useQuery, useObject } = AccountRealmContext;
 
 const ActivateJob = ({ navigation }) => {
   //--------------------------------------------------------------------------------------STATE AND VARIABLES
@@ -44,36 +53,36 @@ const ActivateJob = ({ navigation }) => {
   const activeJobs = useQuery(activejob);
   const allJobs = useQuery(jobSchema);
   const handlers = useQuery(Account).filtered(`role == "Handler"`);
-
-  // const oid = user.identities[0].id;
-  // const cleanedOid = oid.replace(/[^0-9a-fA-F]/g, "");
-
-  // const supervisor = realm.objectForPrimaryKey(
-  //   "account",
-  //   Realm.BSON.ObjectId(cleanedOid)
-  // ).name;
-  const supervisor = "Justin Stone";
+  const { visible, visible2, visible3 } = useSelector((state) => state.app);
+  const { ActiveJob } = useSelector((state) => state);
+  const oid = user.identities[0].id;
+  const cleanedOid = oid.replace(/[^0-9a-fA-F]/g, "");
+  const supervisor = realm.objectForPrimaryKey(
+    "account",
+    Realm.BSON.ObjectId(cleanedOid)
+  ).name;
+  const pushToken =
+    useQuery("account").filtered(`name == $0 AND role == "Handler"`, handler)[0]
+      ?.pushToken ?? "";
 
   const { matNo, dept, handler, job, email, tasks, id } = useSelector(
     (state) => state.ActiveJob
   );
-  const { visible, visible2, visible3 } = useSelector((state) => state.app);
-  const { ActiveJob } = useSelector((state) => state);
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
 
-  useEffect(() => {
-    if (route.params) {
-      const useThis = realm.objectForPrimaryKey(
-        "activejob",
-        Realm.BSON.ObjectId(route.params?.id)
-      );
-      useThis && dispatch(Replace(useThis));
-    } else {
-      dispatch(Replace());
-      return;
-    }
-  }, [route.params]);
+  // useEffect(() => {
+  //   if (route.params) {
+  //     const useThis = realm.objectForPrimaryKey(
+  //       "activejob",
+  //       Realm.BSON.ObjectId(route.params?.id)
+  //     );
+  //     useThis && dispatch(Replace(useThis));
+  //   } else {
+  //     dispatch(Replace());
+  //     return;
+  //   }
+  // }, [route.params]);
 
   const EditActiveJob = useCallback(
     (item) => {
@@ -90,7 +99,7 @@ const ActivateJob = ({ navigation }) => {
           project.matNo = item.matNo;
           project.email = item.email;
 
-          project.tasks.map((task) => {
+          project.job.tasks.map((task) => {
             const { name, handler } = task;
 
             if (name == item.currenttask) {
@@ -111,25 +120,40 @@ const ActivateJob = ({ navigation }) => {
   );
   const activateJob = useCallback(
     (item) => {
-      if (!item.supervisor) {
+      if (!supervisor) {
         alert("No supervisor");
         return;
       }
-
       realm.write(() => {
         try {
           const { tasks, ...rest } = item;
-          const tasksArray = JSON.parse(JSON.stringify(tasks));
+          // const tasksArray = JSON.parse(JSON.stringify(tasks));
+          // const Item = JSON.parse(JSON.stringify(item));
 
-          const project = new activejob(realm, rest);
-          project.tasks = tasksArray;
-          project.tasks[0].handler = item.handler;
+          const project = new activejob(realm, item);
+          // project.job.tasks = tasksArray;
+
+          project.job.tasks.map((task) => {
+            const { name, handler } = task;
+            if (name == item.currenttask) {
+              task.handler = item.handler;
+            }
+          });
+          // project.tasks[0].handler = item.handler;
           project.supervisor = supervisor;
           alert("Job Activated");
         } catch (error) {
           console.log({ error, msg: "Error writing to realm" });
         }
       });
+
+      realm.write(() => {
+        const user = { email: item.email, _id: item.matNo };
+        return new client(realm, user);
+      });
+
+      sendClientDetails(item.email, item);
+      sendPushNotification(pushToken);
     },
     [realm]
   );
@@ -147,24 +171,34 @@ const ActivateJob = ({ navigation }) => {
   //----------------------------------------------------RENDERED COMPONENT
 
   return (
-    <Background bgColor='min-h-[100vh]'>
+    <Background bgColor='min-h-[98vh]'>
       <Topscreen
         del={deleteActiveJob}
         text={route.params ? "Edit Job" : "Activate Job"}
       />
       {isLoading ? (
-        <Text>Loading...</Text>
+        <View className='items-center justify-center h-[58vh] border-2'>
+          <Text style={styles.text_md2}>Loading...</Text>
+          <ActivityIndicator size={"large"} color={"#004343"} />
+        </View>
       ) : (
         <View
           id='FULL_VIEW'
           className='bg-slate-200 h-[80vh] rounded-t-3xl justify-center  p-2 w-full absolute bottom-0'
         >
+          <OdinaryButton
+            text={"Send"}
+            navigate={() => {
+              sendClientDetails(ActiveJob.email, ActiveJob);
+            }}
+            style={"bg-Handler3 absolute top-[5vh] right-[5vw]"}
+          />
           <View className='flex items-center justify-between h-[55vh]'>
             <View
               id='MAT_NO'
               className='flex items-center justify-between w-[90%] flex-row'
             >
-              <Text style={[styles.Pcard]}>MatNo:</Text>
+              <Text style={[styles.Pcard]}>ClientID:</Text>
               <TextInput
                 defaultValue={matNo}
                 style={styles.averageText}
@@ -189,22 +223,22 @@ const ActivateJob = ({ navigation }) => {
                     className='bg-white absolute bottom-0 right-0  space-y-1  border-2 border-black w-[60vw] flex justify-around rounded-md'
                   >
                     <FlatList
-                      style={{ height: 150 }}
+                      style={{ height: 200 }}
                       data={allJobs}
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           onPress={() => {
                             // console.log(item.name);
-                            dispatch(setJob(item.name));
-                            dispatch(setTasks(item.tasks));
+                            dispatch(setJob(item));
+                            // dispatch(setTasks(item.tasks));
 
-                            console.log(item.tasks);
+                            // console.log(item.tasks);
                             dispatch(setVisible2());
                           }}
                         >
                           <Text
                             style={styles.averageText}
-                            className='border-b-[1px] border-b-slate-700'
+                            className='border-b-[1px] my-[1vh] border-b-slate-700'
                           >
                             {item.name}
                           </Text>
@@ -214,10 +248,10 @@ const ActivateJob = ({ navigation }) => {
                   </Motion.View>
                 )}
                 <TextInput
-                  defaultValue={ActiveJob.job}
+                  defaultValue={ActiveJob.job.name ?? ""}
                   editable={false}
                   style={[styles.averageText, { color: "black" }]}
-                  value={job}
+                  value={job.name ?? ""}
                   className='w-[60vw] bg-slate-300  rounded-sm h-10'
                 />
               </View>
@@ -263,8 +297,9 @@ const ActivateJob = ({ navigation }) => {
                     className='bg-white absolute bottom-0 right-0  space-y-1  border-2 border-black w-[60vw] flex justify-around rounded-md'
                   >
                     <FlatList
-                      style={{ height: 150 }}
-                      data={ActiveJob.tasks}
+                      style={{ height: 200 }}
+                      data={ActiveJob.job.tasks ?? []}
+                      // data={[]}
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           onPress={() => {
@@ -275,7 +310,7 @@ const ActivateJob = ({ navigation }) => {
                         >
                           <Text
                             style={styles.averageText}
-                            className='border-b-[1px] border-b-slate-700'
+                            className='border-b-[1px] my-[1vh] border-b-slate-700'
                           >
                             {item.name}
                           </Text>
@@ -285,7 +320,12 @@ const ActivateJob = ({ navigation }) => {
                   </Motion.View>
                 )}
                 <TextInput
-                  defaultValue={ActiveJob.tasks[0]?.name}
+                  // defaultValue={ActiveJob.job.tasks[0]?.name ?? ""}
+                  defaultValue={
+                    ActiveJob.job.tasks && ActiveJob.job.tasks.length > 0
+                      ? ActiveJob.job.tasks[0].name
+                      : ""
+                  }
                   editable={false}
                   multiline={true}
                   style={[styles.averageText, { color: "black" }]}
@@ -321,7 +361,7 @@ const ActivateJob = ({ navigation }) => {
                     className='bg-white absolute bottom-0 right-0  space-y-1  border-2 border-black w-[60vw] flex justify-around rounded-md'
                   >
                     <FlatList
-                      style={{ height: 150 }}
+                      style={{ height: 200 }}
                       data={handlers}
                       renderItem={({ item }) =>
                         item.role === "Handler" && (
@@ -333,7 +373,7 @@ const ActivateJob = ({ navigation }) => {
                           >
                             <Text
                               style={styles.averageText}
-                              className='border-b-[1px] border-b-slate-700'
+                              className='border-b-[1px] my-[1vh] border-b-slate-700'
                             >
                               {item.name}
                             </Text>
@@ -344,7 +384,12 @@ const ActivateJob = ({ navigation }) => {
                   </Motion.View>
                 )}
                 <TextInput
-                  defaultValue={ActiveJob.tasks[0]?.handler}
+                  // defaultValue={ActiveJob.job.tasks[0]?.handler ?? ""}
+                  defaultValue={
+                    ActiveJob.job.tasks && ActiveJob.job.tasks.length > 0
+                      ? ActiveJob.job.tasks[0].handler
+                      : ""
+                  }
                   editable={false}
                   style={[styles.averageText, { color: "black" }]}
                   value={handler}

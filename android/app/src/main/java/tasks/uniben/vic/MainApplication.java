@@ -14,6 +14,7 @@ import com.facebook.soloader.SoLoader;
 
 import expo.modules.ApplicationLifecycleDispatcher;
 import expo.modules.ReactNativeHostWrapper;
+import com.christopherdro.htmltopdf.RNHTMLtoPDFPackage;
 
 import java.util.List;
 
@@ -31,7 +32,8 @@ public class MainApplication extends Application implements ReactApplication {
         @SuppressWarnings("UnnecessaryLocalVariable")
         List<ReactPackage> packages = new PackageList(this).getPackages();
         // Packages that cannot be autolinked yet can be added manually here, for example:
-        // packages.add(new MyReactNativePackage());
+        // packages.add(new MyReactNativePackage);
+        
         return packages;
       }
 

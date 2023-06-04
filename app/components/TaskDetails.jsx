@@ -28,6 +28,8 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
   const route = useRoute();
   const navigation = useNavigation();
   const isFocused = useIsFocused();
+  const { user } = useSelector((state) => state);
+  console.log(user.role);
 
   // const { tasks } = useSelector((state) => state.Job);
 
@@ -54,7 +56,9 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
   // }, [data]);
   return (
     <DraggableFlatList
-      containerStyle={{ height: "91%" }}
+      containerStyle={{
+        height: route.name == "tasks" || user.role == "Client" ? "96%" : "91%",
+      }}
       onDragEnd={({ data }) => {
         route.name !== "mytasks" && reArrange(data);
       }}
@@ -68,6 +72,7 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
       }
       data={taskdata}
       renderItem={({ item, drag, isActive }) => {
+        const { name, id, job, matNo, supervisor, handler, status } = item;
         return (
           <ScaleDecorator>
             <TouchableOpacity
@@ -79,7 +84,15 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
               onPress={() => {
                 // item contains non_serializable values. id
                 route.name == "mytasks" &&
-                  navigation.navigate("taskdetailsscreen", { taskInfo: item });
+                  navigation.navigate("taskdetailsscreen", {
+                    name: name,
+                    matNo: matNo,
+                    supervisor: supervisor,
+                    id: id,
+                    job: job,
+                    handler: handler,
+                    status: status,
+                  });
               }}
             >
               {!item.name ? (
@@ -94,7 +107,7 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
                   {route.name == "activetasks" ? (
                     <DetailsCard
                       isActive={isActive}
-                      // id={jobId}
+                      id={jobId}
                       // name={item.name}
                       duration={item.duration}
                       item={item}
@@ -123,7 +136,7 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
       }}
       showsVerticalScrollIndicator
       keyExtractor={(item, index) => index}
-      style={{ height: "85%" }}
+      // style={{ height: route.name == "tasks" ? "95%" : "95%" }}
     />
   );
 }

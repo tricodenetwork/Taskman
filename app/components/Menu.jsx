@@ -11,12 +11,14 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function Menu() {
   const { menu } = useSelector((state) => state.app);
+  const { role } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const user = useUser();
 
   const handleLogout = useCallback(() => {
+    dispatch(setMenu());
     user?.logOut();
   }, [user]);
 
@@ -79,6 +81,16 @@ export default function Menu() {
           >
             <Text style={styles.text_md2} className='text-xl text-primary'>
               Handler
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("client");
+              dispatch(setMenu());
+            }}
+          >
+            <Text style={styles.text_md2} className='text-xl text-primary'>
+              Client
             </Text>
           </TouchableOpacity>
           <View className='absolute flex flex-row-reverse items-center justify-between w-full border- bottom-[-2%] self-center px-[2vw]'>

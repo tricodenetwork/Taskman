@@ -31,7 +31,8 @@ export default function ChatScreen() {
       .objects("chats")
       .filtered("roomId = $0", roomId)
       .sorted("createdAt", true);
-    setMessage(fetchedMessages);
+    const parsedMessage = JSON.parse(JSON.stringify(fetchedMessages));
+    setMessage(parsedMessage);
 
     // Configure the Realm DB listener for new messages
     const messageListener = realm
@@ -46,6 +47,8 @@ export default function ChatScreen() {
       }
     };
   }, []);
+  // console.log(Array.isArray(message));
+  // console.log(roomId);
 
   const handleNewMessages = () => {
     // Handle new messages received from the Realm DB
@@ -113,10 +116,9 @@ export default function ChatScreen() {
   function renderMessage(props) {
     return <View style={{ marginVertical: 10 }}>{renderBubble(props)}</View>;
   }
-
   return (
     <SafeAreaView>
-      <Background>
+      <Background bgColor='min-h-97vh'>
         <View className='h-[100%]'>
           <Text className='self-center'>{name}</Text>
           <GiftedChat

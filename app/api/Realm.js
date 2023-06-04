@@ -1,10 +1,15 @@
-function calculateInterval(days, hours, minutes) {
+function calculateInterval(duration, inProgress, completedIn) {
   // Convert days, hours, and minutes to milliseconds
+  if (!inProgress) {
+    console.log("Task not yet accepted");
+    return;
+  }
+  const { days, hours, minutes } = duration;
   const milliseconds =
     days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
 
-  // Get the current time
-  const startTime = Date.now();
+  // Get the Inprogess time
+  const startTime = inProgress.getTime();
 
   // Calculate the target time by adding the milliseconds to the start time
   const targetTime = startTime + milliseconds;
@@ -18,7 +23,7 @@ function calculateInterval(days, hours, minutes) {
     const remainingTime = targetTime - currentTime;
 
     // Check if the remaining time is less than or equal to zero
-    if (remainingTime <= 0) {
+    if (completedIn) {
       clearInterval(interval);
       console.log("A Task has just been Completed!");
       return;
@@ -36,16 +41,19 @@ function calculateInterval(days, hours, minutes) {
 
     // Display the remaining time
     const Timer = `${remainingDays}d ${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s`;
-    console.log(Timer);
+    // console.log(Timer);
+    return Timer;
   }, 1000);
 }
 
 const dat = new Date(Date.now());
 
 const da = new Date("2023-05-22T14:39:34.527+00:00");
-const da2 = new Date("2023-05-23T16:05:29.066+00:00");
-// calculateInterval(4, 2);
+const da2 = new Date("2023-05-29T16:05:29.066+00:00");
+// const times = calculateInterval({ days: 2, hours: 20, minutes: 30 }, da2, null);
 // calculateInterval(0, 10);
+// console.log(da.getTime());
+// console.log(times);
 
 // console.log(dat.getMilliseconds() - da.getMilliseconds());
 

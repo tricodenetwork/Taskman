@@ -196,6 +196,9 @@ dependencies {
       // Import the Firebase BoM
 
       implementation 'com.google.firebase:firebase-messaging'
+            implementation project(':react-native-html-to-pdf')
+ 
+
 
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";

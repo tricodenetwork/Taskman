@@ -59,8 +59,8 @@ export default function CreateJob({ navigation }) {
     if (route.params) {
       dispatch(setName(job.name));
       dispatch(setCategory(job.category));
-      dispatch(setDuration(job.duration));
     } else {
+      dispatch(setName(""))
       return;
     }
   };
@@ -77,10 +77,15 @@ export default function CreateJob({ navigation }) {
           Realm.BSON.ObjectId(route.params?.id)
         );
 
+        // const Item = JSON.parse(JSON.stringify(item));
+
+        // console.log(typeof item.category, typeof Item.category);
+
         job.name = item.name;
         job.category = item.category;
-        job.duration = item.duration;
       });
+
+      alert("Job Edited Successfuly!");
     },
     [realm]
   );
@@ -113,7 +118,9 @@ export default function CreateJob({ navigation }) {
           <View className='bg-slate-200 h-[75vh] rounded-t-3xl justify-start pt-[2vh] w-full absolute bottom-0'>
             <View className='flex items-center justify-center space-y-[25vh] h-[55vh]'>
               <View className='flex items-center justify-between w-[90%] flex-row'>
-                <Text style={styles.text_md2}>Name:</Text>
+                <Text className='text-Supervisor3' style={styles.text_md2}>
+                  Name:
+                </Text>
                 <TextInput
                   defaultValue={name}
                   style={[
@@ -127,15 +134,17 @@ export default function CreateJob({ navigation }) {
                 />
               </View>
               <View className='flex items-center justify-between w-[90%] flex-row'>
-                <Text style={styles.text_md2}>Category:</Text>
+                <Text className='text-Supervisor3' style={styles.text_md2}>
+                  Category:
+                </Text>
                 <View className='w-[65vw] relative bg-slate-300  rounded-sm h-10'>
                   {visible && (
                     <Motion.View
                       initial={{ x: 100 }}
                       animate={{ x: 0 }}
                       transition={{ duration: 0.2 }}
-                      style={styles.box}
-                      className='bg-white absolute bottom-0 right-0  space-y-1  border-2 border-black w-[65vw] flex justify-around rounded-md'
+                      style={[styles.box, styles.Pcard]}
+                      className='bg-white absolute bottom-0 right-0  space-y-1  border-[1px] border-Supervisor3 w-[65vw] flex justify-around rounded-md'
                     >
                       <FlatList
                         data={Cat}
@@ -148,7 +157,7 @@ export default function CreateJob({ navigation }) {
                           >
                             <Text
                               style={styles.averageText}
-                              className='border-b-[1px] border-b-slate-700'
+                              className='border-b-[1px] my-[1vh] border-b-slate-700'
                             >
                               {item.name}
                             </Text>
@@ -177,13 +186,14 @@ export default function CreateJob({ navigation }) {
                     <AntDesign
                       name='caretdown'
                       size={actuatedNormalize(18)}
-                      color='black'
+                      color='rgb(147 51 234)'
                     />
                   </TouchableOpacity>
                 </View>
               </View>
             </View>
             <LowerButton
+              textStyle={"text-slate-200"}
               disabled={
                 route.params
                   ? false

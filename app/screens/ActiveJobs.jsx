@@ -1,21 +1,30 @@
 import { View, Text } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import SearchComponent from "../components/SearchComponent";
 import JobDetails from "../components/JobDetails";
 import LowerButton from "../components/LowerButton";
-
+import { setFilter } from "../store/slice-reducers/Formslice";
+import { useDispatch } from "react-redux";
 export default function ActiveJobs({ navigation }) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setFilter("Job"));
+  }, []);
+
   return (
-    <Background>
+    <Background bgColor='min-h-[98vh]'>
       <Topscreen text={"ActiveJobs"} />
       <View
         className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
       >
         <View className='mb-1'>
-          <SearchComponent />
+          <SearchComponent
+            filterItems={["Job", "Dept", "Supervisor", "Status"]}
+          />
         </View>
         <View>
           <JobDetails />

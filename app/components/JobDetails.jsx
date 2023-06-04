@@ -23,6 +23,7 @@ const { useRealm, useQuery, useObject } = AccountRealmContext;
 export default function JobDetails({ onPress }) {
   const [refreshing, setRefreshing] = useState(false);
   const { search, filter } = useSelector((state) => state.app);
+  const { user } = useSelector((state) => state);
   const route = useRoute();
   const realm = useRealm();
   const jobs = useQuery(job);
@@ -31,14 +32,19 @@ export default function JobDetails({ onPress }) {
   const navigation = useNavigation();
   const col = filter && filter.toLowerCase();
   const isFocused = useIsFocused();
+  const client = activeJobs.filtered(`matNo ==$0`, user._id) ?? [];
 
   useEffect(() => {
-    if (route.name == "activeJobs") {
-      setData(activeJobs);
+    if (user._id.toString().length > 10) {
+      if (route.name == "activeJobs") {
+        setData(activeJobs);
+      } else {
+        setData(jobs);
+      }
     } else {
-      setData(jobs);
+      setData(client);
     }
-
+    // console.log(activeJobs);
     return () => {
       setRefreshing(false);
     };
@@ -53,13 +59,14 @@ export default function JobDetails({ onPress }) {
           }}
         />
       }
-      data={data.filter(
-        (item, index) => item == item
-        // item[col] && item[col].toLowerCase().includes(search.toLowerCase())
+      data={data.filter((item, index) =>
+        // item == item
+        item[col]?.name
+          ? item[col].name.toLowerCase().includes(search.toLowerCase())
+          : item[col] && item[col].toLowerCase().includes(search.toLowerCase())
       )}
       renderItem={({ item }) => {
-        const vals = realm.objectForPrimaryKey("job", item._id);
-        // console.log(vals);
+        // console.log(item[col].name);
         return (
           <TouchableOpacity
             activeOpacity={0.9}

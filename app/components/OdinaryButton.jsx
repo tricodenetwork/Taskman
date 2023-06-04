@@ -2,10 +2,11 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 
-export default function OdinaryButton({ navigate, text, style }) {
+export default function OdinaryButton({ navigate, text, style,disabled }) {
   return (
     <View className={` ${style}  self-center rounded-sm  mx-auto`}>
       <TouchableOpacity
+      disabled={disabled}
         onPress={navigate}
         className='bg-[] self-center rounded-lg px-[5vw] py-[1vh]'
       >

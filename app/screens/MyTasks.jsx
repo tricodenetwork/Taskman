@@ -26,6 +26,7 @@ import { getJobDetails, addTask } from "../api/Functions";
 import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import { activejob } from "../models/Task";
+import { useSelector } from "react-redux";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -39,13 +40,12 @@ export default function MyTasks({ navigation }) {
   const [durations, setDurations] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const ActiveJobs = useQuery(activejob);
+  const { user } = useSelector((state) => state);
 
   const myTasks = ActiveJobs.map((job) => {
-    const assigned = job.tasks.filter(
-      (obj) => obj.handler === "Fumilayo Joseph"
-    );
+    const assigned = job.job.tasks.filter((obj) => obj.handler === user.name);
     assigned.map((obj) => {
-      obj.id = job._id;
+      obj.id = job._id.toString();
       obj.job = job.job;
       obj.supervisor = job.supervisor;
       obj.matNo = job.matNo;
@@ -71,7 +71,7 @@ export default function MyTasks({ navigation }) {
           setEdit({ name: item.name, duration: item.duration });
           setName(item.name);
           setDurations(item.duration);
-          const value = job.tasks.filtered(
+          const value = job.job.tasks.filtered(
             `name == $0 AND duration == $1`,
             item.name,
             item.duration
@@ -102,14 +102,15 @@ export default function MyTasks({ navigation }) {
 
   //----------------------------------------------------RENDERED COMPONENT
   return (
-    <Background>
+    <Background bgColor='min-h-98vh'>
       <Topscreen
+        text={"Tasks"}
 
-      // Edit={() => {
-      //   navigation.navigate("ActivateJob", {
-      //     id: route.params.id,
-      //   });
-      // }}
+        // Edit={() => {
+        //   navigation.navigate("ActivateJob", {
+        //     id: route.params.id,
+        //   });
+        // }}
       />
 
       <View
@@ -117,7 +118,7 @@ export default function MyTasks({ navigation }) {
       '
       >
         <View className='mb-1'>
-          <SearchComponent />
+          <SearchComponent filterItems={["Name", "Status", "Supervisor"]} />
         </View>
         <View>
           <TaskDetails
@@ -126,12 +127,7 @@ export default function MyTasks({ navigation }) {
           />
         </View>
       </View>
-      <LowerButton
-        navigate={() => {
-          setModalVisible(true);
-        }}
-        text={"Add Task"}
-      />
+
       <Modal
         animationType='slide'
         className='h-[50vh]'
