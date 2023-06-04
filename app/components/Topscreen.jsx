@@ -31,6 +31,7 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
   const route = useRoute();
   const dispatch = useDispatch();
   const { menu, notify } = useSelector((state) => state.app);
+  const { user } = useSelector((state) => state);
   const [visible, setVisible] = useState(false);
   const realm = useRealm();
   const accounts = useQuery(Account);
@@ -85,10 +86,10 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
     >
       <View
         id='HEADER_NAV'
-        className='px-[4vw]  justify-between flex-row items-center max-h-max bg-opacity-100 border- border-white mt-[6vh]  relative flex  rounded-bl-[35px]'
+        className='px-[4vw]  flex-row items-center max-h-max  justify-center border- border-white mt-[2vh]  relative flex  rounded-bl-[35px]'
       >
         <Menu />
-        <View id='LEFT_OPTION'>
+        <View className='absolute left-[5vw]' id='LEFT_OPTION'>
           <TouchableOpacity
             className={`${menu && "relative "}`}
             onPress={route.name == "taskman" ? toggleMenu : back}
@@ -140,53 +141,47 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
             </>
           )}
         </View>
-        <Fragment key={"RIGHT_OPTION"}>
-          {route.name == "tasks" || route.name == "activetasks" ? (
-            <TouchableOpacity onPress={Edit}>
-              <AntDesign
-                name='select1'
-                size={actuatedNormalize(23)}
-                color='white'
-              />
-            </TouchableOpacity>
-          ) : route.name == "CreateJob" ||
-            route.name == "CreateAccount" ||
-            route.name == "ActivateJob" ? (
-            <TouchableOpacity
-              onPress={() => {
-                setVisible(!visible);
-              }}
-            >
-              <AntDesign
-                name='delete'
-                size={actuatedNormalize(20)}
-                color='white'
-              />
-            </TouchableOpacity>
-          ) : (
-            <View className='relative border- scale-125 border-white'>
-              <TouchableOpacity onPress={toggleNotifications}>
-                <Svg
-                  className='absolute top-[-5] right-[-3]'
-                  height='50%'
-                  width='50%'
-                  viewBox='0 0 100 100'
-                >
-                  <Circle
-                    cx='50'
-                    cy='50'
-                    r='30'
-                    stroke='blue'
-                    strokeWidth='0'
-                    fill='#77e6b6'
+        {user.role !== "Client" && (
+          <View className='absolute right-[5vw]'>
+            <Fragment key={"RIGHT_OPTION"}>
+              {route.name == "tasks" || route.name == "activetasks" ? (
+                <TouchableOpacity onPress={Edit}>
+                  <AntDesign
+                    name='select1'
+                    size={actuatedNormalize(23)}
+                    color='white'
                   />
-                </Svg>
-
-                <Notify width={actuatedNormalize(20)} />
-              </TouchableOpacity>
-            </View>
-          )}
-        </Fragment>
+                </TouchableOpacity>
+              ) : (route.name == "CreateJob" && route.params) ||
+                (route.name == "CreateAccount" && route.params) ||
+                (route.name == "ActivateJob" && route.params) ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setVisible(!visible);
+                  }}
+                >
+                  <AntDesign
+                    name='delete'
+                    size={actuatedNormalize(20)}
+                    color='white'
+                  />
+                </TouchableOpacity>
+              ) : route.name == "activeJobs" ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    nav.navigate("stats");
+                  }}
+                >
+                  <Ionicons
+                    name='stats-chart'
+                    size={actuatedNormalize(20)}
+                    color='white'
+                  />
+                </TouchableOpacity>
+              ) : null}
+            </Fragment>
+          </View>
+        )}
       </View>
       {visible ? (
         <TouchableOpacity
@@ -232,7 +227,7 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
           animate={{ x: 0 }}
           id='NOTIFICATION_MENU'
           style={([], { borderRadius: actuatedNormalize(10) })}
-          className='h-[90vh] absolute flex py-[2vh] px-[2vw] top-[4vh] right-0 w-[65%] bg-[#69DC9E]'
+          className='h-[97vh] z-[999] absolute flex py-[2vh] px-[2vw] top-[3vh] right-0 w-[65%] bg-[#69DC9E]'
         >
           <View className='self-end mb-[2vh]'>
             <TouchableOpacity onPress={toggleNotifications}>

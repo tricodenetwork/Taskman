@@ -21,6 +21,7 @@ import { Motion } from "@legendapp/motion";
 import DismissKeyboard from "./DismissKeyboard";
 import Topscreen from "./Topscreen";
 import ProfileCard from "./ProfileCard";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Background = ({ children, bgColor = "bg-slate-200" }) => {
   //  const [fontLoaded, setFontLoaded] = useState(false);
@@ -50,14 +51,16 @@ const Background = ({ children, bgColor = "bg-slate-200" }) => {
     return <Text className='absolute top-[50vh] left-[50vw]'>Loading...</Text>;
   } else {
     return (
-      <DismissKeyboard>
-        <View
-          // style={[{ maxHeight: Math.round(windowHeight) }]}
-          className={`h-full ${bgColor} border- border-red-  w-full relative`}
-        >
-          {children}
-        </View>
-      </DismissKeyboard>
+      <SafeAreaView>
+        <DismissKeyboard>
+          <View
+            // style={[{ minHeight: Math.round(windowHeight) }]}
+            className={`h-full ${bgColor} border- border-red-  w-full relative`}
+          >
+            {children}
+          </View>
+        </DismissKeyboard>
+      </SafeAreaView>
     );
   }
 };

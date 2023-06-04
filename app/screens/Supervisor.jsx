@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import Background from "../components/Background";
 import HandlerTopscreen from "../components/HandlerTopScreen";
 import {
@@ -8,12 +8,14 @@ import {
   styles,
 } from "../styles/stylesheet";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import OptionsCard from "./OptionsCard";
+import OptionsCard from "../components/OptionsCard";
 import { FontAwesome5 } from "@expo/vector-icons";
-import LowerButton from "./LowerButton";
+import LowerButton from "../components/LowerButton";
 import { AccountRealmContext } from "../models";
 import { useSelector } from "react-redux";
 import { formattedDate } from "../api/Functions";
+import { activejob } from "../models/Task";
+import { useUser } from "@realm/react";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -21,14 +23,82 @@ export default function Supervisor() {
   // prettier-ignore
   //   -------------------------------------------------------------------------VARIABLES AND STATES
   const route = useRoute();
+  const user = useUser();
   const navigation = useNavigation();
   const realm = useRealm();
-  const { id } = useSelector((state) => state.user);
-  const account = useObject("account", Realm.BSON.ObjectId(id));
+  const { id, name } = useSelector((state) => state.user);
+  // const account = useObject("account", Realm.BSON.ObjectId(id));
+  const activeJobs = useQuery(activejob);
+  const handleLogout = useCallback(() => {
+    user?.logOut();
+  }, [user]);
+
+  function updateJobStatus(supervisorName) {
+    realm.write(() => {
+      activeJobs.forEach((activejob) => {
+        if (activejob.supervisor !== supervisorName) {
+          return;
+        }
+        let jobstatus = "Pending";
+        let allTasksCompleted = true;
+
+        activejob.job.tasks.forEach((task) => {
+          if (task.status == "InProgress" || task.status == "Completed") {
+            jobstatus = "InProgress";
+            // InProgress = true;
+            return;
+          } else if (task.status !== "InProgress" || task.status == "Pending") {
+            allTasksCompleted = false;
+            // InProgress = true;
+          }
+        });
+        if (allTasksCompleted) {
+          jobstatus = "Completed";
+        }
+
+        activejob.status = jobstatus;
+      });
+    });
+  }
+
+  function countStatusBySupervisor(dataArray, supervisorName) {
+    let completedCount = 0;
+    let inProgressCount = 0;
+    let pendingCount = 0;
+
+    dataArray.forEach((dataObj) => {
+      if (dataObj.supervisor === supervisorName) {
+        if (dataObj.status === "Completed") {
+          completedCount++;
+        } else if (dataObj.status === "InProgress") {
+          inProgressCount++;
+        } else if (dataObj.status === "Pending") {
+          pendingCount++;
+        }
+      }
+    });
+
+    // Function to add leading zero if number is single digit
+    const addLeadingZero = (number) => {
+      return number < 10 ? "0" + number : number;
+    };
+
+    return {
+      completed: addLeadingZero(completedCount),
+      inProgress: addLeadingZero(inProgressCount),
+      pending: addLeadingZero(pendingCount),
+    };
+  }
+
+  const supervisorStats = countStatusBySupervisor(activeJobs, name);
+
+  useEffect(() => {
+    updateJobStatus(name);
+  }, []);
 
   return (
     <Background>
-      <HandlerTopscreen text3={formattedDate} text={`Hello, ${account?.name}`}>
+      <HandlerTopscreen text3={formattedDate} text={`Hello, ${name}`}>
         <View className=' absolute bottom-[12vh]  w-full  flex flex-row justify-between px-[5vw]'>
           <View className='relative'>
             <Text
@@ -41,7 +111,7 @@ export default function Supervisor() {
               ]}
               className='text-primary_light'
             >
-              08
+              {supervisorStats.pending}
             </Text>
             <View>
               <Text style={styles.text_md} className='flex text-white'>
@@ -67,7 +137,7 @@ export default function Supervisor() {
               ]}
               className='text-primary_light'
             >
-              15
+              {supervisorStats.inProgress}
             </Text>
             <View>
               <Text style={styles.text_md} className='flex text-white'>
@@ -94,7 +164,7 @@ export default function Supervisor() {
               ]}
               className='text-primary_light'
             >
-              29
+              {supervisorStats.completed}
             </Text>
             <View>
               <Text
@@ -110,7 +180,7 @@ export default function Supervisor() {
           </View>
         </View>
       </HandlerTopscreen>
-      <View className='absolute self-center pt-[3vh] top-[52vh]'>
+      <View className='absolute self-center pt-[3vh] top-[49vh]'>
         <View>
           <TouchableOpacity
             onPress={() => {
@@ -147,7 +217,12 @@ export default function Supervisor() {
             text={"Profile"}
           />
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.5}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("messages");
+          }}
+          activeOpacity={0.5}
+        >
           <OptionsCard
             icon={
               <FontAwesome5
@@ -160,7 +235,7 @@ export default function Supervisor() {
           />
         </TouchableOpacity>
       </View>
-      <LowerButton text={"Log Out"} />
+      <LowerButton navigate={handleLogout} text={"Log Out"} />
     </Background>
   );
 }

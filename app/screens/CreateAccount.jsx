@@ -33,6 +33,7 @@ import {
 import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import { Account } from "../models/Account";
+import OdinaryButton from "../components/OdinaryButton";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -54,7 +55,10 @@ const CreateAccount = ({ navigation }) => {
     (user) => {
       // Alternatively if passing the ID as the argument to handleToggleTaskStatus:
       realm?.write(() => {
-        const account = realm?.objectForPrimaryKey("account", route.params?.id); // If the ID is passed as an ObjectId
+        const account = realm?.objectForPrimaryKey(
+          "account",
+          Realm.BSON.ObjectId(route.params?.id)
+        ); // If the ID is passed as an ObjectId
         // const task = realm?.objectForPrimaryKey('Task', Realm.BSON.ObjectId(id));  // If the ID is passed as a string
         account.name = user.name;
         account.email = user.email;
@@ -65,7 +69,7 @@ const CreateAccount = ({ navigation }) => {
         account.category = user.category;
       });
 
-      alert("success!!");
+      alert("Success!!");
       navigation.navigate("accounts");
     },
     [realm]
@@ -102,7 +106,7 @@ const CreateAccount = ({ navigation }) => {
       // dispatch(setRole(item.role));
       // dispatch(setPhone(item.phone));
     } else {
-      return;
+      dispatch(setUser());
     }
   };
 
@@ -110,7 +114,7 @@ const CreateAccount = ({ navigation }) => {
     initialUser();
   }, []);
   return (
-    <Background bgColor='min-h-[100vh]'>
+    <Background bgColor='min-h-[98vh]'>
       <Topscreen
         onPress={() => {
           navigation.goBack();
@@ -243,13 +247,13 @@ const CreateAccount = ({ navigation }) => {
                   </Motion.View>
                 )}
                 <TextInput
-                  // defaultValue={user.category.name}
+                  defaultValue={user.category.name}
                   editable={false}
                   style={[
                     styles.averageText,
                     { color: "black", height: actuatedNormalizeVertical(50) },
                   ]}
-                  // value={user.category.name}
+                  value={user.category.name}
                   className='w-[65vw] bg-slate-300  rounded-sm h-10'
                 />
               </View>
@@ -309,14 +313,21 @@ const CreateAccount = ({ navigation }) => {
                 className='w-[65vw] bg-slate-300  rounded-sm'
               />
             </View>
-            <View className='flex  items-center relative left-[8vw] justify-center'>
+            <OdinaryButton
+              navigate={() => {
+                sendUserDetails(user.email, user);
+              }}
+              text={"Send"}
+              style={"bg-Handler3 absolute left-[5vw] bottom-[4vh]"}
+            />
+            <View className='flex  items-end relative left-[23vw] justify-center'>
               <TouchableOpacity
                 onPress={() => {
                   dispatch(setPassword(generatePassword(10)));
                 }}
                 className='bg-Supervisor2 p-2 rounded-md'
               >
-                <Text style={styles.text}>Generate Password</Text>
+                <Text style={styles.text_md}>Generate Password</Text>
               </TouchableOpacity>
               <TextInput
                 editable={false}
@@ -326,7 +337,7 @@ const CreateAccount = ({ navigation }) => {
                 ]}
                 secureTextEntry={false}
                 value={user.password}
-                className='w-[60vw] bg-slate-300 mt-2 text-black  rounded-sm'
+                className='w-[30vw] bg-slate-300 mt-2 text-black  rounded-sm'
               />
             </View>
           </View>
@@ -338,7 +349,7 @@ const CreateAccount = ({ navigation }) => {
                   user.role === "" ||
                   user.dept === "" ||
                   // user.phone === "" ||
-                  user.password === ""
+                  user.password == ""
                 ? true
                 : false
             }

@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import Background from "../components/Background";
 import HandlerTopscreen from "../components/HandlerTopScreen";
 import {
@@ -7,60 +7,36 @@ import {
   actuatedNormalizeVertical,
   styles,
 } from "../styles/stylesheet";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import OptionsCard from "../components/OptionsCard";
 import { FontAwesome5 } from "@expo/vector-icons";
+import LowerButton from "../components/LowerButton";
+import { AccountRealmContext } from "../models";
+import { useSelector } from "react-redux";
 import { formattedDate } from "../api/Functions";
 import { activejob } from "../models/Task";
-import { AccountRealmContext } from "../models";
-import LowerButton from "../components/LowerButton";
-import { useUser } from "@realm/react/";
-import { useSelector } from "react-redux";
+import { useUser } from "@realm/react";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
-export default function Handler({ navigation }) {
-  const activeJobs = useQuery(activejob);
+export default function ClientScreen() {
+  // prettier-ignore
+  //   -------------------------------------------------------------------------VARIABLES AND STATES
+  const route = useRoute();
   const user = useUser();
-  const { name } = useSelector((state) => state.user);
+  const navigation = useNavigation();
+  const realm = useRealm();
+  const { _id } = useSelector((state) => state.user);
+  // const account = useObject("account", Realm.BSON.ObjectId(id));
+  // const activeJobs = useQuery(activejob);
   const handleLogout = useCallback(() => {
     user?.logOut();
   }, [user]);
 
-  function countTasksByStatus(tasksArray, handlerName) {
-    let completedCount = 0;
-    let inProgressCount = 0;
-    let pendingCount = 0;
-
-    tasksArray.forEach((taskObj) => {
-      taskObj.job.tasks.forEach((task) => {
-        if (task.handler === handlerName) {
-          if (task.status === "Completed") {
-            completedCount++;
-          } else if (task.status === "InProgress") {
-            inProgressCount++;
-          } else if (task.status === "Pending") {
-            pendingCount++;
-          }
-        }
-      });
-    });
-
-    const addLeadingZero = (number) => {
-      return number < 10 ? "0" + number : number;
-    };
-
-    return {
-      completed: addLeadingZero(completedCount),
-      inProgress: addLeadingZero(inProgressCount),
-      pending: addLeadingZero(pendingCount),
-    };
-  }
-
-  const handlerStats = countTasksByStatus(activeJobs, name);
   return (
-    <Background bgColor='-z-40'>
-      <HandlerTopscreen text3={formattedDate} text={`Hello, ${name}`}>
-        <View className=' absolute bottom-[12vh] w-full  flex flex-row justify-between px-[5vw]'>
+    <Background>
+      <HandlerTopscreen text3={formattedDate} text={`Hello, ${_id}`}>
+        {/* <View className=' absolute bottom-[12vh]  w-full  flex flex-row justify-between px-[5vw]'>
           <View className='relative'>
             <Text
               style={[
@@ -72,11 +48,11 @@ export default function Handler({ navigation }) {
               ]}
               className='text-primary_light'
             >
-              {handlerStats.pending}
+              {supervisorStats.pending}
             </Text>
             <View>
               <Text style={styles.text_md} className='flex text-white'>
-                Tasks
+                {route.name === "supervisor" ? "Jobs" : "Tasks"}
               </Text>
               <Text style={styles.text_md} className='text-white'>
                 Pending
@@ -98,11 +74,11 @@ export default function Handler({ navigation }) {
               ]}
               className='text-primary_light'
             >
-              {handlerStats.inProgress}
+              {supervisorStats.inProgress}
             </Text>
             <View>
               <Text style={styles.text_md} className='flex text-white'>
-                Tasks
+                {route.name === "supervisor" ? "Jobs" : "Tasks"}
               </Text>
               <Text style={styles.text_md} className='text-white'>
                 In Progress
@@ -125,27 +101,27 @@ export default function Handler({ navigation }) {
               ]}
               className='text-primary_light'
             >
-              {handlerStats.completed}
+              {supervisorStats.completed}
             </Text>
             <View>
               <Text
                 style={styles.text_md}
                 className='text-[14px] flex text-white'
               >
-                Tasks
+                {route.name === "supervisor" ? "Jobs" : "Tasks"}
               </Text>
               <Text style={styles.text_md} className='text-[14px] text-white'>
                 Completed
               </Text>
             </View>
           </View>
-        </View>
+        </View> */}
       </HandlerTopscreen>
       <View className='absolute self-center pt-[3vh] top-[49vh]'>
         <View>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("mytasks");
+              navigation.navigate("activeJobs");
             }}
             activeOpacity={0.5}
           >
@@ -157,27 +133,11 @@ export default function Handler({ navigation }) {
                   color='black'
                 />
               }
-              text={"Tasks"}
+              text={"Job"}
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("profile");
-          }}
-          activeOpacity={0.5}
-        >
-          <OptionsCard
-            icon={
-              <FontAwesome5
-                name='user'
-                size={actuatedNormalize(25)}
-                color='black'
-              />
-            }
-            text={"Profile"}
-          />
-        </TouchableOpacity>
+
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("messages");
@@ -196,7 +156,7 @@ export default function Handler({ navigation }) {
           />
         </TouchableOpacity>
       </View>
-      <LowerButton navigate={handleLogout} text={"Logout"} />
+      <LowerButton navigate={handleLogout} text={"Log Out"} />
     </Background>
   );
 }

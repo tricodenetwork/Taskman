@@ -9,8 +9,9 @@ import { Account } from "../models/Account";
 import { addChat, deleteChat } from "../store/slice-reducers/ChatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
-import { chatroom, chats } from "../models/Chat";
+import { chatroom, chats, user } from "../models/Chat";
 import { log } from "react-native-reanimated";
+import { TouchableHighlight } from "react-native-gesture-handler";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -18,18 +19,24 @@ export default function MessageScreen({ navigation }) {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const realm = useRealm();
-  const supervisors = useQuery(Account);
+  const { user } = useSelector((state) => state);
+  const { ActiveJob } = useSelector((state) => state);
+  const contacts =
+    user.role == "Handler" || user.role == "Supervisor"
+      ? useQuery(Account).filtered(
+          `(role == "Handler" || role =="Supervisor") AND category.name ==$0 AND name !=$1`,
+          user.category.name,
+          user.name
+        )
+      : useQuery(Account).filtered(
+          `role == "Supervisor" AND name == $0`,
+          ActiveJob.supervisor
+        );
   const allChats = useQuery(chats);
-  const { chat } = useSelector((state) => state.Chat);
-  const { id } = useSelector((state) => state.user);
   const chatrooms = useQuery("chatroom").filtered(
     "senderId == $0 ||  recieverId == $0",
-    id
+    user._id
   );
-  // const chatrooms = useQuery(chatroom).filtered(`senderId || receiverId ==$0`);
-  // console.log(allChats);
-
-  // Assuming you have set up the Realm DB connection and defined schemas
 
   // Create a chat room
   const createChatRoom = (recieverId) => {
@@ -40,19 +47,19 @@ export default function MessageScreen({ navigation }) {
     // Store the chat room in the Realm DB
     const chatRoom = {
       _id: chatRoomId,
-      senderId: id,
+      senderId: user._id,
       recieverId,
       // Additional properties if needed
     };
 
     const roomId = chatrooms.filtered(
       `senderId == $0 AND recieverId ==$1`,
-      id,
+      user._id,
       recieverId
     );
-
+    // Check if chatroom exist and create one if not
     if (roomId.length == 0) {
-      // Save the chat room object to the Realm DB
+      // Create a new chat room object in the Realm DB
       realm.write(() => {
         realm.create("chatroom", chatRoom);
       });
@@ -60,7 +67,7 @@ export default function MessageScreen({ navigation }) {
 
       return chatRoomId;
     } else {
-      return roomId._id;
+      return roomId[0]._id;
     }
   };
 
@@ -69,55 +76,61 @@ export default function MessageScreen({ navigation }) {
       <SafeAreaView className='relative bg-red-100 w-full h-full'>
         {/* <SelectComponent title={"Add"} /> */}
         <FlatList
+          ListHeaderComponent={
+            <View>
+              <Text
+                style={[styles.text, { fontSize: actuatedNormalize(17) }]}
+                className='px-[2vw] text-primary pt-[2vh]'
+              >
+                Messsages
+              </Text>
+            </View>
+          }
           data={chatrooms}
           renderItem={({ item }) => {
             const name = realm.objectForPrimaryKey(
               "account",
-              id == item.senderId
+              user._id == item.senderId
                 ? Realm.BSON.ObjectId(item.recieverId)
                 : Realm.BSON.ObjectId(item.senderId)
             );
 
             const chats = allChats.filtered(`roomId == $0`, item._id);
-            const pop = chats[chats.length - 1];
+            const lastMessage = chats[chats.length - 1];
             // console.log(item);
-            console.log(pop);
+            // console.log(lastMessage);
             return (
-              <View>
-                <View className='h-[10vh] px-[2vw] flex flex-row justify-between pt-[3vh]'>
-                  <TouchableOpacity
-                    onPress={() => {
-                      //   console.log(item.recieverId);
-                      navigation.navigate("chats", {
-                        roomId: item._id,
-                        // name: item.recipient,
-                        // recieverId: item.recieverId,
-                        // messages: item.messages,
-                      });
-                    }}
-                  >
-                    <View className='w-[80vw]'>
-                      <Text>{name && name?.name}</Text>
-                      <Text style={[styles.text_tiny]}>{pop.text}</Text>
-                    </View>
-                  </TouchableOpacity>
-                  <View>
-                    <TouchableOpacity
+              <View id='SINGLE_CONTACT_MESSSAGE_BOX'>
+                {lastMessage && (
+                  <View className='h-[10vh] px-[2vw] items-center flex flex-row justify-between pt-[3vh]'>
+                    <TouchableHighlight
+                      className='rounded-md p-[1vw]'
+                      underlayColor={"rgba(0,0,200,.2)"}
                       onPress={() => {
-                        dispatch(deleteChat(item));
+                        //   console.log(item.recieverId);
+                        navigation.navigate("chats", {
+                          roomId: item._id,
+                        });
                       }}
                     >
-                      <AntDesign name='close' size={actuatedNormalize(20)} />
-                    </TouchableOpacity>
+                      <View className='w-[87vw] '>
+                        <Text>{name && name?.name}</Text>
+                        <Text style={[styles.text_tiny]}>
+                          {lastMessage.text}
+                        </Text>
+                      </View>
+                    </TouchableHighlight>
                   </View>
-                </View>
+                )}
               </View>
             );
           }}
         />
         {visible && (
-          <View className='bg-emerald-300 h-full w-[70vw] pl-[3vw] pt-[1vh] absolute bottom-0 right-0'>
-            <Text className='text-center'>Supervisors</Text>
+          <View className='bg-emerald-300 h-[100vh] w-[70vw] pl-[3vw] pt-[1vh] absolute top-0 right-0'>
+            <Text style={styles.text_md} className=' mt-[2vh] text-center'>
+              Contacts
+            </Text>
             <FlatList
               renderItem={({ item }) => {
                 return (
@@ -127,6 +140,7 @@ export default function MessageScreen({ navigation }) {
                       //   realm.delete(chatrooms);
                       // });
                       const roomId = createChatRoom(item._id.toHexString());
+                      // console.log(roomId);
 
                       navigation.navigate("chats", {
                         roomId: roomId,
@@ -136,20 +150,22 @@ export default function MessageScreen({ navigation }) {
                     }}
                   >
                     <View className='h-[10vh] pt-[3vh]'>
-                      <Text>{item.name}</Text>
+                      <Text style={styles.averageText}>{item.name}</Text>
                     </View>
                   </TouchableOpacity>
                 );
               }}
-              data={supervisors}
+              data={contacts}
+              keyExtractor={(item) => item._id}
             />
           </View>
         )}
         <TouchableOpacity
+          id='OPEN_CONTACT_LIST'
           onPress={() => {
             setVisible(!visible);
           }}
-          activeOpacity={0.2}
+          activeOpacity={0.4}
         >
           <View className='absolute bottom-[5vh] right-[5vw] bg-emerald-500 p-[3vw] rounded-full'>
             <AntDesign name='message1' size={24} color='black' />

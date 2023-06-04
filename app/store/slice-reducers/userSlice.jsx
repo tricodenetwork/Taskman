@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  id: "",
+  id: Realm.BSON.ObjectId(),
   name: "",
   phone: "",
   dept: "",
   role: "",
   email: " ",
   password: " ",
-  category: { name: "" },
+  category: "",
 };
 
 const userSlice = createSlice({
@@ -40,13 +40,12 @@ const userSlice = createSlice({
       state.id = action.payload;
     },
     setUser(state, action) {
-      state.name = action.payload.name;
-      state.phone = action.payload.phone;
-      state.dept = action.payload.dept;
-      state.role = action.payload.role;
-      state.email = action.payload.email;
-      state.password = action.payload.password;
-      state.id = action.payload._id;
+      if (action.payload) {
+        const result = JSON.parse(JSON.stringify(action.payload));
+        return result;
+      } else {
+        return initialState;
+      }
     },
   },
 });

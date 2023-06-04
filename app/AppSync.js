@@ -14,7 +14,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 
-import { Account } from "./models/Account";
+import { Account, client } from "./models/Account";
 import { AccountRealmContext } from "./models";
 import { buttonStyles } from "./styles/button";
 import { shadows } from "./styles/shadows";
@@ -30,6 +30,10 @@ import RealmPlugin from "realm-flipper-plugin-device";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import { user, chatroom, chats } from "./models/Chat";
+import { category } from "./models/Task";
+import { useDispatch } from "react-redux";
+import { sendPushNotification } from "./api/Functions";
+import Login from "./screens/Login";
 
 const originalWarn = console.warn; // Store the original console.warn method
 
@@ -43,6 +47,8 @@ console.warn = function (...args) {
   originalWarn.apply(console, args);
 };
 
+// Can use this function below OR use Expo's Push Notification Tool from: https://expo.dev/notifications
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -52,7 +58,6 @@ Notifications.setNotificationHandler({
 });
 
 async function registerForPushNotificationsAsync() {
-  console.log("Registering for the token");
   let token;
   if (Device.isDevice) {
     const { status: existingStatus } =
@@ -66,11 +71,10 @@ async function registerForPushNotificationsAsync() {
       alert("Failed to get push token for push notification!");
       return;
     }
-    console.log("before the token");
+
     token = (await Notifications.getExpoPushTokenAsync()).data;
 
     console.log(token);
-    console.log("After the token");
   } else {
     alert("Must use physical device for Push Notifications");
   }
@@ -87,7 +91,7 @@ async function registerForPushNotificationsAsync() {
   return token;
 }
 
-const { useRealm, useQuery } = AccountRealmContext;
+const { useRealm, useQuery, useObject } = AccountRealmContext;
 
 export const AppSync = () => {
   const realm = useRealm();
@@ -97,30 +101,34 @@ export const AppSync = () => {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
+  const oid = user.identities[0].id;
+  const cleanedOid = oid.replace(/[^0-9a-zA-Z]/g, "");
+  const appuser =
+    cleanedOid.length > 10
+      ? useObject("account", Realm.BSON.ObjectId(cleanedOid))
+      : useQuery("client").filtered(`_id ==$0`, cleanedOid)[0];
 
   // const tasks = useMemo(() => result.sorted("createdAt"), [result]);
-  // useEffect(() => {
-  //   realm.subscriptions.update((mutableSubs) => {
-  //     mutableSubs.add(realm.objects(chats));
-  //     mutableSubs.add(realm.objects(chatroom));
-  //   });
-  // }, [realm]);
-
-  // const subs = realm.subscriptions;
-  // console.log(subs);
-  // const users = realm.objects("account");
-  console.log(user.identities[0].id);
-  console.log(expoPushToken, "pushtoken");
-  // console.log(user.id);
+  useEffect(() => {
+    realm.subscriptions.update((mutableSubs) => {
+      mutableSubs.add(realm.objects(chats));
+      mutableSubs.add(realm.objects(chatroom));
+      mutableSubs.add(realm.objects(category));
+      // mutableSubs.add(realm.objects(client));
+    });
+  }, [realm]);
 
   // const handleLogout = useCallback(() => {
   //   user?.logOut();
   // }, [user]);
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
+    registerForPushNotificationsAsync().then((token) => {
+      setExpoPushToken(token);
+      realm.write(() => {
+        appuser.pushToken = token;
+      });
+    });
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -131,6 +139,10 @@ export const AppSync = () => {
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
       });
+    console.log("appSync");
+    console.log(realm.path);
+
+    // sendPushNotification(expoPushToken, "Error in Task");
 
     return () => {
       Notifications.removeNotificationSubscription(
@@ -138,7 +150,7 @@ export const AppSync = () => {
       );
       Notifications.removeNotificationSubscription(responseListener.current);
     };
-  }, []);
+  }, [expoPushToken]);
 
   return (
     <>
@@ -154,6 +166,7 @@ export const AppSync = () => {
           <RealmPlugin realms={[realm]} />
           {/* <KeyboardAvoidingView style={{ flex: 1 }} enabled behavior='padding'> */}
           <MainStack />
+          {/* <Login /> */}
           {/* </KeyboardAvoidingView> */}
         </GestureHandlerRootView>
         {/* </PersistGate> */}

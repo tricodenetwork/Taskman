@@ -73,6 +73,7 @@ export default function Tasks({ navigation }) {
                 task.name = item.name;
                 task.duration = item.duration;
                 alert("Task edited successfully!");
+                setName("");
 
                 return;
               }
@@ -82,6 +83,7 @@ export default function Tasks({ navigation }) {
         realm.write(() => {
           job.tasks.push(item);
           alert("Task added successfully!");
+          setName("");
         });
       } else {
         alert("Task already exist");
@@ -181,9 +183,7 @@ export default function Tasks({ navigation }) {
         className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
       >
-        <View className='mb-1'>
-          <SearchComponent />
-        </View>
+        <View className='mb-1'>{/* <SearchComponent /> */}</View>
         <View>
           <TaskDetails
             reArrange={(e) => {
@@ -239,7 +239,7 @@ export default function Tasks({ navigation }) {
                     D
                   </Text>
                   <SelectComponent
-                    value={day}
+                    value={day.toString()}
                     setData={(e) => {
                       setDuration({ ...duration, days: e });
                     }}
@@ -256,7 +256,7 @@ export default function Tasks({ navigation }) {
                     H
                   </Text>
                   <SelectComponent
-                    value={hour}
+                    value={hour.toString()}
                     setData={(e) => {
                       setDuration({ ...duration, hours: e });
                     }}
@@ -273,7 +273,7 @@ export default function Tasks({ navigation }) {
                     M
                   </Text>
                   <SelectComponent
-                    value={minute}
+                    value={minute.toString()}
                     setData={(e) => {
                       setDuration({ ...duration, minutes: e });
                     }}

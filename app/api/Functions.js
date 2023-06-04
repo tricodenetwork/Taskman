@@ -53,6 +53,52 @@ export const sendUserDetails = async (recipient, userDetails) => {
   //   body,
   // });
 };
+export const sendClientDetails = async (recipient, userDetails) => {
+  const { matNo, email } = userDetails;
+  let url = `mailto:${recipient}`;
+  console.log(recipient);
+
+  const subject = "Welcome to Taskman"; // Specify the email subject
+  const body = `
+    Hello,
+
+    Welcome! Your account details are as follows:
+
+    Email: ${email}
+    Password: ${matNo}
+
+    Thank you for joining!
+
+    Best regards,
+    The Team
+  `;
+  // Create email link query
+  const query = qs.stringify({
+    subject: subject,
+    body: body,
+  });
+
+  if (query.length) {
+    url += `?${query}`;
+  }
+
+  // check if we can use this link
+  const canOpen = await Linking.canOpenURL(url);
+  console.log(canOpen);
+
+  // if (!canOpen) {
+  //   throw new Error("Provided URL can not be handled");
+  // }
+
+  return Linking.openURL(url);
+
+  // Compose the email
+  // MailComposer.composeAsync({
+  //   recipients: [recipient],
+  //   subject,
+  //   body,
+  // });
+};
 
 export function generatePassword(length) {
   var charset =
@@ -69,25 +115,30 @@ export function Completed(date1, date2) {
   if (date1 == null || date2 == null) {
     return;
   }
-  const millisecondsDiff =
-    (date1 !== null || date2 !== null) && date1?.getTime() - date2?.getTime();
-  const hoursDiff = Math.floor(millisecondsDiff / (1000 * 60 * 60));
-  const minutesDiff = Math.floor(
-    (millisecondsDiff % (1000 * 60 * 60)) / (1000 * 60)
-  );
 
-  return {
-    hours: hoursDiff,
-    minutes: minutesDiff,
+  const millisecondsDiff = Math.abs(date1.getTime() - date2.getTime());
+  const daysDiff = Math.floor(millisecondsDiff / (1000 * 60 * 60 * 24));
+  const hoursDiff = Math.floor(millisecondsDiff / (1000 * 60 * 60)) % 24;
+  const minutesDiff = Math.floor(millisecondsDiff / (1000 * 60)) % 60;
+
+  const formatTimeUnit = (value, unit) => {
+    return `${value}${unit}`;
   };
+
+  const formattedTime = `${formatTimeUnit(daysDiff, "d")} ${formatTimeUnit(
+    hoursDiff,
+    "h"
+  )} ${formatTimeUnit(minutesDiff, "m")}`;
+
+  return formattedTime;
 }
 
 // Example usage
-const date1 = new Date();
+const date1 = new Date("2023-05-20T14:39:34.527+00:00");
 const date2 = new Date("2023-05-22T14:39:34.527+00:00");
 
 const difference = Completed(date1, date2);
-console.log(difference.hours, "hours", difference.minutes, "minutes");
+console.log(difference);
 
 const date = moment(); // Assuming you want the current date
 export const formattedDate = date.format("dddd, D MMM YYYY");
@@ -153,4 +204,24 @@ export function convertToMinutes(duration) {
     normalizedDays * 24 * 60 + normalizedHours * 60 + normalizedMinutes;
 
   return totalMinutes;
+}
+
+export async function sendPushNotification(expoPushToken, title = "New Task") {
+  const message = {
+    to: expoPushToken,
+    sound: "default",
+    title: title,
+    body: "You have just been assigned a new task!",
+    data: { someData: "goes here" },
+  };
+
+  await fetch("https://exp.host/--/api/v2/push/send", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Accept-encoding": "gzip, deflate",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(message),
+  });
 }

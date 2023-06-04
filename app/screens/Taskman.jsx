@@ -11,13 +11,13 @@ export default function Taskman({ navigation }) {
   console.log(Constants.systemFonts);
 
   return (
-    <Background>
+    <Background bgColor='-z-40'>
       <Topscreen />
       {/* <Menu /> */}
-      <View className='flex-1 z-10'>
+      <View className='flex-1 -z-40'>
         <Text
           style={[styles.text, { fontSize: actuatedNormalize(18) }]}
-          className='absolute top-[50vh] bg-slate-300 z-0 rounded-3xl px-4 py-1  text-2xl text-primary self-center'
+          className='absolute top-[50vh] bg-slate-300 -z-40 rounded-3xl px-4 py-1  text-2xl text-primary self-center'
         >
           Taskman
         </Text>

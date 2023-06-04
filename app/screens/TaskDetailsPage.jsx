@@ -17,93 +17,76 @@ import { AccountRealmContext } from "../models";
 import { setCurrentTask, setHandler } from "../store/slice-reducers/ActiveJob";
 import { useDispatch, useSelector } from "react-redux";
 import { Account } from "../models/Account";
+import ChatScreen from "./ChatScreen";
+import { chats } from "../models/Chat";
+import { sendPushNotification } from "../api/Functions";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
 const TaskDetailsPage = () => {
   const [isNextTaskModalOpen, setIsNextTaskModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [nextTask, setNextTask] = useState("");
-  const [nextHandler, setNextHandler] = useState("");
-  const [previousHandler, setPreviousHandler] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const { currenttask, handler } = useSelector((state) => state.ActiveJob);
+  const { user } = useSelector((state) => state);
   const route = useRoute();
   const realm = useRealm();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { taskInfo, id } = route.params;
-  const Tasks = useObject(activejob, taskInfo.id);
+  const { id, name, job, matNo, supervisor, status } = route.params; // current handler for particular task
+  const activeJob = useObject(activejob, Realm.BSON.ObjectId(id));
   const Accounts = useQuery(Account);
+  const account = useQuery("account").filtered(
+    `name == $0 AND role == "Handler"`,
+    handler
+  )[0];
+  const pushToken = account?.pushToken || "";
 
-  function calculateInterval(hours) {
-    // Convert hours to milliseconds
-    const milliseconds = hours * 60 * 60 * 1000;
+  const chatrooms = useQuery("chatroom").filtered(
+    "senderId == $0 ||  recieverId == $0",
+    id
+  );
 
-    // Get the current time
-    const startTime = Date.now();
+  // Create a chat room
+  const createChatRoom = (recieverId) => {
+    // console.log(recieverId);
+    // Generate a unique chat room ID
+    const chatRoomId = new Realm.BSON.ObjectId().toHexString();
 
-    // Calculate the target time by adding the milliseconds to the start time
-    const targetTime = startTime + milliseconds;
+    // Store the chat room in the Realm DB
+    const chatRoom = {
+      _id: chatRoomId,
+      senderId: id,
+      recieverId,
+      // Additional properties if needed
+    };
 
-    // Set up the interval to update the remaining time every second
-    const interval = setInterval(() => {
-      // Get the current time
-      const currentTime = Date.now();
-
-      // Calculate the remaining time in milliseconds
-      const remainingTime = targetTime - currentTime;
-
-      // Calculate the remaining hours, minutes, and seconds
-      const remainingHours = Math.floor(remainingTime / (60 * 60 * 1000));
-      const remainingMinutes = Math.floor(
-        (remainingTime % (60 * 60 * 1000)) / (60 * 1000)
-      );
-      const remainingSeconds = Math.floor((remainingTime % (60 * 1000)) / 1000);
-
-      // Display the remaining time
-      const Timer = `${remainingHours}:${remainingMinutes}:${remainingSeconds}`;
-
+    const roomId = chatrooms.filtered(
+      `senderId == $0 AND recieverId ==$1`,
+      user._id,
+      recieverId
+    );
+    // Check if chatroom exist and create one if not
+    if (roomId.length == 0) {
+      // Create a new chat room object in the Realm DB
       realm.write(() => {
-        try {
-          Tasks.tasks.map((task) => {
-            const { name } = task;
-
-            if (
-              (task.status == "Completed") &
-              (name == taskInfo.name) &
-              (task.handler == taskInfo.handler)
-            ) {
-              // Check if the remaining time is less than or equal to zero
-              clearInterval(interval);
-              console.log("Task Completed!");
-              return;
-            } else if (
-              (name == taskInfo.name) &
-              (task.handler == taskInfo.handler) &
-              (task.status == "InProgress")
-            ) {
-              task.timer = Timer;
-            }
-
-            return;
-          });
-        } catch (error) {
-          console.log({ error, msg: "Error updating Timer" });
-        }
+        realm.create("chatroom", chatRoom);
       });
-    }, 1000);
-  }
+      // Return the created chat room ID
+
+      return chatRoomId;
+    } else {
+      return roomId[0]._id;
+    }
+  };
 
   const handleAcceptButton = useCallback(() => {
     // Perform the necessary actions to accept task
 
     realm.write(() => {
       try {
-        Tasks.tasks.map((task) => {
-          const { name } = task;
-
-          if ((name == taskInfo.name) & (task.handler == taskInfo.handler)) {
+        activeJob.job.tasks.map((task) => {
+          if ((task.name == name) & (task.handler == route.params.handler)) {
             task.status = "InProgress";
             task.inProgress = new Date(Date.now());
           }
@@ -111,14 +94,12 @@ const TaskDetailsPage = () => {
           return;
         });
         alert("Task Accepted!");
-
-        console.log("Accepted successully!");
       } catch (error) {
         console.log({ error, msg: "Error Accepting Task" });
       }
     });
 
-    calculateInterval(taskInfo.duration);
+    // calculateInterval(taskInfo.duration);
 
     navigation.navigate("mytasks");
     setIsNextTaskModalOpen(false);
@@ -138,10 +119,10 @@ const TaskDetailsPage = () => {
 
     realm.write(() => {
       try {
-        Tasks.tasks.map((task) => {
-          const { name } = task;
+        activeJob.job.tasks.map((task) => {
+          // const { name } = task;
 
-          if ((name == taskInfo.name) & (task.handler == taskInfo.handler)) {
+          if ((task.name == name) & (task.handler == route.params.handler)) {
             task.status = "Completed";
             task.completedIn = new Date(Date.now());
           }
@@ -159,27 +140,79 @@ const TaskDetailsPage = () => {
       }
     });
 
+    sendPushNotification(pushToken);
+
     navigation.navigate("mytasks");
     setIsNextTaskModalOpen(false);
   }, [realm, currenttask, handler]);
-
   const handleErrorSubmit = () => {
     // Perform the necessary actions to send the task back to the previous handler
     // and send the error message to the supervisor
+
+    //select handler Id to send error
+
+    receiverId = Accounts.filtered(
+      `role == "Handler" AND name == $0`,
+      handler
+    )[0]._id;
+    const roomId = createChatRoom(receiverId.toHexString());
+
+    const onSend = () => {
+      const messageObject = {
+        _id: new Realm.BSON.ObjectId().toHexString(),
+        text: errorMessage,
+        createdAt: new Date(),
+        user: { _id: user._id, name: user.name },
+        roomId: roomId,
+      };
+
+      realm.write(() => {
+        return new chats(realm, messageObject);
+      });
+    };
+    onSend();
+
+    realm.write(() => {
+      try {
+        activeJob.job.tasks.map((task) => {
+          if ((task.name == name) & (task.handler == route.params.handler)) {
+            task.status = "Pending";
+            task.inProgress = null;
+            task.handler = "";
+          }
+          if (task.name == currenttask) {
+            task.status = "Pending";
+            task.inProgress = null;
+            task.handler = handler;
+            alert("Task rejected!");
+
+            return;
+          }
+        });
+
+        console.log("Assigned successully!");
+      } catch (error) {
+        console.log({ error, msg: "Error Assigning next task" });
+      }
+    });
+    p;
+    sendPushNotification(pushToken, "Error in Task");
+    navigation.navigate("mytasks");
+
     setIsErrorModalOpen(false);
   };
 
   return (
     <Background>
-      <Topscreen text={taskInfo.job} />
+      <Topscreen text={job.name} />
       <View className='h-[75vh] absolute bottom-0 bg-white w-full flex items-start pb-[3vh] pt-[5vh] px-[3vw] justify-between'>
         {/* Display the task details */}
-        <Text style={[styles.text_md]}>Id: {taskInfo.id.toString()}</Text>
-        <Text style={[styles.text_md]}>MatNo: {taskInfo.matNo}</Text>
-        <Text style={[styles.text_md]}>Supervisor: {taskInfo.supervisor}</Text>
-        <Text style={[styles.text_md]}>Task: {taskInfo.name}</Text>
+        <Text style={[styles.text_md]}>Id: {id.toString()}</Text>
+        <Text style={[styles.text_md]}>ClientId: {matNo}</Text>
+        <Text style={[styles.text_md]}>Supervisor: {supervisor}</Text>
+        <Text style={[styles.text_md]}>Task: {name}</Text>
         {/* <Text style={[styles.text_md]}>Job: {taskInfo.job}</Text> */}
-        <Text style={[styles.text_sm2]}>Timer: {taskInfo.timer}</Text>
+        {/* <Text style={[styles.text_sm2]}>Timer:{time}</Text> */}
 
         <View
           id='BUTTONS'
@@ -188,9 +221,7 @@ const TaskDetailsPage = () => {
           {/* Accept button */}
           <Button
             disabled={
-              taskInfo.status == "InProgress" || taskInfo.status == "Completed"
-                ? true
-                : false
+              status == "InProgress" || status == "Completed" ? true : false
             }
             color={"#00a3a3"}
             title='Accept'
@@ -198,7 +229,7 @@ const TaskDetailsPage = () => {
           />
           {/* Done button */}
           <Button
-            disabled={taskInfo.status == "Completed" && true}
+            disabled={status == "Completed" && true}
             color={"#004343"}
             title='Done'
             onPress={handleDoneButton}
@@ -206,9 +237,9 @@ const TaskDetailsPage = () => {
 
           {/* Error button */}
           <Button
-            disabled={taskInfo.status == "Completed" && true}
+            disabled={status == "Completed" && true}
             color={"#E59F71"}
-            title='Error'
+            title='Reject'
             onPress={handleErrorButton}
           />
         </View>
@@ -228,7 +259,9 @@ const TaskDetailsPage = () => {
                 <SelectComponent
                   title={"Tasks:"}
                   placeholder={"Assign Next Task"}
-                  data={Tasks.tasks.filter((obj) => obj.status == "Pending")}
+                  data={activeJob.job.tasks.filter(
+                    (obj) => obj.status == "Pending"
+                  )}
                   setData={(params) => {
                     dispatch(setCurrentTask(params));
                   }}
@@ -236,7 +269,11 @@ const TaskDetailsPage = () => {
                 <SelectComponent
                   title={"Handler:"}
                   placeholder={"Assign Next Handler"}
-                  data={Accounts.filter((obj) => obj.role == "Handler")}
+                  data={Accounts.filter(
+                    (obj) =>
+                      (obj.role == "Handler") &
+                      (obj.category?.name == user.category)
+                  )}
                   setData={(params) => {
                     dispatch(setHandler(params));
                   }}
@@ -261,9 +298,9 @@ const TaskDetailsPage = () => {
         {/* Error modal */}
         <Modal visible={isErrorModalOpen}>
           <Background>
-            <View className=' h-[70%] pt-[5vh] flex justify-between items-center'>
+            <View className=' h-[70%] pt-[5vh] flex self-center justify-between items-center'>
               <Text
-                className=' w-[50vw]'
+                className='self-center  text-center w-[50vw]'
                 style={[styles.text_sm2, { fontSize: actuatedNormalize(20) }]}
               >
                 Report Error
@@ -271,16 +308,18 @@ const TaskDetailsPage = () => {
 
               <View className='h-[30vh] self-start px-[5vw] flex justify-around'>
                 <SelectComponent
-                  title={"Tasks"}
-                  placeholder={"Assign Next Task"}
-                  data={Tasks.tasks.filter((obj) => obj.status == "Pending")}
+                  title={"activeJob.job"}
+                  placeholder={"Choose faulty task"}
+                  data={activeJob.job.tasks.filter(
+                    (obj) => obj.status == "Completed"
+                  )}
                   setData={(params) => {
                     dispatch(setCurrentTask(params));
                   }}
                 />
                 <SelectComponent
                   title={"Handler"}
-                  placeholder={"Assign Next Handler"}
+                  placeholder={"Send to Handler"}
                   data={Accounts.filter((obj) => obj.role == "Handler")}
                   setData={(params) => {
                     dispatch(setHandler(params));
@@ -289,7 +328,7 @@ const TaskDetailsPage = () => {
               </View>
               <TextInput
                 multiline={true}
-                placeholder='Error Message to Supervisor'
+                placeholder='Error Message to Handler'
                 value={errorMessage}
                 className='w-[70vw] h-[10vh] border-2 border-gray-400 self-center rounded-md p-2'
                 onChangeText={(text) => setErrorMessage(text)}

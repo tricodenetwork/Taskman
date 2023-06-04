@@ -9,14 +9,14 @@ import UserDetails from "../components/UserDetails";
 
 export default function Accounts({ navigation }) {
   return (
-    <Background>
+    <Background bgColor='min-h-[98vh]'>
       <Topscreen text={"Accounts"} />
       <View
         className='bg-slate-200 h-[80vh] rounded-t-3xl  pt-[3vh] w-full absolute bottom-0
       '
       >
         <View className='mb-1'>
-          <SearchComponent />
+          <SearchComponent filterItems={["Name", "Dept", "Role"]} />
         </View>
         <View>
           <UserDetails />

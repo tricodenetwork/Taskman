@@ -1,7 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setSearch,
@@ -13,18 +13,19 @@ import { SelectList } from "react-native-dropdown-select-list";
 import { accountsFilter } from "../api/Functions";
 import { Motion } from "@legendapp/motion";
 
-export default function SearchComponent() {
+export default function SearchComponent({ filterItems = [] }) {
   const dispatch = useDispatch();
-  const { visible, filter } = useSelector((state) => state.app);
+  const [visible, setVisible] = useState(false);
+  const { filter } = useSelector((state) => state.app);
 
   return (
     <View
       style={{ borderRadius: actuatedNormalize(6) }}
       className={`bg-slate-400 w-[90%] self-center relative h-max py-[1vh] flex flex-row items-center px-[1vw]`}
     >
-      <MaterialCommunityIcons
-        name='account-search'
-        size={actuatedNormalize(23)}
+      <MaterialIcons
+        name='search'
+        size={actuatedNormalize(20)}
         color='#004343'
       />
       <TextInput
@@ -39,13 +40,13 @@ export default function SearchComponent() {
       <View className='absolute right-[1vw]'>
         <TouchableOpacity
           onPress={() => {
-            dispatch(setVisible(!visible));
+            setVisible(!visible);
           }}
           className=''
         >
           <AntDesign
             name='filter'
-            size={actuatedNormalize(23)}
+            size={actuatedNormalize(20)}
             color='#004343'
           />
         </TouchableOpacity>
@@ -56,32 +57,21 @@ export default function SearchComponent() {
           animate={{ x: 0 }}
           transition={{ duration: 0.2 }}
           style={styles.box}
-          className='bg-white px-5 rounded-md'
+          className='bg-white px-[5vw] space-y-[12vh] rounded-md'
+          // customProp={customValue}
         >
-          <TouchableOpacity
-            onPress={() => {
-              dispatch(setFilter("Name"));
-              dispatch(setVisible(!visible));
-            }}
-          >
-            <Text>Name</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              dispatch(setFilter("Dept"));
-              dispatch(setVisible(!visible));
-            }}
-          >
-            <Text>Dept</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              dispatch(setFilter("Role"));
-              dispatch(setVisible(!visible));
-            }}
-          >
-            <Text>Role</Text>
-          </TouchableOpacity>
+          {/* Use map to generate TouchableOpacity components */}
+          {filterItems.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => {
+                dispatch(setFilter(item));
+                setVisible(!visible);
+              }}
+            >
+              <Text>{item}</Text>
+            </TouchableOpacity>
+          ))}
         </Motion.View>
       )}
     </View>

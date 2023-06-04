@@ -52,10 +52,12 @@ export default function ActiveTasks({ navigation }) {
     "activejob",
     Realm.BSON.ObjectId(route.params.id)
   );
-  const [task, setTask] = useState(job.tasks);
-  const value = job.tasks.filtered(`name == $0 `, edit.name);
+  const [task, setTask] = useState(job.job.tasks);
+  const value = job.job.tasks.filtered(`name == $0 `, edit.name);
   const Accounts = useQuery(Account);
   const { currenttask, handler } = useSelector((state) => state.ActiveJob);
+  const { user } = useSelector((state) => state);
+  const foreignSupervisor = job.supervisor !== user.name ?? true;
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
 
@@ -66,21 +68,19 @@ export default function ActiveTasks({ navigation }) {
     };
   }, [refreshing, modalVisible]);
 
-  const handleNextTaskSubmit = useCallback(() => {
+  const assignNextTask = useCallback(() => {
     // Perform the necessary actions to assign the next task and handler
     // based on the values of nextTask and nextHandler
 
     realm.write(() => {
       try {
-        job.tasks.map((task) => {
+        job.job.tasks.map((task) => {
           const { name } = task;
 
-          if ((name == taskInfo.name) & (task.handler == taskInfo.handler)) {
-            task.status = "Completed";
-            task.completedIn = new Date(Date.now());
-          }
           if (name == currenttask) {
             task.handler = handler;
+            task.status = "Pending";
+            task.inProgress = null;
             alert("Next Task Assigned!");
 
             return;
@@ -93,8 +93,8 @@ export default function ActiveTasks({ navigation }) {
       }
     });
 
-    navigation.navigate("mytasks");
-    setIsNextTaskModalOpen(false);
+    // navigation.navigate("activejobs");
+    setModalVisible(false);
   }, [realm, currenttask, handler]);
 
   const addTask = useCallback(
@@ -103,12 +103,12 @@ export default function ActiveTasks({ navigation }) {
         alert("Name cannot be empty");
         return;
       }
-      const index = job.tasks.findIndex((obj) => obj.name == item.name);
+      const index = job.job.tasks.findIndex((obj) => obj.name == item.name);
 
       if (value.length !== 0) {
         realm.write(() => {
           if (item.name)
-            job.tasks.map((task) => {
+            job.job.tasks.map((task) => {
               const { name, duration } = task;
 
               if (name == edit.name && duration == edit.duration) {
@@ -122,7 +122,7 @@ export default function ActiveTasks({ navigation }) {
         });
       } else if (index == -1) {
         realm.write(() => {
-          job.tasks.push(item);
+          job.job.tasks.push(item);
           alert("Task added successfully!");
         });
       } else {
@@ -130,7 +130,7 @@ export default function ActiveTasks({ navigation }) {
         return;
       }
 
-      setTask(job.tasks);
+      setTask(job.job.tasks);
     },
     [realm, edit]
   );
@@ -139,17 +139,17 @@ export default function ActiveTasks({ navigation }) {
       // Alternatively if passing the ID as the argument to handleDeleteTask:
       // realm?.delete(value);
 
-      const index = job.tasks.findIndex(
+      const index = job.job.tasks.findIndex(
         (obj) => obj.name == edit.name && obj.duration == edit.duration
       );
-      // setTask(job.tasks);
+      // setTask(job.job.tasks);
       console.log(index);
 
       if (index !== -1) {
-        job.tasks.splice(index, 1);
+        job.job.tasks.splice(index, 1);
         alert("Task deleted successfully!");
 
-        setTask(job.tasks);
+        setTask(job.job.tasks);
       }
     });
   }, [realm, edit]);
@@ -159,7 +159,7 @@ export default function ActiveTasks({ navigation }) {
         return;
       }
       realm.write(() => {
-        job.tasks = array;
+        job.job.tasks = array;
       });
     },
     [realm]
@@ -172,7 +172,7 @@ export default function ActiveTasks({ navigation }) {
           setEdit({ name: item.name, duration: item.duration });
           setName(item.name);
           setDurations(item.duration);
-          const value = job.tasks.filtered(
+          const value = job.job.tasks.filtered(
             `name == $0 AND duration == $1`,
             item.name,
             item.duration
@@ -210,9 +210,9 @@ export default function ActiveTasks({ navigation }) {
             id: route.params.id,
           });
         }}
-        text2={job ? job.tasks.length : item.supervisor}
+        text2={job ? job.job.tasks.length : item.supervisor}
         text3={job.duration}
-        text={job.job}
+        text={job.job.name}
       />
 
       <View
@@ -232,12 +232,15 @@ export default function ActiveTasks({ navigation }) {
           />
         </View>
       </View>
-      <LowerButton
-        navigate={() => {
-          setModalVisible(true);
-        }}
-        text={"Assign Task"}
-      />
+      {user.role !== "Client" && (
+        <LowerButton
+          disabled={foreignSupervisor}
+          navigate={() => {
+            setModalVisible(true);
+          }}
+          text={"Assign Task"}
+        />
+      )}
       <Modal visible={modalVisible}>
         <Background>
           <View className=' h-[70%] pt-[5vh] self-center flex justify-between items-center'>
@@ -253,7 +256,7 @@ export default function ActiveTasks({ navigation }) {
                 value={currenttask}
                 title={"Tasks:"}
                 placeholder={"Assign Next Task"}
-                data={job.tasks.filter((obj) => obj.status == "Pending")}
+                data={job.job.tasks}
                 setData={(params) => {
                   dispatch(setCurrentTask(params));
                 }}
@@ -262,7 +265,11 @@ export default function ActiveTasks({ navigation }) {
                 value={handler}
                 title={"Handler:"}
                 placeholder={"Assign Next Handler"}
-                data={Accounts.filter((obj) => obj.role == "Handler")}
+                data={Accounts.filter(
+                  (obj) =>
+                    (obj.role == "Handler") &
+                    (obj.category?.name == user.category)
+                )}
                 setData={(params) => {
                   dispatch(setHandler(params));
                 }}
@@ -272,7 +279,7 @@ export default function ActiveTasks({ navigation }) {
               id='BUTTONS'
               className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
             >
-              <Button title='Submit' onPress={handleNextTaskSubmit} />
+              <Button title='Submit' onPress={assignNextTask} />
               <Button
                 title='Cancel'
                 onPress={() => {
