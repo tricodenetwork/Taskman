@@ -48,7 +48,14 @@ const Background = ({ children, bgColor = "bg-slate-200" }) => {
   const windowHeight = useWindowDimensions().height;
 
   if (!fontsLoaded) {
-    return <Text className='absolute top-[50vh] left-[50vw]'>Loading...</Text>;
+    return (
+      <Text
+        style={styles.text}
+        className='absolute text-white top-[50vh] text-center w-full'
+      >
+        Loading...
+      </Text>
+    );
   } else {
     return (
       <SafeAreaView>

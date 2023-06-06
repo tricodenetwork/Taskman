@@ -12,6 +12,7 @@ import { LoginScreen } from "./components/LoginScreen";
 import colors from "./styles/colors";
 import { AppSync } from "./AppSync";
 import Login from "./screens/Login";
+import SplashScreen from "./components/SplashScreen";
 
 export const AppWrapperSync = ({ appId }) => {
   const { RealmProvider } = AccountRealmContext;
@@ -22,6 +23,7 @@ export const AppWrapperSync = ({ appId }) => {
       <AppProvider id={appId}>
         <UserProvider fallback={Login}>
           <RealmProvider
+            fallback={SplashScreen}
             sync={{
               flexible: true,
               initialSubscriptions: {
