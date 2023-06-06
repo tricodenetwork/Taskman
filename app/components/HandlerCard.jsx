@@ -12,12 +12,18 @@ import { useIsFocused, useRoute } from "@react-navigation/native";
 import { Fragment as MainBox } from "react";
 import { Completed } from "../api/Functions";
 import { MaterialIcons } from "@expo/vector-icons";
-import { calculateInterval } from "../api/Realm";
+import { AccountRealmContext } from "../models";
+import { millisecondSinceStartDate } from "../api/test";
+
+const { useRealm, useQuery, useObject } = AccountRealmContext;
 
 export default function HandlerCard({ item }) {
   //____________________________________________________________________STATE AND VARIABLES____________________________________________________________________//
-  const [time, setTime] = useState("0d 0h 0m");
+  const [time, setTime] = useState("");
   const route = useRoute();
+  const realm = useRealm();
+  const Time = Completed(item.completedIn, item.inProgress);
+  const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
   const status =
     item.status === "Pending" || item.status === ""
       ? "gray"
@@ -29,65 +35,71 @@ export default function HandlerCard({ item }) {
       ? "#006400"
       : null;
 
-  const Time = Completed(item.completedIn, item.inProgress);
+  const { days, hours, minutes } = item.duration;
+  const milliseconds =
+    days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
 
-  function calculateInterval(duration, inProgress, completedIn) {
-    // Convert days, hours, and minutes to milliseconds
-    if (!inProgress) {
-      return;
-    }
-    const { days, hours, minutes } = duration;
-    const milliseconds =
-      days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
+  useEffect(() => {
+    let interval = null;
+    // let newTargetTime = Date.now(); // Initialize newTargetTime outside the interval
 
-    // Get the Inprogess time
-    const startTime = inProgress.getTime();
-
-    // Calculate the target time by adding the milliseconds to the start time
-    const targetTime = startTime + milliseconds;
-
-    // Set up the interval to update the remaining time every second
-    const interval = setInterval(() => {
-      // Get the current time
-      const currentTime = Date.now();
-
-      // Calculate the remaining time in milliseconds
-      const remainingTime = targetTime - currentTime;
-
-      // Check if the remaining time is less than or equal to zero
+    function calculateRemainingTime(targetTime) {
+      // Check if the task is completed
       if (item.status == "Completed") {
         clearInterval(interval);
         return;
       }
+      let countDownTimer;
+      // Calculate the remaining time in milliseconds
+      countDownTimer = targetTime - millisecondSinceStartDate(item.inProgress);
 
       // Calculate the remaining days, hours, minutes, and seconds
-      const isElapsed = remainingTime <= 0;
+
       const remainingDays = Math.floor(
-        Math.abs(remainingTime) / (24 * 60 * 60 * 1000)
+        Math.abs(countDownTimer) / (24 * 60 * 60 * 1000)
       );
       const remainingHours = Math.floor(
-        (Math.abs(remainingTime) % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+        (Math.abs(countDownTimer) % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
       );
       const remainingMinutes = Math.floor(
-        (Math.abs(remainingTime) % (60 * 60 * 1000)) / (60 * 1000)
+        (Math.abs(countDownTimer) % (60 * 60 * 1000)) / (60 * 1000)
       );
       const remainingSeconds = Math.floor(
-        (Math.abs(remainingTime) % (60 * 1000)) / 1000
+        (Math.abs(countDownTimer) % (60 * 1000)) / 1000
       );
 
-      const sign = isElapsed ? "-" : ""; // Add negative sign if time is elapsed
+      // Add negative sign if time is elapsed
 
-      // Display the remaining time
+      const isElapsed = countDownTimer <= 0;
+      const sign = isElapsed ? "-" : "";
+
+      // set the time variable to display on the UI
       const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s`;
-      // console.log(Timer);
       setTime(Timer);
-    }, 1000);
-  }
+    }
 
-  useEffect(() => {
-    calculateInterval(item.duration, item.inProgress, item.completedIn);
-  }, [item.inProgress]);
+    function calculateInterval() {
+      if (!item.inProgress) {
+        return;
+      }
 
+      const targetTime = milliseconds;
+
+      // Set up the interval to update the remaining time every second
+      interval = setInterval(calculateRemainingTime(targetTime), 1000);
+    }
+
+    // Call calculateInterval when the component mounts during working hours
+    !isWeekend & isAllowedTime &&
+      calculateInterval(item.duration, item.inProgress, item.completedIn);
+
+    calculateRemainingTime(milliseconds);
+
+    // Clear the interval when the component is unmounted
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
   return (
     // <ActivityIndicator />
     <View

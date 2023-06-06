@@ -38,6 +38,7 @@ const Login = ({ navigation }) => {
   const [authState, setAuthState] = useState(AuthState.None);
   // console.log(authState);
 
+
   const handleLogin = useCallback(async () => {
     setAuthState(AuthState.Loading);
     // const credentials = Realm.Credentials.anonymous();
@@ -59,11 +60,11 @@ const Login = ({ navigation }) => {
   }, [usermail, password, setAuthState, app]);
 
   return (
-    <Background bgColor='bg-primary min-h-[97vh] items-center justify-center'>
-      <Text className='text-primary_light text-2xl absolute top-[6vh] left-[5vw]'>
-        University Of Benin
+    <Background bgColor='bg-primary min-h-[90vh] items-center justify-center'>
+      <Text className='text-primary_light text-2xl absolute top-[3vh] left-[5vw]'>
+        {/* Uniben */}
       </Text>
-      <View className=' rounded-3xl  bg-slate-300 px-[12vw] py-[15vh] border-2 border-Supervisor2'>
+      <View className=' rounded-3xl relative my-auto bg-slate-300 px-[12vw] pt-[4vh] pb-[8vh] border-2 border-Supervisor2'>
         <View className='w-[55vw] mt-[7vh] self-center'>
           <Text
             style={styles.text_md}

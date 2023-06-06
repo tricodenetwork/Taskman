@@ -97,7 +97,7 @@ export default function Supervisor() {
   }, []);
 
   return (
-    <Background>
+    <Background bgColor='min-h-[96vh]'>
       <HandlerTopscreen text3={formattedDate} text={`Hello, ${name}`}>
         <View className=' absolute bottom-[12vh]  w-full  flex flex-row justify-between px-[5vw]'>
           <View className='relative'>

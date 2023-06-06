@@ -12,6 +12,7 @@ import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { chatroom, chats, user } from "../models/Chat";
 import { log } from "react-native-reanimated";
 import { TouchableHighlight } from "react-native-gesture-handler";
+import { Motion } from "@legendapp/motion";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -127,7 +128,12 @@ export default function MessageScreen({ navigation }) {
           }}
         />
         {visible && (
-          <View className='bg-emerald-300 h-[100vh] w-[70vw] pl-[3vw] pt-[1vh] absolute top-0 right-0'>
+          <Motion.View
+            initial={{ x: 300 }}
+            animate={{ x: 0 }}
+            exit={{ x: 300 }}
+            className='bg-emerald-300 h-[100vh] w-[70vw] pl-[3vw] pt-[1vh] absolute top-0 right-0'
+          >
             <Text style={styles.text_md} className=' mt-[2vh] text-center'>
               Contacts
             </Text>
@@ -158,7 +164,7 @@ export default function MessageScreen({ navigation }) {
               data={contacts}
               keyExtractor={(item) => item._id}
             />
-          </View>
+          </Motion.View>
         )}
         <TouchableOpacity
           id='OPEN_CONTACT_LIST'

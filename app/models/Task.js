@@ -76,6 +76,7 @@ export class task extends Realm.Object {
       duration: "duration",
       status: { type: "string", default: "Pending" },
       timer: { type: "string?", default: "00:00" },
+      remainingTime: { type: "int", default: 0 },
       completedIn: { type: "date?" },
       inProgress: { type: "date?" },
     },

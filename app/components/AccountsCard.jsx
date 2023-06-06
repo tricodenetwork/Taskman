@@ -14,12 +14,11 @@ import { useSelector } from "react-redux";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
-export default function DetailsCard({ item, id }) {
+export default function AccountsCard({ item, id }) {
   const [time, setTime] = useState("");
   const route = useRoute();
   const realm = useRealm();
-  const job = useObject(activejob, Realm.BSON.ObjectId(route.params.id));
-  const task = job.job.tasks.filter((obj) => obj.name === item.name)[0];
+
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
 
   const status =
@@ -60,72 +59,6 @@ export default function DetailsCard({ item, id }) {
   };
   const Time = Completed(item.completedIn, item.inProgress); // Variable to store the remaining time when the interval is paused
 
-  const { days, hours, minutes } = item.duration;
-  const milliseconds =
-    days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
-
-  useEffect(() => {
-    let interval = null;
-    // let newTargetTime = Date.now(); // Initialize newTargetTime outside the interval
-
-    function calculateRemainingTime(targetTime) {
-      // Check if the task is completed
-      if (item.status == "Completed") {
-        clearInterval(interval);
-        return;
-      }
-      let countDownTimer;
-      // Calculate the remaining time in milliseconds
-      countDownTimer = targetTime - millisecondSinceStartDate(item.inProgress);
-
-      // Calculate the remaining days, hours, minutes, and seconds
-
-      const remainingDays = Math.floor(
-        Math.abs(countDownTimer) / (24 * 60 * 60 * 1000)
-      );
-      const remainingHours = Math.floor(
-        (Math.abs(countDownTimer) % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
-      );
-      const remainingMinutes = Math.floor(
-        (Math.abs(countDownTimer) % (60 * 60 * 1000)) / (60 * 1000)
-      );
-      const remainingSeconds = Math.floor(
-        (Math.abs(countDownTimer) % (60 * 1000)) / 1000
-      );
-
-      // Add negative sign if time is elapsed
-
-      const isElapsed = countDownTimer <= 0;
-      const sign = isElapsed ? "-" : "";
-
-      // set the time variable to display on the UI
-      const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s`;
-      setTime(Timer);
-    }
-
-    function calculateInterval() {
-      if (!item.inProgress) {
-        return;
-      }
-
-      const targetTime = milliseconds;
-
-      // Set up the interval to update the remaining time every second
-      interval = setInterval(calculateRemainingTime(targetTime), 1000);
-    }
-
-    // Call calculateInterval when the component mounts during working hours
-    !isWeekend & isAllowedTime &&
-      calculateInterval(item.duration, item.inProgress, item.completedIn);
-
-    calculateRemainingTime(milliseconds);
-
-    // Clear the interval when the component is unmounted
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
   return (
     <View
       style={styles.Pcard}
@@ -143,39 +76,6 @@ export default function DetailsCard({ item, id }) {
         id='LEFT_SECTION'
         className='text-left w-[70%] space-y-[1vh] relative border- h-full justify-center pl-[2vw]'
       >
-        {route.name !== "accounts" && (
-          <View
-            id='TIMER'
-            className='absolute items-center space-x-[3vw] flex flex-row top-[5%] left-[22%]'
-          >
-            <MaterialIcons
-              name='timer'
-              size={actuatedNormalize(12)}
-              color={time.includes("-") & item.inProgress ? "red" : "#004343"}
-            />
-            {!item.inProgress ? (
-              <Text
-                id='TIMER'
-                className=' text-primary'
-                style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
-              >
-                {`${item.duration.days == null ? 0 : item.duration.days}d ${
-                  item.duration.hours == null ? 0 : item.duration.hours
-                }h ${
-                  item.duration.minutes == null ? 0 : item.duration.minutes
-                }m`}
-              </Text>
-            ) : (
-              <Text
-                id='TIMER'
-                className={time.includes("-") ? "text-red-600" : "text-primary"}
-                style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
-              >
-                {item.status == "Completed" ? Time : time}
-              </Text>
-            )}
-          </View>
-        )}
         <Text
           style={[styles.text_md2, { fontSize: actuatedNormalize(14) }]}
           className='text-primary'

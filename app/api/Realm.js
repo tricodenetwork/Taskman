@@ -58,3 +58,28 @@ const da2 = new Date("2023-05-29T16:05:29.066+00:00");
 // console.log(dat.getMilliseconds() - da.getMilliseconds());
 
 // console.log(new Date("501521"));
+
+
+export const remainingTimetohours = (remainingTime) => {
+  // Calculate the remaining days, hours, minutes, and seconds
+  const isElapsed = remainingTime <= 0;
+  const remainingDays = Math.floor(
+    Math.abs(remainingTime) / (24 * 60 * 60 * 1000)
+  );
+  const remainingHours = Math.floor(
+    (Math.abs(remainingTime) % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+  );
+  const remainingMinutes = Math.floor(
+    (Math.abs(remainingTime) % (60 * 60 * 1000)) / (60 * 1000)
+  );
+  const remainingSeconds = Math.floor(
+    (Math.abs(remainingTime) % (60 * 1000)) / 1000
+  );
+
+  const sign = isElapsed ? "-" : ""; // Add negative sign if time is elapsed
+
+  // Display the remaining time
+  const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s`;
+  return Timer;
+};
+

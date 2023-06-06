@@ -1,71 +1,229 @@
-const tasks = [
-  {
-    handler: "Handler1",
-    duration: { days: 1, hours: 2, minutes: 30 },
-    completedIn: new Date(), // Example completed date
-    inProgress: new Date("2023-05-31T14:39:34.527+00:00"),
-  },
-  {
-    handler: "Handler2",
-    duration: { days: 0, hours: 4, minutes: 0 },
-    completedIn: new Date(), // Example completed date
-    inProgress: new Date("2023-05-29T16:05:29.066+00:00"),
-  },
-  {
-    handler: "Handler1",
-    duration: { days: 0, hours: 1, minutes: 0 },
-    completedIn: new Date(), // Example completed date
-    inProgress: null,
-  },
-  // more tasks...
-];
+const date = new Date();
+date.setHours(8);
+date.setMinutes(0);
+date.setSeconds(0);
+// export const morning = date.getTime();
 
-function calculateTaskStats(tasks) {
-  const taskStats = {};
+let countdownInterval;
+let startTime; // item.inProgress
+let endTime; // targetTime or newTargetTime
+let timeLeft; // timeleft for task task.remaining time
+let timeSpent; // if it is working hours, then timespent is morning plus Date.now()
+let duration;
+let completedIn; // startTime + timeSpent
 
-  tasks.forEach((task) => {
-    const handler = task.handler;
+function startCountdown(duration) {
+  const totalSeconds =
+    duration.d * 24 * 60 * 60 + duration.h * 60 * 60 + duration.m * 60;
+  startTime = new Date();
+  endTime = new Date(startTime.getTime() + totalSeconds * 1000); // Initially it is startTime plus duration,
 
-    // Calculate task counts per handler
-    if (!taskStats[handler]) {
-      taskStats[handler] = {
-        handler: handler,
-        Assigned: 0,
-        promptCompleted: 0,
-        promptInPercentage: 0,
-      };
-    }
+  timeLeft = totalSeconds;
 
-    taskStats[handler].Assigned++;
+  countdownInterval = setInterval(() => {
+    const currentTime = new Date();
+    const isInTimeRange =
+      currentTime.getHours() >= 8 && currentTime.getHours() < 16;
 
-    // Calculate prompt completed counts per handler
-    if (task.completedIn) {
-      const duration = task.duration;
-      const taskDurationInMinutes =
-        duration.days * 24 * 60 + duration.hours * 60 + duration.minutes;
-      const timeDifferenceInMinutes = Math.round(
-        (task.completedIn - task.inProgress) / (1000 * 60)
-      );
-      const isPromptCompleted =
-        timeDifferenceInMinutes <= taskDurationInMinutes;
+    if (isInTimeRange) {
+      const timeDiff = Math.floor((endTime - currentTime) / 1000); // Time difference in seconds
+      timeLeft = timeDiff;
 
-      if (isPromptCompleted) {
-        taskStats[handler].promptCompleted++;
+      if (timeDiff > 0) {
+        const days = Math.floor(timeDiff / (24 * 60 * 60));
+        const hours = Math.floor((timeDiff / (60 * 60)) % 24);
+        const minutes = Math.floor((timeDiff / 60) % 60);
+        const seconds = Math.floor(timeDiff % 60);
+
+        console.log(
+          `Countdown: ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`
+        );
+      } else {
+        clearInterval(countdownInterval);
+        console.log("Time has elapsed.");
       }
+    } else {
+      clearInterval(countdownInterval);
+      console.log(`Countdown paused. Time remaining: ${timeLeft} seconds`);
     }
-  });
-
-  // Calculate prompt completion percentages per handler
-  for (const handler in taskStats) {
-    const stats = taskStats[handler];
-    const promptCompletionPercentage =
-      (stats.promptCompleted / stats.Assigned) * 100 || 0;
-
-    stats.promptInPercentage = promptCompletionPercentage.toFixed(2);
-  }
-
-  return taskStats;
+  }, 1000); // Update every 1 second
 }
 
-const handlerTaskStats = calculateTaskStats(tasks);
-console.log(handlerTaskStats);
+// startCountdown({ d: 0, h: 4, m: 0 });
+
+function calculateTimeSince(startDate, startTime) {
+  const startDateTime = new Date(`${startDate} ${startTime}`);
+  const currentDate = new Date();
+
+  // Check if the start date is on a weekend
+  if (startDateTime.getDay() === 6 || startDateTime.getDay() === 0) {
+    console.log("Start date falls on a weekend. No working hours.");
+    return;
+  }
+
+  // Check if the start date is outside working hours
+  if (
+    startDateTime.getHours() < 8 ||
+    startDateTime.getHours() >= 16 ||
+    (startDateTime.getHours() === 16 && startDateTime.getMinutes() > 0)
+  ) {
+    console.log("Start date is outside working hours.");
+    return;
+  }
+
+  let elapsedTime = currentDate - startDateTime;
+
+  // Subtract weekends from the elapsed time
+  const elapsedDays = Math.floor(elapsedTime / (24 * 60 * 60 * 1000));
+  const elapsedWeekends =
+    Math.floor((elapsedDays + startDateTime.getDay()) / 7) * 2;
+  elapsedTime -= elapsedWeekends * 24 * 60 * 60 * 1000;
+
+  // Subtract time outside working hours from the elapsed time
+  const startHour = startDateTime.getHours();
+  const startMinutes = startDateTime.getMinutes();
+  const endHour = 16; // 4 PM
+  const endMinutes = 0;
+
+  if (currentDate.getDay() > 0 && currentDate.getDay() < 6) {
+    // Check if the current day is a weekday
+    const currentHour = currentDate.getHours();
+    const currentMinutes = currentDate.getMinutes();
+
+    if (
+      currentHour < startHour ||
+      (currentHour === startHour && currentMinutes < startMinutes)
+    ) {
+      console.log("Current time is outside working hours.");
+      return;
+    }
+
+    if (
+      currentHour > endHour ||
+      (currentHour === endHour && currentMinutes > endMinutes)
+    ) {
+      const remainingHours =
+        (currentHour - endHour) * 60 + (currentMinutes - endMinutes);
+      elapsedTime -= remainingHours * 60 * 1000;
+    }
+  }
+
+  const days = Math.floor(elapsedTime / (24 * 60 * 60 * 1000));
+  const hours = Math.floor((elapsedTime / (60 * 60 * 1000)) % 24);
+  const minutes = Math.floor((elapsedTime / (60 * 1000)) % 60);
+  const seconds = Math.floor((elapsedTime / 1000) % 60);
+
+  console.log(
+    `Time spent since ${startDate} ${startTime}: ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds.`
+  );
+}
+
+const startDate = "2023-06-2";
+const startT = "08:00:00";
+// calculateTimeSince(startDate, startT);
+
+function timeSpentz(dateTimeString) {
+  const startDate = new Date(dateTimeString);
+  const endDate = new Date();
+  let hours = 0;
+  let minutes = 0;
+  let seconds = 0;
+  for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
+    if (d.getDay() !== 0 && d.getDay() !== 6) {
+      if (d.getTime() === startDate.getTime()) {
+        const startHour = startDate.getHours();
+        if (startHour < 8) {
+          hours += 8;
+        } else if (startHour >= 16) {
+          continue;
+        } else {
+          hours += 16 - startHour;
+          minutes -= startDate.getMinutes();
+          seconds -= startDate.getSeconds();
+        }
+      } else if (d.getTime() === endDate.getTime()) {
+        const endHour = endDate.getHours();
+        if (endHour < 8) {
+          continue;
+        } else if (endHour >= 16) {
+          hours += 8;
+        } else {
+          hours += endHour - 8;
+          minutes += endDate.getMinutes();
+          seconds += endDate.getSeconds();
+        }
+      } else {
+        hours += 8;
+      }
+    }
+  }
+  minutes += Math.floor(seconds / 60);
+  seconds = seconds % 60;
+  hours += Math.floor(minutes / 60);
+  minutes = minutes % 60;
+  return `{d: ${Math.floor(hours / 24)}, h: ${
+    hours % 24
+  }, m: ${minutes}, s: ${seconds}}`;
+}
+
+// console.log(timeSpentz("2023-05-30T08:00:00"));
+
+export function millisecondSinceStartDate(startDate) {
+  const startDateTime = new Date(startDate);
+  const currentDate = new Date();
+
+  // Check if the start date is on a weekend
+  if (startDateTime.getDay() === 6 || startDateTime.getDay() === 0) {
+    alert("Start date falls on a weekend. No working hours.");
+    return;
+  }
+
+  // Check if the start date is outside working hours
+  if (
+    startDateTime.getHours() < 8 ||
+    startDateTime.getHours() >= 16 ||
+    (startDateTime.getHours() === 16 && startDateTime.getMinutes() > 0)
+  ) {
+    return;
+  }
+
+  let elapsedTime = currentDate - startDateTime;
+
+  // Subtract weekends from the elapsed time
+  const elapsedDays = Math.floor(elapsedTime / (24 * 60 * 60 * 1000));
+  const elapsedWeekends =
+    Math.floor((elapsedDays + startDateTime.getDay()) / 7) * 2;
+  elapsedTime -= elapsedWeekends * 24 * 60 * 60 * 1000;
+
+  // Subtract time outside working hours from the elapsed time
+  const startHour = startDateTime.getHours();
+  const startMinutes = startDateTime.getMinutes();
+  const endHour = 16; // 4 PM
+  const endMinutes = 0;
+
+  if (currentDate.getDay() > 0 && currentDate.getDay() < 6) {
+    // Check if the current day is a weekday
+    const currentHour = currentDate.getHours();
+    const currentMinutes = currentDate.getMinutes();
+
+    if (
+      currentHour < startHour ||
+      (currentHour === startHour && currentMinutes < startMinutes)
+    ) {
+      console.log("Current time is outside working hours.");
+      return;
+    }
+
+    if (
+      currentHour > endHour ||
+      (currentHour === endHour && currentMinutes > endMinutes)
+    ) {
+      const remainingHours =
+        (currentHour - endHour) * 60 + (currentMinutes - endMinutes);
+      elapsedTime -= remainingHours * 60 * 1000;
+    }
+  }
+
+  // console.log(`Milliseconds since ${startDate}: ${elapsedTime}`);
+  return elapsedTime;
+}

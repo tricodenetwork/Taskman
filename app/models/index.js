@@ -19,7 +19,21 @@ export const AccountRealmContext = createRealmContext({
     category,
     client,
   ],
-  schemaVersion: 2,
+  schemaVersion: 3,
+  // onMigration: (oldRealm, newRealm) => {
+  //   // only apply this change if upgrading schemaVersion
+  //   if (oldRealm.schemaVersion < 3) {
+  //     const oldObjects = oldRealm.objects(task);
+  //     const newObjects = newRealm.objects(task);
+  //     // loop through all objects and set the fullName property in the
+  //     // new schema
+  //     for (const objectIndex in oldObjects) {
+  //       const oldObject = oldObjects[objectIndex];
+  //       const newObject = newObjects[objectIndex];
+  //       newObject._id = `${oldObject.name}`;
+  //     }
+  //   }
+  // },
 });
 
 // export const JobRealmContext = createRealmContext({
