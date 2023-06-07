@@ -9,21 +9,21 @@ import { useUser } from "@realm/react";
 import { chats as Chats } from "../models/Chat";
 import { log } from "react-native-reanimated";
 import { render } from "react-dom";
+import { useSelector } from "react-redux";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
 export default function ChatScreen() {
   const [message, setMessage] = useState([]);
   const route = useRoute();
-  const user = useUser();
   const realm = useRealm();
   const { roomId, name } = route.params;
   const allChats = useQuery(Chats);
-  const oid = user.identities[0].id.replace(/[^0-9a-fA-F]/g, "");
-  const chatUser = realm.objectForPrimaryKey(
-    "account",
-    Realm.BSON.ObjectId(oid)
-  );
+  const { user } = useSelector((state) => state);
+  const chatUser =
+    user.role !== "Client"
+      ? realm.objectForPrimaryKey("account", Realm.BSON.ObjectId(user._id))
+      : realm.objectForPrimaryKey("client", user._id);
 
   useEffect(() => {
     // Fetch existing messages from the Realm DB
@@ -117,20 +117,18 @@ export default function ChatScreen() {
     return <View style={{ marginVertical: 10 }}>{renderBubble(props)}</View>;
   }
   return (
-    <SafeAreaView>
-      <Background bgColor='min-h-97vh'>
-        <View className='h-[100%]'>
-          <Text className='self-center'>{name}</Text>
-          <GiftedChat
-            showAvatarForEveryMessage={true}
-            loadEarlier={true}
-            messages={message}
-            onSend={(messages) => onSend(messages)}
-            user={{ _id: chatUser._id.toString(), name: chatUser.name }}
-            renderMessage={renderMessage}
-          />
-        </View>
-      </Background>
-    </SafeAreaView>
+    <Background bgColor='min-h-97vh'>
+      <View className='h-[100%]'>
+        <Text className='self-center'>{name}</Text>
+        <GiftedChat
+          showAvatarForEveryMessage={true}
+          loadEarlier={true}
+          messages={message}
+          onSend={(messages) => onSend(messages)}
+          user={{ _id: chatUser._id.toString(), name: chatUser.name }}
+          renderMessage={renderMessage}
+        />
+      </View>
+    </Background>
   );
 }

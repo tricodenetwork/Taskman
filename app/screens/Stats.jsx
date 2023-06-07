@@ -18,6 +18,7 @@ import RNHTMLtoPDF from "react-native-html-to-pdf";
 import * as FileSystem from "expo-file-system";
 import { PermissionsAndroid } from "react-native";
 import { StorageAccessFramework } from "expo-file-system";
+import { useEffect } from "react";
 
 async function checkExternalStoragePermissions() {
   try {
@@ -56,7 +57,7 @@ export default function Stats() {
     const taskStats = [];
 
     data.forEach((object) => {
-      object.job.tasks.forEach((task) => {
+      object.job?.tasks.forEach((task) => {
         const handler = task.handler;
 
         // Skip tasks with null or empty string handler
@@ -197,6 +198,7 @@ export default function Stats() {
     }
   }
 
+  useEffect(() => {});
   const handlerTaskStats = calculateTaskStats(activeJobs);
 
   const render = ({ item }) => {

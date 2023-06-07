@@ -57,7 +57,7 @@ const CreateAccount = ({ navigation }) => {
       realm?.write(() => {
         const account = realm?.objectForPrimaryKey(
           "account",
-          Realm.BSON.ObjectId(route.params?.id)
+          Realm.BSON.ObjectId(route.params.id)
         ); // If the ID is passed as an ObjectId
         // const task = realm?.objectForPrimaryKey('Task', Realm.BSON.ObjectId(id));  // If the ID is passed as a string
         account.name = user.name;
@@ -66,7 +66,7 @@ const CreateAccount = ({ navigation }) => {
         account.password = user.password;
         account.role = user.role;
         account.phone = user.phone;
-        account.category = user.category;
+        account.category.name = user.category.name;
       });
 
       alert("Success!!");

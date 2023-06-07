@@ -22,6 +22,7 @@ import * as Updates from "expo-updates";
 import Eye from "../../assets/icons/eye.svg";
 import EyesClosed from "../../assets/icons/closed.svg";
 import Error from "../../assets/icons/error.svg";
+import { Motion } from "@legendapp/motion";
 
 export let AuthState;
 (function (AuthState) {
@@ -30,14 +31,13 @@ export let AuthState;
   AuthState[(AuthState["LoginError"] = 2)] = "LoginError";
   AuthState[(AuthState["User"] = 3)] = "User";
 })(AuthState || (AuthState = {}));
-const Login = ({ navigation }) => {
+export const Login = ({ navigation }) => {
   const [usermail, setUsermail] = useState(" ");
   const [password, setPassword] = useState(" ");
   const [show, setShow] = useState(true);
   const app = useApp();
   const [authState, setAuthState] = useState(AuthState.None);
   // console.log(authState);
-
 
   const handleLogin = useCallback(async () => {
     setAuthState(AuthState.Loading);
@@ -94,6 +94,7 @@ const Login = ({ navigation }) => {
               style={styles.averageText}
               value={password.trimStart()}
               onChangeText={setPassword}
+              secureTextEntry={show}
               className='w-full h-[5vh] bg-slate-400 rounded-sm self-center'
             />
             <View className={"absolute right-[1vw]"}>
@@ -103,7 +104,7 @@ const Login = ({ navigation }) => {
                 }}
               >
                 {!show ? (
-                  <EyesClosed
+                  <Motion.EyesClosed
                     width={actuatedNormalize(22)}
                     height={actuatedNormalizeVertical(22)}
                     color={show ? "purple" : "gray"}

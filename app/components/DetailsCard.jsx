@@ -14,13 +14,14 @@ import { useSelector } from "react-redux";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
-export default function DetailsCard({ item, id }) {
+export default function DetailsCard({ item, id, index }) {
   const [time, setTime] = useState("");
   const route = useRoute();
   const realm = useRealm();
   const job = useObject(activejob, Realm.BSON.ObjectId(route.params.id));
   const task = job.job.tasks.filter((obj) => obj.name === item.name)[0];
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
+  const { user } = useSelector((state) => state);
 
   const status =
     item.status === "Pending" || item.status == ""
@@ -180,7 +181,7 @@ export default function DetailsCard({ item, id }) {
           style={[styles.text_md2, { fontSize: actuatedNormalize(14) }]}
           className='text-primary'
         >
-          {item.name}
+          {user.role !== "Client" ? item.name : `Task:${index + 1}`}
         </Text>
         <Text
           style={[styles.text_sm, { fontSize: actuatedNormalize(12) }]}

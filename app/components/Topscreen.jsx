@@ -89,7 +89,7 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
         className='px-[4vw]  flex-row items-center max-h-max  justify-center border- border-white mt-[2vh]  relative flex  rounded-bl-[35px]'
       >
         <Menu />
-        <View className='absolute left-[5vw]' id='LEFT_OPTION'>
+        <View className='absolute   left-[3vw]' id='LEFT_OPTION'>
           <TouchableOpacity
             className={`${menu && "relative "}`}
             onPress={route.name == "taskman" ? toggleMenu : back}
@@ -119,7 +119,7 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
             style={[
               styles.text_md,
               {
-                fontSize: actuatedNormalize(20),
+                fontSize: actuatedNormalize(16),
                 // lineHeight: actuatedNormalizeVertical(28),
               },
             ]}
@@ -142,7 +142,7 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
           )}
         </View>
         {user.role !== "Client" && (
-          <View className='absolute right-[5vw]'>
+          <View className='absolute right-[3vw]'>
             <Fragment key={"RIGHT_OPTION"}>
               {route.name == "tasks" || route.name == "activetasks" ? (
                 <TouchableOpacity onPress={Edit}>

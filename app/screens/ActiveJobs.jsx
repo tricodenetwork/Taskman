@@ -6,9 +6,11 @@ import SearchComponent from "../components/SearchComponent";
 import JobDetails from "../components/JobDetails";
 import LowerButton from "../components/LowerButton";
 import { setFilter } from "../store/slice-reducers/Formslice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 export default function ActiveJobs({ navigation }) {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state);
+  const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
 
   useEffect(() => {
     dispatch(setFilter("Job"));
@@ -30,12 +32,17 @@ export default function ActiveJobs({ navigation }) {
           <JobDetails />
         </View>
       </View>
-      <LowerButton
-        navigate={() => {
-          navigation.navigate("ActivateJob");
-        }}
-        text={"Activate"}
-      />
+      {user.role !== "Client" && (
+        <LowerButton
+          disabled={isWeekend || !isAllowedTime ? true : false}
+          navigate={() => {
+            navigation.navigate("ActivateJob");
+          }}
+          text={
+            isWeekend || !isAllowedTime ? "Outside working hours" : "Activate"
+          }
+        />
+      )}
     </Background>
   );
 }

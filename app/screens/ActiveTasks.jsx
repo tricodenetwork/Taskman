@@ -33,6 +33,7 @@ import SelectComponent from "../components/SelectComponent";
 import { Account } from "../models/Account";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentTask, setHandler } from "../store/slice-reducers/ActiveJob";
+import { setFilter } from "../store/slice-reducers/Formslice";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -53,20 +54,13 @@ export default function ActiveTasks({ navigation }) {
     Realm.BSON.ObjectId(route.params.id)
   );
   const [task, setTask] = useState(job.job.tasks);
-  const value = job.job.tasks.filtered(`name == $0 `, edit.name);
   const Accounts = useQuery(Account);
   const { currenttask, handler } = useSelector((state) => state.ActiveJob);
   const { user } = useSelector((state) => state);
   const foreignSupervisor = job.supervisor !== user.name ?? true;
+  const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
-
-  useEffect(() => {
-    setEdit({ name: "", duration: "" });
-    return () => {
-      setRefreshing(false);
-    };
-  }, [refreshing, modalVisible]);
 
   const assignNextTask = useCallback(() => {
     // Perform the necessary actions to assign the next task and handler
@@ -97,113 +91,13 @@ export default function ActiveTasks({ navigation }) {
     setModalVisible(false);
   }, [realm, currenttask, handler]);
 
-  const addTask = useCallback(
-    (item) => {
-      if (item.name == "") {
-        alert("Name cannot be empty");
-        return;
-      }
-      const index = job.job.tasks.findIndex((obj) => obj.name == item.name);
-
-      if (value.length !== 0) {
-        realm.write(() => {
-          if (item.name)
-            job.job.tasks.map((task) => {
-              const { name, duration } = task;
-
-              if (name == edit.name && duration == edit.duration) {
-                task.name = item.name;
-                task.duration = item.duration;
-                alert("Task edited successfully!");
-
-                return;
-              }
-            });
-        });
-      } else if (index == -1) {
-        realm.write(() => {
-          job.job.tasks.push(item);
-          alert("Task added successfully!");
-        });
-      } else {
-        alert("Task already exist");
-        return;
-      }
-
-      setTask(job.job.tasks);
-    },
-    [realm, edit]
-  );
-  const deleteTask = useCallback(() => {
-    realm.write(() => {
-      // Alternatively if passing the ID as the argument to handleDeleteTask:
-      // realm?.delete(value);
-
-      const index = job.job.tasks.findIndex(
-        (obj) => obj.name == edit.name && obj.duration == edit.duration
-      );
-      // setTask(job.job.tasks);
-      console.log(index);
-
-      if (index !== -1) {
-        job.job.tasks.splice(index, 1);
-        alert("Task deleted successfully!");
-
-        setTask(job.job.tasks);
-      }
-    });
-  }, [realm, edit]);
-  const reArrange = useCallback(
-    (array) => {
-      if (!array) {
-        return;
-      }
-      realm.write(() => {
-        job.job.tasks = array;
-      });
-    },
-    [realm]
-  );
-
-  const render = ({ item }) => {
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          setEdit({ name: item.name, duration: item.duration });
-          setName(item.name);
-          setDurations(item.duration);
-          const value = job.job.tasks.filtered(
-            `name == $0 AND duration == $1`,
-            item.name,
-            item.duration
-          );
-          console.log(value);
-        }}
-      >
-        <View
-          style={{
-            backgroundColor:
-              edit.name == item.name && edit.duration == item.duration
-                ? "pink"
-                : "transparent",
-          }}
-          className='flex mb-1 border-b-[.5px] py-[1vh] border-b-primary_light  flex-row'
-          key={item.name}
-        >
-          <Text style={styles.text_sm} className='w-[50%] text-left text-white'>
-            {item.name}
-          </Text>
-          <Text style={styles.text_sm} className='w-[50%] text-white'>
-            {`${item.duration} hrs`}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  useEffect(() => {
+    dispatch(setFilter("Status"));
+  });
 
   //----------------------------------------------------RENDERED COMPONENT
   return (
-    <Background>
+    <Background bgColor='min-h-screen'>
       <Topscreen
         Edit={() => {
           navigation.navigate("ActivateJob", {
@@ -220,7 +114,7 @@ export default function ActiveTasks({ navigation }) {
       '
       >
         <View className='mb-1'>
-          <SearchComponent />
+          <SearchComponent filterItems={["Status"]} />
         </View>
         <View>
           <TaskDetails
@@ -234,11 +128,17 @@ export default function ActiveTasks({ navigation }) {
       </View>
       {user.role !== "Client" && (
         <LowerButton
-          disabled={foreignSupervisor}
+          disabled={
+            foreignSupervisor || isWeekend || !isAllowedTime ? true : false
+          }
           navigate={() => {
             setModalVisible(true);
           }}
-          text={"Assign Task"}
+          text={
+            isWeekend || !isAllowedTime
+              ? "Outside working hour!"
+              : "Assign Task"
+          }
         />
       )}
       <Modal visible={modalVisible}>

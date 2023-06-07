@@ -13,6 +13,7 @@ import { chatroom, chats, user } from "../models/Chat";
 import { log } from "react-native-reanimated";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { Motion } from "@legendapp/motion";
+import { activejob } from "../models/Task";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -21,7 +22,8 @@ export default function MessageScreen({ navigation }) {
   const [visible, setVisible] = useState(false);
   const realm = useRealm();
   const { user } = useSelector((state) => state);
-  const { ActiveJob } = useSelector((state) => state);
+  // const { ActiveJob } = useSelector((state) => state);
+  const ActiveJob = useQuery(activejob).filtered(`matNo == $0`, user._id);
   const contacts =
     user.role == "Handler" || user.role == "Supervisor"
       ? useQuery(Account).filtered(
@@ -31,7 +33,7 @@ export default function MessageScreen({ navigation }) {
         )
       : useQuery(Account).filtered(
           `role == "Supervisor" AND name == $0`,
-          ActiveJob.supervisor
+          ActiveJob[0].supervisor
         );
   const allChats = useQuery(chats);
   const chatrooms = useQuery("chatroom").filtered(

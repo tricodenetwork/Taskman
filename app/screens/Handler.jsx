@@ -32,7 +32,7 @@ export default function Handler({ navigation }) {
     let pendingCount = 0;
 
     tasksArray.forEach((taskObj) => {
-      taskObj.job.tasks.forEach((task) => {
+      taskObj.job?.tasks.forEach((task) => {
         if (task.handler === handlerName) {
           if (task.status === "Completed") {
             completedCount++;

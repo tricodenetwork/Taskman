@@ -71,7 +71,8 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
         />
       }
       data={taskdata}
-      renderItem={({ item, drag, isActive }) => {
+      renderItem={({ item, drag, isActive, getIndex }) => {
+        // console.log(getIndex());
         const { name, id, job, matNo, supervisor, handler, status } = item;
         return (
           <ScaleDecorator>
@@ -89,7 +90,7 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
                     matNo: matNo,
                     supervisor: supervisor,
                     id: id,
-                    job: job,
+                    job: job.name,
                     handler: handler,
                     status: status,
                   });
@@ -108,8 +109,9 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
                     <DetailsCard
                       isActive={isActive}
                       id={jobId}
+                      index={getIndex()}
                       // name={item.name}
-                      duration={item.duration}
+                      // duration={item.duration}
                       item={item}
                     />
                   ) : route.name == "mytasks" ? (

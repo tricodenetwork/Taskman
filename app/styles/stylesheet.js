@@ -72,11 +72,11 @@ export const styles = StyleSheet.create({
   text: {
     // letterSpacing: 1.25,
     fontFamily: "AxiformaBold",
-    fontSize: actuatedNormalize(20),
+    fontSize: actuatedNormalize(17),
   },
   text_md: {
     fontFamily: "AxiformaMedium",
-    fontSize: actuatedNormalize(16),
+    fontSize: actuatedNormalize(14),
   },
   text_mdhandler: {
     fontFamily: "AxiformaMedium",
@@ -84,18 +84,18 @@ export const styles = StyleSheet.create({
   text_md2: {
     fontFamily: "AxiformaSemiBold",
     fontWeight: "600",
-    fontSize: actuatedNormalize(16),
+    fontSize: actuatedNormalize(14),
   },
   text_tiny: {
     fontFamily: "AxiformaThin",
     fontSize: actuatedNormalize(10),
-    lineHeight: actuatedNormalize(18),
+    lineHeight: actuatedNormalizeVertical(18),
     // fontWeight:'400'
   },
   text_sm: {
     fontFamily: "AxiformaRegular",
     fontSize: actuatedNormalize(14),
-    lineHeight: actuatedNormalize(20),
+    lineHeight: actuatedNormalizeVertical(22),
     // fontWeight:'400'
   },
   text_sm2: {

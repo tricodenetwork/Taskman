@@ -55,6 +55,7 @@ const ActivateJob = ({ navigation }) => {
   const handlers = useQuery(Account).filtered(`role == "Handler"`);
   const { visible, visible2, visible3 } = useSelector((state) => state.app);
   const { ActiveJob } = useSelector((state) => state);
+  const { category } = useSelector((state) => state.user);
   const oid = user.identities[0].id;
   const cleanedOid = oid.replace(/[^0-9a-fA-F]/g, "");
   const supervisor = realm.objectForPrimaryKey(
@@ -65,24 +66,25 @@ const ActivateJob = ({ navigation }) => {
     useQuery("account").filtered(`name == $0 AND role == "Handler"`, handler)[0]
       ?.pushToken ?? "";
 
-  const { matNo, dept, handler, job, email, tasks, id } = useSelector(
+  const { matNo, dept, handler, job, email, currenttask, id } = useSelector(
     (state) => state.ActiveJob
   );
+  const clientExist = useObject("client", matNo);
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
 
-  // useEffect(() => {
-  //   if (route.params) {
-  //     const useThis = realm.objectForPrimaryKey(
-  //       "activejob",
-  //       Realm.BSON.ObjectId(route.params?.id)
-  //     );
-  //     useThis && dispatch(Replace(useThis));
-  //   } else {
-  //     dispatch(Replace());
-  //     return;
-  //   }
-  // }, [route.params]);
+  useEffect(() => {
+    if (route.params) {
+      const useThis = realm.objectForPrimaryKey(
+        "activejob",
+        Realm.BSON.ObjectId(route.params?.id)
+      );
+      useThis && dispatch(Replace(useThis));
+    } else {
+      dispatch(Replace());
+      return;
+    }
+  }, [route.params]);
 
   const EditActiveJob = useCallback(
     (item) => {
@@ -124,6 +126,17 @@ const ActivateJob = ({ navigation }) => {
         alert("No supervisor");
         return;
       }
+
+      if (clientExist) {
+        alert("Client Exists already");
+        return;
+      } else {
+        realm.write(() => {
+          const user = { email: item.email, _id: item.matNo };
+          return new client(realm, user);
+        });
+      }
+
       realm.write(() => {
         try {
           const { tasks, ...rest } = item;
@@ -145,11 +158,6 @@ const ActivateJob = ({ navigation }) => {
         } catch (error) {
           console.log({ error, msg: "Error writing to realm" });
         }
-      });
-
-      realm.write(() => {
-        const user = { email: item.email, _id: item.matNo };
-        return new client(realm, user);
       });
 
       sendClientDetails(item.email, item);
@@ -365,7 +373,7 @@ const ActivateJob = ({ navigation }) => {
                       style={{ height: 200 }}
                       data={handlers}
                       renderItem={({ item }) =>
-                        item.role === "Handler" && (
+                        item.category === category && (
                           <TouchableOpacity
                             onPress={() => {
                               dispatch(setHandler(item.name));
@@ -429,7 +437,12 @@ const ActivateJob = ({ navigation }) => {
             disabled={
               route.params
                 ? false
-                : matNo === "" || dept === "" || handler === "" || job === ""
+                : matNo === "" ||
+                  dept === "" ||
+                  handler === "" ||
+                  job === "" ||
+                  email === "" ||
+                  currenttask == ""
                 ? true
                 : false
             }

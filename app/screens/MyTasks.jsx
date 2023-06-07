@@ -43,7 +43,8 @@ export default function MyTasks({ navigation }) {
   const { user } = useSelector((state) => state);
 
   const myTasks = ActiveJobs.map((job) => {
-    const assigned = job.job.tasks.filter((obj) => obj.handler === user.name);
+    const assigned =
+      job.job?.tasks.filter((obj) => obj.handler === user.name) ?? [];
     assigned.map((obj) => {
       obj.id = job._id.toString();
       obj.job = job.job;

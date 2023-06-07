@@ -14,6 +14,7 @@ import { Completed } from "../api/Functions";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AccountRealmContext } from "../models";
 import { millisecondSinceStartDate } from "../api/test";
+import { useSelector } from "react-redux";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
