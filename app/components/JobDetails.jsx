@@ -44,7 +44,6 @@ export default function JobDetails({ onPress }) {
     } else {
       setData(client);
     }
-    // console.log(activeJobs);
     return () => {
       setRefreshing(false);
     };
@@ -66,7 +65,6 @@ export default function JobDetails({ onPress }) {
           : item[col] && item[col].toLowerCase().includes(search.toLowerCase())
       )}
       renderItem={({ item }) => {
-        // console.log(item[col].name);
         return (
           <TouchableOpacity
             activeOpacity={0.9}

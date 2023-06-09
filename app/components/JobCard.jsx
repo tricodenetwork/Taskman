@@ -39,8 +39,6 @@ export default function JobCard({ isActive, id, name, item }) {
 
   const convert = convertToMinutes(sumAll);
   const sum = formatDuration(convert);
-  // const sum = { days: 19, hours: 3, minutes: 45 };
-  // console.log(item);
 
   return (
     <View
@@ -104,4 +102,3 @@ export default function JobCard({ isActive, id, name, item }) {
     </View>
   );
 }
-;

@@ -30,6 +30,7 @@ export default function Accounts({ navigation }) {
         </View>
       </View>
       <LowerButton
+        style={"w-[90vw]"}
         navigate={() => {
           navigation.navigate("CreateAccount");
         }}

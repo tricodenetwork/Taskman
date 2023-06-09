@@ -4,20 +4,12 @@
     "slug": "manager",
     "version": "1.0.0",
     "assetBundlePatterns": ["**/*"],
-    "icon": "./assets/icon.png",
     "android": {
       "package": "tasks.uniben.vic",
       "googleServicesFile": "./android/app/google-services.json",
-      "softwareKeyboardLayoutMode": "pan",
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+      "softwareKeyboardLayoutMode": "pan"
     },
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "cover"
-    },
+
     "extra": {
       "eas": {
         "projectId": "8e39c5ba-8a9b-44b4-8b67-00fe923da1c6"

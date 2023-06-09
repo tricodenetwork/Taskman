@@ -25,6 +25,8 @@ module.exports = {
         Handler: "rgba(242, 153, 74, 0.15)",
         Handler2: "rgba(242, 153, 74, 0.7)",
         Handler3: "rgba(242, 153, 74, 1)",
+        Secondary: "#FEFAE0",
+        Gold: "#F3C969",
       },
     },
   },

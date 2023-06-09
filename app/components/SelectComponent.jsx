@@ -77,17 +77,19 @@ export default function SelectComponent({
           className={`${inputStyles} bg-slate-300  rounded-sm h-10`}
         />
         <View className='absolute  z-[100] right-[1vw]'>
-          <TouchableOpacity
-            onPress={() => {
-              setVisible(!visible);
-            }}
-          >
-            <AntDesign
-              name='caretdown'
-              size={actuatedNormalize(15)}
-              color='#004343'
-            />
-          </TouchableOpacity>
+          {data && (
+            <TouchableOpacity
+              onPress={() => {
+                setVisible(!visible);
+              }}
+            >
+              <AntDesign
+                name='caretdown'
+                size={actuatedNormalize(15)}
+                color='#004343'
+              />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>

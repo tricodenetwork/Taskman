@@ -20,30 +20,6 @@ import { PermissionsAndroid } from "react-native";
 import { StorageAccessFramework } from "expo-file-system";
 import { useEffect } from "react";
 
-async function checkExternalStoragePermissions() {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      {
-        title: "External Storage Permission",
-        message: "Your app needs access to external storage.",
-        buttonPositive: "OK",
-        buttonNegative: "Cancel",
-      }
-    );
-
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log("External storage permission granted.");
-      // Perform file operations or access external storage here
-    } else {
-      console.log("External storage permission denied.");
-      // Handle permission denial case
-    }
-  } catch (error) {
-    console.log("Error checking external storage permission:", error);
-  }
-}
-
 // Call the function to check permissions
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
@@ -137,7 +113,6 @@ export default function Stats() {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      console.log("File created and base64 data written successfully");
       console.log("PDF file saved:", uri);
     } catch (e) {
       console.log("Error:", e);
@@ -237,9 +212,7 @@ export default function Stats() {
         ListFooterComponent={
           <OdinaryButton
             navigate={() => {
-              generatePDF(handlerTaskStats).catch((error) =>
-                console.log("Error generating PDF:", error)
-              );
+              generatePDF(handlerTaskStats);
             }}
             text='Print'
             style={"bg-Handler3"}

@@ -35,24 +35,29 @@ export default function HandlerCard({ item }) {
       : item.status === "Completed"
       ? "#006400"
       : null;
-
   const { days, hours, minutes } = item.duration;
-  const milliseconds =
+  const taskDuration =
     days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
 
   useEffect(() => {
     let interval = null;
     // let newTargetTime = Date.now(); // Initialize newTargetTime outside the interval
 
-    function calculateRemainingTime(targetTime) {
+    function calculateRemainingTime(duration) {
       // Check if the task is completed
       if (item.status == "Completed") {
         clearInterval(interval);
         return;
       }
       let countDownTimer;
+      let timeSpent = item.error
+        ? item.completedIn.getTime() +
+          task.error +
+          millisecondSinceStartDate(item.inProgress)
+        : millisecondSinceStartDate(item.inProgress);
+
       // Calculate the remaining time in milliseconds
-      countDownTimer = targetTime - millisecondSinceStartDate(item.inProgress);
+      countDownTimer = duration - timeSpent;
 
       // Calculate the remaining days, hours, minutes, and seconds
 
@@ -84,23 +89,23 @@ export default function HandlerCard({ item }) {
         return;
       }
 
-      const targetTime = milliseconds;
-
       // Set up the interval to update the remaining time every second
-      interval = setInterval(calculateRemainingTime(targetTime), 1000);
+      interval = setInterval(() => {
+        calculateRemainingTime(taskDuration);
+      }, 1000);
     }
 
     // Call calculateInterval when the component mounts during working hours
     !isWeekend & isAllowedTime &&
       calculateInterval(item.duration, item.inProgress, item.completedIn);
 
-    calculateRemainingTime(milliseconds);
+    calculateRemainingTime(taskDuration);
 
     // Clear the interval when the component is unmounted
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [item.inProgress]);
   return (
     // <ActivityIndicator />
     <View

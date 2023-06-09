@@ -9,8 +9,12 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
-import { actuatedNormalizeVertical, styles } from "../styles/stylesheet";
-import { FontAwesome5 } from "@expo/vector-icons";
+import {
+  actuatedNormalize,
+  actuatedNormalizeVertical,
+  styles,
+} from "../styles/stylesheet";
+import { FontAwesome } from "@expo/vector-icons";
 import LowerButton from "../components/LowerButton";
 import SearchComponent from "../components/SearchComponent";
 import DetailsCard from "../components/DetailsCard";
@@ -42,8 +46,13 @@ export default function Jobs({ navigation }) {
 
   const addCat = useCallback(
     (item) => {
-      if (item == "") {
+      if (item.name == "") {
         alert("Name cannot be empty");
+        return;
+      }
+      const sameName = Cat.filtered(`name == $0`, item.name)[0]?.name ?? "";
+      if (sameName !== "") {
+        alert(`${sameName} alreaddy exist `);
         return;
       }
 
@@ -61,33 +70,19 @@ export default function Jobs({ navigation }) {
     },
     [realm, edit]
   );
-  const editCat = useCallback(
-    (item) => {
-      if (item.name == "") {
-        alert("Name cannot be empty");
-        return;
-      }
 
-      realm.write(() => {
-        const value = realm.objectForPrimaryKey("category", item.id);
-      });
-    },
-    [realm]
-  );
   const deleteCat = useCallback(
     (item) => {
       if (edit.name == "") {
-        alert("Name cannot be empty");
+        alert("No name to delete");
         return;
       }
 
       realm.write(() => {
-        const value = realm.objectForPrimaryKey(
-          "category",
-          Realm.BSON.ObjectId(edit.id)
-        );
+        const value = Cat.filtered(`name ==$0`, edit.name)[0];
         realm.delete(value);
-        alert("Category deleted!s");
+        alert("Deleted!!");
+        setEdit({ name: "" });
       });
     },
     [realm]
@@ -99,25 +94,39 @@ export default function Jobs({ navigation }) {
   }, []);
 
   const render = ({ item }) => {
+    const highlight =
+      edit.name == item.name ? "rgba(200,60,150,.4)" : "transparent";
+
     return (
       <TouchableOpacity
         onPress={() => {
-          setEdit({ name: item.name, id: item._id });
           setName(item.name);
+          setEdit({ name: item.name, id: item._id.toString() });
         }}
       >
         <View
           style={{
-            backgroundColor:
-              edit.name == item.name && edit.id == item._id.toString()
-                ? "pink"
-                : "transparent",
+            backgroundColor: highlight,
           }}
-          className='flex mb-1 border-b-[.5px] py-[1vh] border-b-primary_light  flex-row'
+          className='flex mb-1 pl-[2vw] border-b-[.5px] px-[1vw] py-[1vh] justify-between border-b-primary_light  flex-row'
         >
-          <Text style={styles.text_sm} className='w-[50%] text-left text-white'>
+          <Text
+            style={styles.text_sm}
+            className='w-[50%]  text-left text-white'
+          >
             {item.name}
           </Text>
+          <TouchableOpacity onPress={() => setEdit({ name: "" })}>
+            {edit.name == item.name && (
+              <View className=''>
+                <FontAwesome
+                  name='close'
+                  size={actuatedNormalize(17)}
+                  color='gold'
+                />
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );
@@ -186,9 +195,10 @@ export default function Jobs({ navigation }) {
               style={[styles.Pcard]}
             >
               <OdinaryButton
-                text={"ADD"}
+                text={edit.name !== "" ? "EDIT" : "ADD"}
                 navigate={() => {
                   addCat({ name: name });
+                  setEdit({ name: "" });
                 }}
                 style={"mt-5 relative bg-[#E59F71] left-[15%]"}
               />
@@ -220,7 +230,11 @@ export default function Jobs({ navigation }) {
               style={{ height: "55%" }}
             />
           </View>
-          <LowerButton text={"Done"} navigate={() => setModalVisible(false)} />
+          <LowerButton
+            style={"w-[90vw]"}
+            text={"Done"}
+            navigate={() => setModalVisible(false)}
+          />
         </View>
       </Modal>
     </Background>

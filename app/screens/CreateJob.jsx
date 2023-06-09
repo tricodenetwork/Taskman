@@ -60,7 +60,7 @@ export default function CreateJob({ navigation }) {
       dispatch(setName(job.name));
       dispatch(setCategory(job.category));
     } else {
-      dispatch(setName(""))
+      dispatch(setName(""));
       return;
     }
   };
@@ -98,7 +98,7 @@ export default function CreateJob({ navigation }) {
       realm.write(() => {
         return new jobber(realm, item);
       });
-      alert("New Job Created!");
+      alert("New Job Created! 👷🏽‍♂️");
     },
     [realm]
   );
@@ -167,13 +167,13 @@ export default function CreateJob({ navigation }) {
                     </Motion.View>
                   )}
                   <TextInput
-                    defaultValue={category.name}
+                    defaultValue={category?.name}
                     editable={false}
                     style={[
                       styles.averageText,
                       { color: "black", height: actuatedNormalizeVertical(50) },
                     ]}
-                    value={Job.category.name}
+                    value={Job.category?.name}
                     className='w-[65vw] bg-slate-300  rounded-sm h-10'
                   />
                 </View>
@@ -194,6 +194,7 @@ export default function CreateJob({ navigation }) {
             </View>
             <LowerButton
               textStyle={"text-slate-200"}
+              style={"w-[90vw]"}
               disabled={
                 route.params
                   ? false

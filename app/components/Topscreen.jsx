@@ -40,7 +40,6 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
     nav.goBack();
   };
   const id = route.params ? route.params.id : null;
-  // console.log(route.params ? route.params.id : null);
 
   const toggleMenu = () => {
     dispatch(setMenu());
@@ -84,9 +83,43 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
+      {visible ? (
+        <TouchableOpacity
+          className='bg-primary_light rounded-2xl self-center absolute top-[5vh] justify-center w-[70%] h-[35%]'
+          activeOpacity={1}
+        >
+          <Motion.View
+            initial={{ x: -500 }}
+            animate={{ x: 0 }}
+            transition={{ type: "spring", stiffness: 100 }}
+            className='justify-center h-full  w-full  flex self-center'
+          >
+            <Text style={styles.text_sm} className='text-center mb-2'>
+              Press Ok to confirm
+            </Text>
+            <OdinaryButton
+              style={"rounded-sm mt-4 bg-primary"}
+              navigate={() => {
+                route.name == "CreateJob"
+                  ? deleteJob() & nav.navigate("jobs")
+                  : route.name == "ActivateJob"
+                  ? del() & nav.navigate("activeJobs")
+                  : route.name == "CreateAccount"
+                  ? deleteAccount() &
+                    console.log("deleted account sucessfully") &
+                    nav.navigate("accounts")
+                  : null;
+                setVisible(!visible);
+              }}
+              text={"OK"}
+            />
+          </Motion.View>
+        </TouchableOpacity>
+      ) : null}
+      {children}
       <View
         id='HEADER_NAV'
-        className='px-[4vw]  flex-row items-center max-h-max  justify-center border- border-white mt-[2vh]  relative flex  rounded-bl-[35px]'
+        className='px-[4vw] absolute top-0  flex-row items-center max-h-max  justify-center  w-full border-white mt-[2vh]  flex  rounded-bl-[35px]'
       >
         <Menu />
         <View className='absolute   left-[3vw]' id='LEFT_OPTION'>
@@ -114,13 +147,13 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
             )}
           </TouchableOpacity>
         </View>
-        <View id='MIDDLE_OPTION' className='self-center w-[40%]'>
+        <View id='MIDDLE_OPTION' className='self-center   w-[60%]'>
           <Text
             style={[
               styles.text_md,
               {
                 fontSize: actuatedNormalize(16),
-                // lineHeight: actuatedNormalizeVertical(28),
+                lineHeight: actuatedNormalizeVertical(28),
               },
             ]}
             className='text-white   text-center'
@@ -183,66 +216,6 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
           </View>
         )}
       </View>
-      {visible ? (
-        <TouchableOpacity
-          className='bg-primary_light rounded-2xl self-center absolute top-[5vh] justify-center w-[70%] h-[35%]'
-          activeOpacity={1}
-        >
-          <Motion.View
-            initial={{ x: -500 }}
-            animate={{ x: 0 }}
-            transition={{ type: "spring", stiffness: 100 }}
-            className='justify-center h-full  w-full  flex self-center'
-          >
-            <Text style={styles.text_sm} className='text-center mb-2'>
-              Press Ok to confirm
-            </Text>
-            <OdinaryButton
-              style={"rounded-sm mt-4 bg-primary"}
-              navigate={() => {
-                route.name == "tasks"
-                  ? deleteTasks(id).then((res) => {
-                      console.log(res, "deleted task sucessfully");
-                    })
-                  : route.name == "CreateJob"
-                  ? deleteJob() & nav.navigate("jobs")
-                  : route.name == "ActivateJob"
-                  ? del() & nav.navigate("activeJobs")
-                  : route.name == "CreateAccount"
-                  ? deleteAccount() &
-                    console.log("deleted account sucessfully") &
-                    nav.navigate("accounts")
-                  : null;
-                setVisible(!visible);
-              }}
-              text={"OK"}
-            />
-          </Motion.View>
-        </TouchableOpacity>
-      ) : null}
-      {children}
-      {notify ? (
-        <Motion.View
-          initial={{ x: 500 }}
-          animate={{ x: 0 }}
-          id='NOTIFICATION_MENU'
-          style={([], { borderRadius: actuatedNormalize(10) })}
-          className='h-[97vh] z-[999] absolute flex py-[2vh] px-[2vw] top-[3vh] right-0 w-[65%] bg-[#69DC9E]'
-        >
-          <View className='self-end mb-[2vh]'>
-            <TouchableOpacity onPress={toggleNotifications}>
-              <Ionicons
-                name='ios-close'
-                color={"darkgreen"}
-                size={actuatedNormalize(25)}
-              />
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity>
-            <Text style={[styles.text_sm]}>You have just recieved a Task!</Text>
-          </TouchableOpacity>
-        </Motion.View>
-      ) : null}
     </LinearGradient>
   );
 };

@@ -109,10 +109,10 @@ export default function DetailsCard({ item, id, index }) {
         return;
       }
 
-      const targetTime = milliseconds;
-
       // Set up the interval to update the remaining time every second
-      interval = setInterval(calculateRemainingTime(targetTime), 1000);
+      interval = setInterval(() => {
+        calculateRemainingTime(milliseconds);
+      }, 1000);
     }
 
     // Call calculateInterval when the component mounts during working hours
@@ -125,7 +125,7 @@ export default function DetailsCard({ item, id, index }) {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [item.inProgress]);
 
   return (
     <View

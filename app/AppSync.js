@@ -73,8 +73,6 @@ async function registerForPushNotificationsAsync() {
     }
 
     token = (await Notifications.getExpoPushTokenAsync()).data;
-
-    console.log(token);
   } else {
     alert("Must use physical device for Push Notifications");
   }
@@ -139,10 +137,6 @@ export const AppSync = () => {
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
       });
-    console.log("appSync");
-    console.log(realm.path);
-
-    // sendPushNotification(expoPushToken, "Error in Task");
 
     return () => {
       Notifications.removeNotificationSubscription(

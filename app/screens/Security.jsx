@@ -17,6 +17,8 @@ export default function Security() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
+  const status = Account.password == oldPassword;
+
   const updatePassword = () => {
     if (Account.password !== oldPassword) {
       alert("Please input correct Password");
@@ -27,6 +29,7 @@ export default function Security() {
         }
         Account.password = newPassword;
       });
+      alert("Password changed 🔑");
     }
   };
 
@@ -51,6 +54,7 @@ export default function Security() {
         />
       </View>
       <OdinaryButton
+        disabled={!status}
         navigate={updatePassword}
         // disabled={Account.password == oldPassword}
         text={"Update"}

@@ -47,8 +47,6 @@ export default function ChatScreen() {
       }
     };
   }, []);
-  // console.log(Array.isArray(message));
-  // console.log(roomId);
 
   const handleNewMessages = () => {
     // Handle new messages received from the Realm DB

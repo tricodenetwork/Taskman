@@ -10,15 +10,15 @@ const LowerButton = ({
   textStyle = " text-slate-200",
 }) => {
   return (
-    <View className='absolute bottom-[2%] self-center  mx-auto'>
+    <View className={`absolute bottom-[2%] ${style} self-center  mx-auto`}>
       {
         <TouchableOpacity
           style={{ opacity: disabled ? 0.5 : 1 }}
           disabled={disabled}
           onPress={navigate}
-          className={`bg-slate-900 ${style} self-center rounded-lg w-[90vw] py-2`}
+          className={`bg-[#77E6B6] ${style} self-center rounded-lg  py-2`}
         >
-          <Text style={styles.text_md2} className={`text-center ${textStyle}`}>
+          <Text style={styles.text_md2} className={`text-center text-Blue`}>
             {text}
           </Text>
         </TouchableOpacity>

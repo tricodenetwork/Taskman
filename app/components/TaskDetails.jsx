@@ -11,16 +11,18 @@ import { useDispatch, useSelector } from "react-redux";
 import DraggableFlatList, {
   ScaleDecorator,
 } from "react-native-draggable-flatlist";
-import { RefreshControl } from "react-native-gesture-handler";
 import DetailsCard from "./DetailsCard";
 import { AccountRealmContext } from "../models";
 import HandlerCard from "./HandlerCard";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
-export default function TaskDetails({ jobId, reArrange, taskdata }) {
-  // const taskdata = realm.objectForPrimaryKey("job", jobId);
-  // console.log(taskdata);
+export default function TaskDetails({
+  jobId,
+  reArrange,
+  taskdata,
+  foreignSupervisor,
+}) {
   const [data, setData] = useState(taskdata);
   const [refreshing, setRefreshing] = useState(false);
   const realm = useRealm();
@@ -29,31 +31,28 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { user } = useSelector((state) => state);
-  console.log(user.role);
+  // const job = realm.objectForPrimaryKey(
+  //   "activejob",
+  //   Realm.BSON.ObjectId(route.params.id)
+  // );
+  // const foreignSupervisor = job.supervisor !== user.name ?? true;
 
-  // const { tasks } = useSelector((state) => state.Job);
+  // useEffect(() => {
+  //   setData(taskdata);
 
-  // const reArrange = useCallback((array) => {
-  //   const taskArray = realm.objectForPrimaryKey("job");
-
-  //   realm.write(() => {});
-  // });
+  //   return () => {
+  //     setRefreshing(false);
+  //   };
+  // }, [isFocused, refreshing, taskdata]);
 
   useEffect(() => {
-    // getJobDetails(jobId).then((res) => {
     setData(taskdata);
-    //   dispatch(replaceTask(res.tasks));
-    // });
 
     return () => {
       setRefreshing(false);
     };
   }, [isFocused, refreshing, taskdata]);
 
-  // useEffect(() => {
-  //   setData(data);
-  //   dispatch(replaceTask(data));
-  // }, [data]);
   return (
     <DraggableFlatList
       containerStyle={{
@@ -62,17 +61,8 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
       onDragEnd={({ data }) => {
         route.name !== "mytasks" && reArrange(data);
       }}
-      refreshControl={
-        <RefreshControl
-          // refreshing={refreshing}
-          onRefresh={() => {
-            // setRefreshing(true);
-          }}
-        />
-      }
-      data={taskdata}
+      data={data}
       renderItem={({ item, drag, isActive, getIndex }) => {
-        // console.log(getIndex());
         const { name, id, job, matNo, supervisor, handler, status } = item;
         return (
           <ScaleDecorator>
@@ -94,6 +84,12 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
                     handler: handler,
                     status: status,
                   });
+
+                (route.name == "activetasks") & !foreignSupervisor &&
+                  navigation.navigate("it", {
+                    taskName: name,
+                    id: route.params.id,
+                  });
               }}
             >
               {!item.name ? (
@@ -110,17 +106,10 @@ export default function TaskDetails({ jobId, reArrange, taskdata }) {
                       isActive={isActive}
                       id={jobId}
                       index={getIndex()}
-                      // name={item.name}
-                      // duration={item.duration}
                       item={item}
                     />
                   ) : route.name == "mytasks" ? (
-                    <HandlerCard
-                      isActive={isActive}
-                      // id={jobId}
-                      // name={item.name}
-                      item={item}
-                    />
+                    <HandlerCard isActive={isActive} id={jobId} item={item} />
                   ) : (
                     <JobCard
                       isActive={isActive}

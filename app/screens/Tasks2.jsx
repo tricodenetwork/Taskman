@@ -37,17 +37,15 @@ export default function Tasks2({ navigation }) {
   const [name, setName] = useState("");
   const [edit, setEdit] = useState({ name: "", duration: "" });
   const [durations, setDurations] = useState("");
+  const { days, hours, minutes } = duration;
+
   const [refreshing, setRefreshing] = useState(false);
   const job = realm.objectForPrimaryKey(
     "job",
     Realm.BSON.ObjectId(route.params.id)
   );
   const [task, setTask] = useState(job.tasks);
-  const value = job.tasks.filtered(
-    `name == $0 AND duration == $1`,
-    edit.name,
-    edit.duration
-  );
+  const value = job.tasks.filtered(`name == $0`, edit.name);
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
 
@@ -100,11 +98,8 @@ export default function Tasks2({ navigation }) {
       // Alternatively if passing the ID as the argument to handleDeleteTask:
       // realm?.delete(value);
 
-      const index = job.tasks.findIndex(
-        (obj) => obj.name == edit.name && obj.duration == edit.duration
-      );
+      const index = job.tasks.findIndex((obj) => obj.name == edit.name);
       // setTask(job.tasks);
-      console.log(index);
 
       if (index !== -1) {
         job.tasks.splice(index, 1);
@@ -121,7 +116,6 @@ export default function Tasks2({ navigation }) {
       }
       realm.write(() => {
         // job.tasks = array;
-        console.log(typeof array);
       });
     },
     [realm]
@@ -139,7 +133,6 @@ export default function Tasks2({ navigation }) {
             item.name,
             item.duration
           );
-          console.log(value);
         }}
       >
         <View
@@ -179,7 +172,6 @@ export default function Tasks2({ navigation }) {
         text3={job.duration}
         text={job.name}
       />
-
       <View
         className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
@@ -198,6 +190,7 @@ export default function Tasks2({ navigation }) {
         </View>
       </View>
       <LowerButton
+        style={"w-[90vw]"}
         navigate={() => {
           setModalVisible(true);
         }}
@@ -229,61 +222,66 @@ export default function Tasks2({ navigation }) {
                 className='w-[65vw] bg-slate-300 mb-2 rounded-sm h-10'
               />
             </View>
-            <View className='flex items-center justify-between self-center w-[90%] flex-row'>
+            <View
+              id='DURATION_BOX'
+              className='flex items-center bottom-[5vh]  justify-between self-center w-[90%] flex-row'
+            >
               <Text className='text-Handler2' style={styles.text_md2}>
                 Duration:
               </Text>
-              <View className='flex flex-row items-center'>
-                <Text className='text-Handler2' style={[styles.text_md2]}>
-                  D
-                </Text>
-                <SelectComponent
-                  data={[...Array(20)].map((_, index) => {
-                    const obj = { name: (index + 1).toString() };
-                    return obj;
-                  })}
-                  visibleStyles='w-[15vw]'
-                  inputStyles='w-[11vw]'
-                />
+              <View className='flex flex-row w-[70%] justify-around'>
+                <View className='flex flex-row items-center'>
+                  <Text className='text-Handler2' style={[styles.text_md2]}>
+                    D
+                  </Text>
+                  <SelectComponent
+                    value={day.toString()}
+                    setData={(e) => {
+                      setDuration({ ...duration, days: e });
+                    }}
+                    data={[...Array(31)].map((_, index) => {
+                      const obj = { name: index };
+                      return obj;
+                    })}
+                    visibleStyles='w-[15vw]'
+                    inputStyles='w-[11vw]'
+                  />
+                </View>
+                <View className='flex flex-row items-center'>
+                  <Text className='text-Handler2' style={[styles.text_md2]}>
+                    H
+                  </Text>
+                  <SelectComponent
+                    value={hour.toString()}
+                    setData={(e) => {
+                      setDuration({ ...duration, hours: e });
+                    }}
+                    data={[...Array(24)].map((_, index) => {
+                      const obj = { name: index };
+                      return obj;
+                    })}
+                    visibleStyles='w-[15vw]'
+                    inputStyles='w-[11vw]'
+                  />
+                </View>
+                <View className='flex flex-row items-center'>
+                  <Text className='text-Handler2' style={[styles.text_md2]}>
+                    M
+                  </Text>
+                  <SelectComponent
+                    value={minute.toString()}
+                    setData={(e) => {
+                      setDuration({ ...duration, minutes: e });
+                    }}
+                    data={[...Array(60)].map((_, index) => {
+                      const obj = { name: index };
+                      return obj;
+                    })}
+                    visibleStyles='w-[15vw]'
+                    inputStyles='w-[11vw]'
+                  />
+                </View>
               </View>
-              <View className='flex flex-row items-center'>
-                <Text className='text-Handler2' style={[styles.text_md2]}>
-                  H
-                </Text>
-                <SelectComponent
-                  data={[...Array(24)].map((_, index) => {
-                    const obj = { name: (index + 1).toString() };
-                    return obj;
-                  })}
-                  visibleStyles='w-[15vw]'
-                  inputStyles='w-[11vw]'
-                />
-              </View>
-              <View className='flex flex-row items-center'>
-                <Text className='text-Handler2' style={[styles.text_md2]}>
-                  M
-                </Text>
-                <SelectComponent
-                  data={[...Array(60)].map((_, index) => {
-                    const obj = { name: (index + 1).toString() };
-                    return obj;
-                  })}
-                  visibleStyles='w-[15vw]'
-                  inputStyles='w-[11vw]'
-                />
-              </View>
-              {/* <TextInput
-                value={durations}
-                keyboardType='numeric'
-                style={[
-                  styles.averageText,
-                  { height: actuatedNormalizeVertical(50) },
-                ]}
-                onChangeText={(value) => {
-                  setDurations(value);
-                }}
-                className='w-[65vw] bg-slate-300 mb-2 rounded-sm h-10'
-              /> */}
             </View>
             <View className='flex flex-row' style={[styles.Pcard]}>
               <OdinaryButton
@@ -321,7 +319,11 @@ export default function Tasks2({ navigation }) {
               style={{ height: "55%" }}
             />
           </View>
-          <LowerButton text={"Done"} navigate={() => setModalVisible(false)} />
+          <LowerButton
+            style={"w-[90vw]"}
+            text={"Done"}
+            navigate={() => setModalVisible(false)}
+          />
         </View>
       </Modal>
     </Background>

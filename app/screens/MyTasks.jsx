@@ -77,7 +77,6 @@ export default function MyTasks({ navigation }) {
             item.name,
             item.duration
           );
-          console.log(value);
         }}
       >
         <View
@@ -208,7 +207,11 @@ export default function MyTasks({ navigation }) {
               style={{ height: "55%" }}
             />
           </View>
-          <LowerButton text={"Done"} navigate={() => setModalVisible(false)} />
+          <LowerButton
+            style={"w-[90vw]"}
+            text={"Done"}
+            navigate={() => setModalVisible(false)}
+          />
         </View>
       </Modal>
     </Background>

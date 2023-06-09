@@ -1,23 +1,76 @@
-import { View, Text } from "react-native";
-import React from "react";
-import { actuatedNormalize, styles } from "../styles/stylesheet";
+import { View, Text, Animated } from "react-native";
+import React, { useEffect, useRef } from "react";
+import {
+  actuatedNormalize,
+  actuatedNormalizeVertical,
+  styles,
+} from "../styles/stylesheet";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import Constants from "expo-constants";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Motion } from "@legendapp/motion";
 
 export default function Taskman({ navigation }) {
-  // const users = Realm.objects("Account");
-  // console.log(new Realm.BSON.ObjectId());
-  console.log(Constants.systemFonts);
+  // fadeAnim will be used as the value for opacity. Initial Value: 0
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const initial = () => {
+    // Will change fadeAnim value to 1 in 5 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const animate = () => {
+    // Will change fadeAnim value to 0 in 3 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 3000,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  useEffect(() => {
+    initial();
+    setTimeout(() => {
+      animate();
+    }, 1000);
+  }, []);
 
   return (
     <Background bgColor='-z-40'>
-      <Topscreen />
-      {/* <Menu /> */}
+      <Topscreen>
+        <Animated.Text
+          style={[
+            styles.text_md2,
+            {
+              fontSize: actuatedNormalize(22),
+              lineHeight: actuatedNormalizeVertical(45),
+              color: "purple",
+              borderRadius: actuatedNormalize(5),
+              opacity: fadeAnim,
+            },
+          ]}
+          className=' bg-[#FEFAE0] px-[5vw] my-auto border-[1px] bottom-[7vh] border-Supervisor2 py-[1vh] mx-auto'
+        >
+          Univeristy of Benin
+        </Animated.Text>
+        <Motion.Text
+          initial={{ x: -400 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 3 }}
+          style={[styles.text_md2]}
+          className=' text-Secondary px-[5vw] bottom-[10vh]  py-[1vh]  self-center'
+        >
+          Knowledge for Service
+        </Motion.Text>
+      </Topscreen>
       <View className='flex-1 px-[3vw] pt-[3vh] -z-40'>
         <Text className='text-primary' style={[styles.text_sm]}>
-          With organisational Task Manager, you can remotely...
+          With TaskMan, you can remotely...
         </Text>
 
         <View className='mt-[5vh] h-[30vh] flex justify-around'>
@@ -39,8 +92,14 @@ export default function Taskman({ navigation }) {
         </View>
 
         <Text
-          style={[styles.text, { fontSize: actuatedNormalize(18) }]}
-          className='absolute bottom-[5vh] bg-slate-300 -z-40 rounded-3xl px-4 py-1  text-2xl text-primary self-center'
+          style={[
+            styles.text,
+            {
+              fontSize: actuatedNormalize(18),
+              lineHeight: actuatedNormalizeVertical(30),
+            },
+          ]}
+          className='absolute bottom-[3vh]  -z-40 rounded-3xl px-4 py-1  text-2xl text-primary self-center'
         >
           Taskman
         </Text>

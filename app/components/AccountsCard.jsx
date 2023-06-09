@@ -86,7 +86,7 @@ export default function AccountsCard({ item, id }) {
           style={[styles.text_sm, { fontSize: actuatedNormalize(12) }]}
           className='text-primary'
         >
-          {item.dept ? item.dept : item.handler || "Not assigned"}
+          {item.dept}
         </Text>
       </View>
       <View
@@ -110,12 +110,12 @@ export default function AccountsCard({ item, id }) {
             : item.status == "" && "PENDING"}
         </Text>
       </View>
-      {/* <Text
+      <Text
         style={[{ fontSize: actuatedNormalize(12) }]}
         className='absolute text-Handler3 bottom-1 left-[25%]'
       >
-        Handler:{item.handler || "Not Assigned"}
-      </Text> */}
+        {item.category?.name}
+      </Text>
     </View>
   );
 }

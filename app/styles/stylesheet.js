@@ -90,12 +90,14 @@ export const styles = StyleSheet.create({
     fontFamily: "AxiformaThin",
     fontSize: actuatedNormalize(10),
     lineHeight: actuatedNormalizeVertical(18),
-    // fontWeight:'400'
+    // fontWeight: "600",
   },
   text_sm: {
     fontFamily: "AxiformaRegular",
     fontSize: actuatedNormalize(14),
     lineHeight: actuatedNormalizeVertical(22),
+    // letterSpacing: actuatedNormalize(0.5),
+
     // fontWeight:'400'
   },
   text_sm2: {

@@ -84,7 +84,7 @@ export default function Handler({ navigation }) {
             </View>
             <View
               style={{}}
-              className={`bg-primary_light absolute w-[.5px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]`}
+              className={`bg-primary_light absolute w-[.5px] opacity-40 rounded-full left-[25vw] top-[2.5vh] h-[90%]`}
             ></View>
           </View>
           <View className='relative'>
@@ -110,7 +110,7 @@ export default function Handler({ navigation }) {
             </View>
             <View
               className={
-                "bg-primary_light absolute w-[.5px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]"
+                "bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[2.5vh] h-[90%]"
               }
             ></View>
           </View>
@@ -141,7 +141,7 @@ export default function Handler({ navigation }) {
           </View>
         </View>
       </HandlerTopscreen>
-      <View className='absolute self-center pt-[3vh] top-[49vh]'>
+      <View className='flex justify-start self-center pt-[3vh]'>
         <View>
           <TouchableOpacity
             onPress={() => {
@@ -196,7 +196,7 @@ export default function Handler({ navigation }) {
           />
         </TouchableOpacity>
       </View>
-      <LowerButton navigate={handleLogout} text={"Logout"} />
+      <LowerButton style={"w-[90vw]"} navigate={handleLogout} text={"Logout"} />
     </Background>
   );
 }

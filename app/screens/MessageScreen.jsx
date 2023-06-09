@@ -10,7 +10,6 @@ import { addChat, deleteChat } from "../store/slice-reducers/ChatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { chatroom, chats, user } from "../models/Chat";
-import { log } from "react-native-reanimated";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { Motion } from "@legendapp/motion";
 import { activejob } from "../models/Task";
@@ -33,7 +32,7 @@ export default function MessageScreen({ navigation }) {
         )
       : useQuery(Account).filtered(
           `role == "Supervisor" AND name == $0`,
-          ActiveJob[0].supervisor
+          ActiveJob[0]?.supervisor
         );
   const allChats = useQuery(chats);
   const chatrooms = useQuery("chatroom").filtered(
@@ -43,7 +42,6 @@ export default function MessageScreen({ navigation }) {
 
   // Create a chat room
   const createChatRoom = (recieverId) => {
-    // console.log(recieverId);
     // Generate a unique chat room ID
     const chatRoomId = new Realm.BSON.ObjectId().toHexString();
 
@@ -100,31 +98,28 @@ export default function MessageScreen({ navigation }) {
 
             const chats = allChats.filtered(`roomId == $0`, item._id);
             const lastMessage = chats[chats.length - 1];
-            // console.log(item);
-            // console.log(lastMessage);
             return (
               <View id='SINGLE_CONTACT_MESSSAGE_BOX'>
-                {lastMessage && (
-                  <View className='h-[10vh] px-[2vw] items-center flex flex-row justify-between pt-[3vh]'>
+                {lastMessage?.text ?? "" !== "" ? (
+                  <View className='h-[10vh] px-[2vw] items-center flex flex-row justify-between pt-[1vh]'>
                     <TouchableHighlight
                       className='rounded-md p-[1vw]'
                       underlayColor={"rgba(0,0,200,.2)"}
                       onPress={() => {
-                        //   console.log(item.recieverId);
                         navigation.navigate("chats", {
                           roomId: item._id,
                         });
                       }}
                     >
                       <View className='w-[87vw] '>
-                        <Text>{name && name?.name}</Text>
-                        <Text style={[styles.text_tiny]}>
+                        <Text className=''>{name && name?.name}</Text>
+                        <Text className='' style={[styles.text_tiny]}>
                           {lastMessage.text}
                         </Text>
                       </View>
                     </TouchableHighlight>
                   </View>
-                )}
+                ) : null}
               </View>
             );
           }}
@@ -148,7 +143,6 @@ export default function MessageScreen({ navigation }) {
                       //   realm.delete(chatrooms);
                       // });
                       const roomId = createChatRoom(item._id.toHexString());
-                      // console.log(roomId);
 
                       navigation.navigate("chats", {
                         roomId: roomId,

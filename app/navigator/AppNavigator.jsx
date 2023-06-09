@@ -34,6 +34,7 @@ import Stats from "../screens/Stats";
 import Security from "../screens/Security";
 import ClientScreen from "../screens/ClientScreen";
 import { AccountRealmContext } from "../models";
+import IndividualTask from "../screens/IndividualTask";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -58,7 +59,17 @@ export const MainStack = () => {
 
   useFlipper(navRef);
   return (
-    <NavigationContainer ref={navRef}>
+    <NavigationContainer
+      onStateChange={(state) =>
+        console.log(
+          state.routes[0].name,
+          state.routes[0].params
+          // state.routes[1].name,
+          // state.routes[1].params
+        )
+      }
+      ref={navRef}
+    >
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -84,6 +95,7 @@ export const MainStack = () => {
         <Stack.Screen name='CreateAccount' component={CreateAccount} />
         <Stack.Screen name='CreateJob' component={CreateJob} />
         <Stack.Screen name='security' component={Security} />
+        <Stack.Screen name='it' component={IndividualTask} />
 
         {/* //Supervisor */}
         <Stack.Screen name='supervisor' component={Supervisor} />

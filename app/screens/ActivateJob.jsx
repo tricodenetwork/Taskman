@@ -49,19 +49,13 @@ const ActivateJob = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const route = useRoute();
   const realm = useRealm();
-  const user = useUser();
   const activeJobs = useQuery(activejob);
   const allJobs = useQuery(jobSchema);
   const handlers = useQuery(Account).filtered(`role == "Handler"`);
   const { visible, visible2, visible3 } = useSelector((state) => state.app);
   const { ActiveJob } = useSelector((state) => state);
-  const { category } = useSelector((state) => state.user);
-  const oid = user.identities[0].id;
-  const cleanedOid = oid.replace(/[^0-9a-fA-F]/g, "");
-  const supervisor = realm.objectForPrimaryKey(
-    "account",
-    Realm.BSON.ObjectId(cleanedOid)
-  ).name;
+  const { category, role, name } = useSelector((state) => state.user);
+
   const pushToken =
     useQuery("account").filtered(`name == $0 AND role == "Handler"`, handler)[0]
       ?.pushToken ?? "";
@@ -111,8 +105,6 @@ const ActivateJob = ({ navigation }) => {
               return;
             }
           });
-
-          console.log("Edited successully!");
         } catch (error) {
           console.log({ error, msg: "Error writing to realm" });
         }
@@ -122,8 +114,8 @@ const ActivateJob = ({ navigation }) => {
   );
   const activateJob = useCallback(
     (item) => {
-      if (!supervisor) {
-        alert("No supervisor");
+      if (!name || role !== "Supervisor") {
+        alert("Invalid Supervisor ❌.");
         return;
       }
 
@@ -160,7 +152,7 @@ const ActivateJob = ({ navigation }) => {
         }
       });
 
-      sendClientDetails(item.email, item);
+      // sendClientDetails(item.email, item);
       sendPushNotification(pushToken);
     },
     [realm]
@@ -237,11 +229,8 @@ const ActivateJob = ({ navigation }) => {
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           onPress={() => {
-                            // console.log(item.name);
                             dispatch(setJob(item));
-                            // dispatch(setTasks(item.tasks));
 
-                            // console.log(item.tasks);
                             dispatch(setVisible2());
                           }}
                         >
@@ -314,7 +303,6 @@ const ActivateJob = ({ navigation }) => {
                           onPress={() => {
                             dispatch(setCurrentTask(item.name));
                             dispatch(setVisible3());
-                            console.log(ActiveJob.currenttask);
                           }}
                         >
                           <Text
@@ -437,13 +425,9 @@ const ActivateJob = ({ navigation }) => {
             disabled={
               route.params
                 ? false
-                : matNo === "" ||
-                  dept === "" ||
-                  handler === "" ||
-                  job === "" ||
-                  email === "" ||
-                  currenttask == ""
-                ? true
+                : matNo === "" || dept === "" || job === "" || email === ""
+                ? //  || currenttask == ""
+                  true
                 : false
             }
             navigate={() => {
@@ -459,6 +443,7 @@ const ActivateJob = ({ navigation }) => {
               navigation.navigate("activeJobs");
             }}
             text={route.params ? "Edit" : "Activate"}
+            style={"w-[90vw]"}
           />
         </View>
       )}
@@ -467,4 +452,3 @@ const ActivateJob = ({ navigation }) => {
 };
 
 export default ActivateJob;
-  

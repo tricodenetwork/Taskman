@@ -49,8 +49,6 @@ const CreateAccount = ({ navigation }) => {
   const accounts = useQuery(Account);
   const Cat = useQuery("category");
 
-  //  console.log(item);
-
   const editAccount = useCallback(
     (user) => {
       // Alternatively if passing the ID as the argument to handleToggleTaskStatus:
@@ -66,7 +64,7 @@ const CreateAccount = ({ navigation }) => {
         account.password = user.password;
         account.role = user.role;
         account.phone = user.phone;
-        account.category.name = user.category.name;
+        account.category = user.category;
       });
 
       alert("Success!!");
@@ -92,19 +90,11 @@ const CreateAccount = ({ navigation }) => {
 
   const initialUser = () => {
     if (route.params) {
-      // const { item } = route.params;
       const item = realm?.objectForPrimaryKey(
         "account",
         Realm.BSON.ObjectId(route.params.id)
       );
-      console.log(item);
       dispatch(setUser(item));
-      // dispatch(setName(item.name));
-      // dispatch(setEmail(item.email));
-      // dispatch(setDept(item.dept));
-      // dispatch(setPassword(item.password));
-      // dispatch(setRole(item.role));
-      // dispatch(setPhone(item.phone));
     } else {
       dispatch(setUser());
     }
@@ -247,13 +237,13 @@ const CreateAccount = ({ navigation }) => {
                   </Motion.View>
                 )}
                 <TextInput
-                  defaultValue={user.category.name}
+                  defaultValue={user.category?.name}
                   editable={false}
                   style={[
                     styles.averageText,
                     { color: "black", height: actuatedNormalizeVertical(50) },
                   ]}
-                  value={user.category.name}
+                  value={user.category?.name}
                   className='w-[65vw] bg-slate-300  rounded-sm h-10'
                 />
               </View>
@@ -342,6 +332,7 @@ const CreateAccount = ({ navigation }) => {
             </View>
           </View>
           <LowerButton
+            style={"w-[90vw]"}
             disabled={
               route.params
                 ? false
@@ -365,7 +356,6 @@ const CreateAccount = ({ navigation }) => {
               setIsLoading(false);
 
               // navigation.navigate("accounts");
-              //   console.log(job.id);
             }}
             text={route.params ? "Edit" : "Create"}
           />

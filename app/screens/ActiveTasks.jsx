@@ -80,8 +80,6 @@ export default function ActiveTasks({ navigation }) {
             return;
           }
         });
-
-        console.log("Assigned successully!");
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
       }
@@ -118,6 +116,7 @@ export default function ActiveTasks({ navigation }) {
         </View>
         <View>
           <TaskDetails
+            foreignSupervisor={foreignSupervisor}
             reArrange={(e) => {
               reArrange(e);
             }}
@@ -134,9 +133,10 @@ export default function ActiveTasks({ navigation }) {
           navigate={() => {
             setModalVisible(true);
           }}
+          style={"w-[90vw]"}
           text={
             isWeekend || !isAllowedTime
-              ? "Outside working hour!"
+              ? "Outside working hours!"
               : "Assign Task"
           }
         />

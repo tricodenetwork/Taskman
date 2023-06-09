@@ -34,6 +34,7 @@ export default function ActiveJobs({ navigation }) {
       </View>
       {user.role !== "Client" && (
         <LowerButton
+          style={"w-[90vw]"}
           disabled={isWeekend || !isAllowedTime ? true : false}
           navigate={() => {
             navigation.navigate("ActivateJob");

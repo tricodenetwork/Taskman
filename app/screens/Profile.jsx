@@ -62,7 +62,11 @@ const Profile = ({ navigation }) => {
           }
         /> */}
       </View>
-      <LowerButton navigate={handleLogout} text={"Log out"} />
+      <LowerButton
+        style={"w-[90vw]"}
+        navigate={handleLogout}
+        text={"Log out"}
+      />
     </Background>
   );
 };

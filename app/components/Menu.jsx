@@ -30,7 +30,7 @@ export default function Menu() {
         initial={{ x: -100 }}
         animate={{ x: 0 }}
         transition={{ type: "spring", stiffness: 100 }}
-        className='h-[80vh]  pt-[7vh] absolute top-[-1vh] border-b-2 border-r-2 border-primary bg-white left-0 w-[60vw]'
+        className='h-[80vh]  pt-[8vh] absolute top-[-3vh] border-b-2 border-r-2 border-primary bg-white left-0 w-[60vw]'
       >
         <View className='relative w-auto z-50 h-[100%] gap-3 mx-[2vw]'>
           <TouchableOpacity

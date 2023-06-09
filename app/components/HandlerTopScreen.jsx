@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -17,7 +17,11 @@ import { Motion } from "@legendapp/motion";
 import { useRoute } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { setMenu, openNotification } from "../store/slice-reducers/Formslice";
+import {
+  setMenu,
+  openNotification,
+  setClock,
+} from "../store/slice-reducers/Formslice";
 import { AccountRealmContext } from "../models";
 import { setName, setUser } from "../store/slice-reducers/userSlice";
 import { activejob } from "../models/Task";
@@ -32,11 +36,30 @@ const HandlerTopscreen = ({ text, text2, text3, children, Edit }) => {
   const realm = useRealm();
   const { user } = useSelector((state) => state);
   // const account = useObject("account", Realm.BSON.ObjectId(id));
-  const { menu, notify } = useSelector((state) => state.app);
+  const { menu, clock } = useSelector((state) => state.app);
 
-  const toggleNotification = () => {
-    dispatch(openNotification());
-  };
+  useEffect(() => {
+    let interval = null;
+
+    function onClock() {
+      interval = setInterval(() => {
+        const times = `${new Date().getHours().toLocaleString()}:${new Date()
+          .getMinutes()
+          .toLocaleString()}`;
+        dispatch(setClock(times));
+      }, 60000);
+    }
+
+    onClock();
+    // Update the clock immediately on mount
+    const times = `${new Date().getHours().toLocaleString()}:${new Date()
+      .getMinutes()
+      .toLocaleString()}`;
+    dispatch(setClock(times));
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <LinearGradient
@@ -46,32 +69,9 @@ const HandlerTopscreen = ({ text, text2, text3, children, Edit }) => {
       end={{ x: 1, y: 1 }}
     >
       <View
-        // id='headerNav'
+        id='headerNav'
         className='px-[5vw]  justify-between flex-row items-center h-[20%]  border- border-white mt-[5vh]  relative flex'
       >
-        {/* <TouchableOpacity
-          className={`z-[500]  ${menu && "relative "}`}
-          onPress={route.name == "taskman" ? toggleMenu : onPress}
-        >
-          {route.name == "taskman" ? (
-            <Motion.View className='bg-primary_light rounded-full w-[10vw] h-[10vw] flex items-center justify-center'>
-              <Ionicons
-                // name='md-arrow-back-outline'
-                name={!menu ? "ios-menu" : "ios-close"}
-                size={25}
-                style={styles.backArrow}
-                color={!menu ? "white" : "darkgreen"}
-              />
-            </Motion.View>
-          ) : (
-            <Ionicons
-              name='md-arrow-back-outline'
-              size={25}
-              style={styles.backArrow}
-              color={!menu ? "white" : "darkgreen"}
-            />
-          )}
-        </TouchableOpacity> */}
         <View>
           <Text style={styles.headingText} className='text-white  text-left '>
             {text}
@@ -79,11 +79,17 @@ const HandlerTopscreen = ({ text, text2, text3, children, Edit }) => {
 
           <Text
             style={styles.text_sm}
-            className='text-primary_light mt-1 `  text-left'
+            className='text-primary_light mt-1 text-left'
           >
             {text3}
           </Text>
         </View>
+        <Text
+          style={[styles.text_md, { fontSize: actuatedNormalize(18) }]}
+          className='text-Gold absolute right-[5vw] mt-1 text-left'
+        >
+          {clock}
+        </Text>
       </View>
 
       {children}

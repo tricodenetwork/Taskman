@@ -166,8 +166,6 @@ function timeSpentz(dateTimeString) {
   }, m: ${minutes}, s: ${seconds}}`;
 }
 
-// console.log(timeSpentz("2023-05-30T08:00:00"));
-
 export function millisecondSinceStartDate(startDate) {
   const startDateTime = new Date(startDate);
   const currentDate = new Date();
@@ -175,6 +173,7 @@ export function millisecondSinceStartDate(startDate) {
   // Check if the start date is on a weekend
   if (startDateTime.getDay() === 6 || startDateTime.getDay() === 0) {
     alert("Start date falls on a weekend. No working hours.");
+    console.log("Start date falls on a weekend. No working hours.");
     return;
   }
 
@@ -184,6 +183,7 @@ export function millisecondSinceStartDate(startDate) {
     startDateTime.getHours() >= 16 ||
     (startDateTime.getHours() === 16 && startDateTime.getMinutes() > 0)
   ) {
+    console.log("Start time is outside working hours.");
     return;
   }
 
@@ -224,6 +224,39 @@ export function millisecondSinceStartDate(startDate) {
     }
   }
 
-  // console.log(`Milliseconds since ${startDate}: ${elapsedTime}`);
   return elapsedTime;
 }
+
+function calculateRemainingTime(countDownTimer) {
+  // Calculate the remaining days, hours, minutes, and seconds
+
+  const remainingDays = Math.floor(
+    Math.abs(countDownTimer) / (24 * 60 * 60 * 1000)
+  );
+  const remainingHours = Math.floor(
+    (Math.abs(countDownTimer) % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+  );
+  const remainingMinutes = Math.floor(
+    (Math.abs(countDownTimer) % (60 * 60 * 1000)) / (60 * 1000)
+  );
+  const remainingSeconds = Math.floor(
+    (Math.abs(countDownTimer) % (60 * 1000)) / 1000
+  );
+
+  // Add negative sign if time is elapsed
+
+  const isElapsed = countDownTimer <= 0;
+  const sign = isElapsed ? "-" : "";
+
+  // set the time variable to display on the UI
+  const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s`;
+  console.log(Timer);
+  return Timer;
+}
+
+// const test = millisecondSinceStartDate("2023-06-07T10:43:39.249Z");
+// const use = test - undefined;
+// const us = 101795429;
+// const dates = new Date(us);
+
+// console.log(dates.getTime());

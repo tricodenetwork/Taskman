@@ -105,7 +105,7 @@ export default function Supervisor() {
               style={[
                 styles.text,
                 {
-                  fontSize: actuatedNormalize(48),
+                  fontSize: actuatedNormalize(44),
                   lineHeight: actuatedNormalizeVertical(78),
                 },
               ]}
@@ -122,8 +122,7 @@ export default function Supervisor() {
               </Text>
             </View>
             <View
-              style={{}}
-              className={`bg-primary_light absolute w-[.5px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]`}
+              className={`bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]`}
             ></View>
           </View>
           <View className='relative'>
@@ -131,7 +130,7 @@ export default function Supervisor() {
               style={[
                 styles.text,
                 {
-                  fontSize: actuatedNormalize(48),
+                  fontSize: actuatedNormalize(44),
                   lineHeight: actuatedNormalizeVertical(78),
                 },
               ]}
@@ -149,7 +148,7 @@ export default function Supervisor() {
             </View>
             <View
               className={
-                "bg-primary_light absolute w-[.5px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]"
+                "bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]"
               }
             ></View>
           </View>
@@ -158,7 +157,7 @@ export default function Supervisor() {
               style={[
                 styles.text,
                 {
-                  fontSize: actuatedNormalize(48),
+                  fontSize: actuatedNormalize(44),
                   lineHeight: actuatedNormalizeVertical(78),
                 },
               ]}
@@ -180,7 +179,7 @@ export default function Supervisor() {
           </View>
         </View>
       </HandlerTopscreen>
-      <View className='absolute self-center pt-[3vh] top-[49vh]'>
+      <View className='self-center pt-[3vh]'>
         <View>
           <TouchableOpacity
             onPress={() => {
@@ -235,7 +234,11 @@ export default function Supervisor() {
           />
         </TouchableOpacity>
       </View>
-      <LowerButton navigate={handleLogout} text={"Log Out"} />
+      <LowerButton
+        style={"w-[90vw]"}
+        navigate={handleLogout}
+        text={"Log Out"}
+      />
     </Background>
   );
 }

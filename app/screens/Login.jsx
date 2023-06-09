@@ -8,9 +8,9 @@ import {
   Pressable,
   ActivityIndicator,
   Modal,
+  Image,
 } from "react-native";
 import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
@@ -22,24 +22,27 @@ import * as Updates from "expo-updates";
 import Eye from "../../assets/icons/eye.svg";
 import EyesClosed from "../../assets/icons/closed.svg";
 import Error from "../../assets/icons/error.svg";
-import { Motion } from "@legendapp/motion";
 
-export let AuthState;
+let AuthState;
 (function (AuthState) {
   AuthState[(AuthState["None"] = 0)] = "None";
   AuthState[(AuthState["Loading"] = 1)] = "Loading";
   AuthState[(AuthState["LoginError"] = 2)] = "LoginError";
   AuthState[(AuthState["User"] = 3)] = "User";
 })(AuthState || (AuthState = {}));
-export const Login = ({ navigation }) => {
+
+const Login = ({ navigation }) => {
   const [usermail, setUsermail] = useState(" ");
   const [password, setPassword] = useState(" ");
   const [show, setShow] = useState(true);
   const app = useApp();
   const [authState, setAuthState] = useState(AuthState.None);
-  // console.log(authState);
 
   const handleLogin = useCallback(async () => {
+    if (usermail == " ") {
+      alert("Enter Username 👤");
+      return;
+    }
     setAuthState(AuthState.Loading);
     // const credentials = Realm.Credentials.anonymous();
     const credentials = Realm.Credentials.function({
@@ -61,10 +64,10 @@ export const Login = ({ navigation }) => {
 
   return (
     <Background bgColor='bg-primary min-h-[90vh] items-center justify-center'>
-      <Text className='text-primary_light text-2xl absolute top-[3vh] left-[5vw]'>
+      <Text className='text-[#FFD700] text-2xl absolute top-[3vh] left-[5vw]'>
         {/* Uniben */}
       </Text>
-      <View className=' rounded-3xl relative my-auto bg-slate-300 px-[12vw] pt-[4vh] pb-[8vh] border-2 border-Supervisor2'>
+      <View className=' rounded-3xl relative my-auto bg-slate-300 px-[12vw] pt-[4vh] pb-[12vh] border-2 border-Supervisor2'>
         <View className='w-[55vw] mt-[7vh] self-center'>
           <Text
             style={styles.text_md}
@@ -104,7 +107,7 @@ export const Login = ({ navigation }) => {
                 }}
               >
                 {!show ? (
-                  <Motion.EyesClosed
+                  <EyesClosed
                     width={actuatedNormalize(22)}
                     height={actuatedNormalizeVertical(22)}
                     color={show ? "purple" : "gray"}
@@ -123,6 +126,17 @@ export const Login = ({ navigation }) => {
         <Text className='text-purple-600 mt-[5vh] text-center'>
           Forgot Password? Check your mail!
         </Text>
+
+        <LowerButton
+          disabled={authState == 1}
+          style={"bg-[#FFb700] w-[35vw]"}
+          textStyle='text-slate-900'
+          navigate={() => {
+            handleLogin();
+            // navigation.navigate("accounts");
+          }}
+          text={"Log in"}
+        />
       </View>
       <Modal visible={authState == 1}>
         <View className='flex bg-slate-300 h-full justify-center items-center'>
@@ -140,17 +154,6 @@ export const Login = ({ navigation }) => {
           </Text>
         </View>
       </Modal>
-
-      <LowerButton
-        disabled={authState == 1}
-        style={"bg-[#77E6B6]"}
-        textStyle='text-slate-900'
-        navigate={() => {
-          handleLogin();
-          // navigation.navigate("accounts");
-        }}
-        text={"Log in"}
-      />
     </Background>
   );
 };
