@@ -108,7 +108,7 @@ export class activejob extends Realm.Object {
     properties: {
       _id: { type: "objectId", default: () => new Realm.BSON.ObjectId() },
       job: "job",
-      matNo: "string?",
+      matno: "string?",
       supervisor: "string?",
       dept: "string?",
       email: "string?",
@@ -119,11 +119,3 @@ export class activejob extends Realm.Object {
     },
   };
 }
-
-
-
-
-
-
-
-

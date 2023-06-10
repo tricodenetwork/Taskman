@@ -105,7 +105,7 @@ export default function CreateJob({ navigation }) {
 
   return (
     <View style={{ minHeight: Math.round(windowHeight) }}>
-      <Background>
+      <Background bgColor='min-h-[98vh]'>
         <Topscreen
           onPress={() => {
             navigation.goBack();

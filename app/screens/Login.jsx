@@ -22,6 +22,7 @@ import * as Updates from "expo-updates";
 import Eye from "../../assets/icons/eye.svg";
 import EyesClosed from "../../assets/icons/closed.svg";
 import Error from "../../assets/icons/error.svg";
+import Logo from "../../assets/images/C.svg";
 
 let AuthState;
 (function (AuthState) {
@@ -67,6 +68,9 @@ const Login = ({ navigation }) => {
       <Text className='text-[#FFD700] text-2xl absolute top-[3vh] left-[5vw]'>
         {/* Uniben */}
       </Text>
+      <View className='absolute top-0  scale-[.25]'>
+        <Logo />
+      </View>
       <View className=' rounded-3xl relative my-auto bg-slate-300 px-[12vw] pt-[4vh] pb-[12vh] border-2 border-Supervisor2'>
         <View className='w-[55vw] mt-[7vh] self-center'>
           <Text

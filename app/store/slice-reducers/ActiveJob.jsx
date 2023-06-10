@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   id: "",
-  matNo: "",
+  matno: "",
   dept: "",
   handler: "",
   currenttask: "",
@@ -17,7 +17,7 @@ const ActiveJob = createSlice({
 
   reducers: {
     setMatNo: (state, action) => {
-      state.matNo = action.payload;
+      state.matno = action.payload;
     },
     setDept: (state, action) => {
       state.dept = action.payload;

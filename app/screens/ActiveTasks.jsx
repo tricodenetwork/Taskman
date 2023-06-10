@@ -51,7 +51,7 @@ export default function ActiveTasks({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const job = realm.objectForPrimaryKey(
     "activejob",
-    Realm.BSON.ObjectId(route.params.id)
+    Realm.BSON.ObjectId(route.params?.id)
   );
   const [task, setTask] = useState(job.job.tasks);
   const Accounts = useQuery(Account);

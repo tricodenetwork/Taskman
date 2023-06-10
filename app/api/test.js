@@ -172,7 +172,6 @@ export function millisecondSinceStartDate(startDate) {
 
   // Check if the start date is on a weekend
   if (startDateTime.getDay() === 6 || startDateTime.getDay() === 0) {
-    alert("Start date falls on a weekend. No working hours.");
     console.log("Start date falls on a weekend. No working hours.");
     return;
   }

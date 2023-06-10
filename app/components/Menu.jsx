@@ -63,36 +63,7 @@ export default function Menu() {
               Jobs
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("supervisor");
-              dispatch(setMenu());
-            }}
-          >
-            <Text style={styles.text_md2} className='text-xl text-primary'>
-              Supervisor
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("handler");
-              dispatch(setMenu());
-            }}
-          >
-            <Text style={styles.text_md2} className='text-xl text-primary'>
-              Handler
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("client");
-              dispatch(setMenu());
-            }}
-          >
-            <Text style={styles.text_md2} className='text-xl text-primary'>
-              Client
-            </Text>
-          </TouchableOpacity>
+
           <View className='absolute flex flex-row-reverse items-center justify-between w-full border- bottom-[-2%] self-center px-[2vw]'>
             <TouchableOpacity onPress={handleLogout}>
               <Text

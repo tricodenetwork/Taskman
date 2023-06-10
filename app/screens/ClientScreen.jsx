@@ -35,89 +35,11 @@ export default function ClientScreen() {
 
   return (
     <Background>
-      <HandlerTopscreen text3={formattedDate} text={`Hello, ${_id}`}>
-        {/* <View className=' absolute bottom-[12vh]  w-full  flex flex-row justify-between px-[5vw]'>
-          <View className='relative'>
-            <Text
-              style={[
-                styles.text,
-                {
-                  fontSize: actuatedNormalize(48),
-                  lineHeight: actuatedNormalizeVertical(78),
-                },
-              ]}
-              className='text-primary_light'
-            >
-              {supervisorStats.pending}
-            </Text>
-            <View>
-              <Text style={styles.text_md} className='flex text-white'>
-                {route.name === "supervisor" ? "Jobs" : "Tasks"}
-              </Text>
-              <Text style={styles.text_md} className='text-white'>
-                Pending
-              </Text>
-            </View>
-            <View
-              style={{}}
-              className={`bg-primary_light absolute w-[.5px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]`}
-            ></View>
-          </View>
-          <View className='relative'>
-            <Text
-              style={[
-                styles.text,
-                {
-                  fontSize: actuatedNormalize(48),
-                  lineHeight: actuatedNormalizeVertical(78),
-                },
-              ]}
-              className='text-primary_light'
-            >
-              {supervisorStats.inProgress}
-            </Text>
-            <View>
-              <Text style={styles.text_md} className='flex text-white'>
-                {route.name === "supervisor" ? "Jobs" : "Tasks"}
-              </Text>
-              <Text style={styles.text_md} className='text-white'>
-                In Progress
-              </Text>
-            </View>
-            <View
-              className={
-                "bg-primary_light absolute w-[.5px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]"
-              }
-            ></View>
-          </View>
-          <View className='relative'>
-            <Text
-              style={[
-                styles.text,
-                {
-                  fontSize: actuatedNormalize(48),
-                  lineHeight: actuatedNormalizeVertical(78),
-                },
-              ]}
-              className='text-primary_light'
-            >
-              {supervisorStats.completed}
-            </Text>
-            <View>
-              <Text
-                style={styles.text_md}
-                className='text-[14px] flex text-white'
-              >
-                {route.name === "supervisor" ? "Jobs" : "Tasks"}
-              </Text>
-              <Text style={styles.text_md} className='text-[14px] text-white'>
-                Completed
-              </Text>
-            </View>
-          </View>
-        </View> */}
-      </HandlerTopscreen>
-      <View className='absolute self-center pt-[3vh] top-[49vh]'>
+      <HandlerTopscreen
+        text3={formattedDate}
+        text={`Hello, ${_id}`}
+      ></HandlerTopscreen>
+      <View className='self-center pt-[3vh]'>
         <View>
           <TouchableOpacity
             onPress={() => {
@@ -156,7 +78,11 @@ export default function ClientScreen() {
           />
         </TouchableOpacity>
       </View>
-      <LowerButton navigate={handleLogout} text={"Log Out"} />
+      <LowerButton
+        style={"w-[90vw]"}
+        navigate={handleLogout}
+        text={"Log Out"}
+      />
     </Background>
   );
 }

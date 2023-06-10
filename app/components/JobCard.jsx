@@ -55,7 +55,7 @@ export default function JobCard({ isActive, id, name, item }) {
 
       <View className='text-left  w-[70%] pl-[1vw]'>
         <Text style={styles.text_md2} className='text-primary'>
-          {(item.name && item.name) || (item.matNo && item.matNo)}
+          {(item.name && item.name) || (item.matno && item.matno)}
         </Text>
         {/* {item.dept ? <Text>{item.dept}</Text> : null} */}
         {route.name == "jobs" ? (

@@ -19,7 +19,7 @@ export default function Accounts({ navigation }) {
     <Background bgColor='min-h-[98vh]'>
       <Topscreen text={"Accounts"} />
       <View
-        className='bg-slate-200 h-[80vh] rounded-t-3xl  pt-[3vh] w-full absolute bottom-0
+        className='bg-slate-200 h-[85vh] rounded-t-3xl  pt-[3vh] w-full absolute bottom-0
       '
       >
         <View className='mb-1'>

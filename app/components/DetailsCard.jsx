@@ -187,7 +187,11 @@ export default function DetailsCard({ item, id, index }) {
           style={[styles.text_sm, { fontSize: actuatedNormalize(12) }]}
           className='text-primary'
         >
-          {item.dept ? item.dept : item.handler || "Not assigned"}
+          {item.handler == "" || item.handler == null
+            ? "Not Assigned"
+            : user.role == "Client"
+            ? "Assigned"
+            : item.handler}
         </Text>
       </View>
       <View

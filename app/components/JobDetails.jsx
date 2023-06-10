@@ -32,7 +32,7 @@ export default function JobDetails({ onPress }) {
   const navigation = useNavigation();
   const col = filter && filter.toLowerCase();
   const isFocused = useIsFocused();
-  const client = activeJobs.filtered(`matNo ==$0`, user._id) ?? [];
+  const client = activeJobs.filtered(`matno ==$0`, user._id) ?? [];
 
   useEffect(() => {
     if (user._id.toString().length > 10) {
@@ -59,7 +59,6 @@ export default function JobDetails({ onPress }) {
         />
       }
       data={data.filter((item, index) =>
-        // item == item
         item[col]?.name
           ? item[col].name.toLowerCase().includes(search.toLowerCase())
           : item[col] && item[col].toLowerCase().includes(search.toLowerCase())

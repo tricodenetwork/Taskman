@@ -49,7 +49,7 @@ export default function MyTasks({ navigation }) {
       obj.id = job._id.toString();
       obj.job = job.job;
       obj.supervisor = job.supervisor;
-      obj.matNo = job.matNo;
+      obj.matno = job.matno;
     });
     // const useThis = assigned.unshift(job._id);
     // console.log(assigned);

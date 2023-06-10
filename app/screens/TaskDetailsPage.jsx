@@ -34,7 +34,7 @@ const TaskDetailsPage = () => {
   const realm = useRealm();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { id, name, job, matNo, supervisor, status } = route.params; // current handler for particular task
+  const { id, name, job, matno, supervisor, status } = route.params; // current handler for particular task
   const activeJob = useObject(activejob, Realm.BSON.ObjectId(id));
   const Accounts = useQuery(Account);
   const handlers = Accounts.filter(
@@ -230,7 +230,7 @@ const TaskDetailsPage = () => {
       <View className='h-[75vh] absolute bottom-0 bg-white w-full flex items-start pb-[3vh] pt-[5vh] px-[3vw] justify-between'>
         {/* Display the task details */}
         <Text style={[styles.text_md]}>Id: {id.toString()}</Text>
-        <Text style={[styles.text_md]}>ClientId: {matNo}</Text>
+        <Text style={[styles.text_md]}>ClientId: {matno}</Text>
         <Text style={[styles.text_md]}>Supervisor: {supervisor}</Text>
         <Text style={[styles.text_md]}>Task: {name}</Text>
         {/* <Text style={[styles.text_md]}>Job: {taskInfo.job}</Text> */}

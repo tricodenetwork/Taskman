@@ -54,7 +54,7 @@ export const sendUserDetails = async (recipient, userDetails) => {
   // });
 };
 export const sendClientDetails = async (recipient, userDetails) => {
-  const { matNo, email } = userDetails;
+  const { matno, email } = userDetails;
   let url = `mailto:${recipient}`;
   console.log(recipient);
 
@@ -65,7 +65,7 @@ export const sendClientDetails = async (recipient, userDetails) => {
     Welcome! Your account details are as follows:
 
     Email: ${email}
-    Password: ${matNo}
+    Password: ${matno}
 
     Thank you for joining!
 

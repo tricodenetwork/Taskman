@@ -22,7 +22,7 @@ export default function MessageScreen({ navigation }) {
   const realm = useRealm();
   const { user } = useSelector((state) => state);
   // const { ActiveJob } = useSelector((state) => state);
-  const ActiveJob = useQuery(activejob).filtered(`matNo == $0`, user._id);
+  const ActiveJob = useQuery(activejob).filtered(`matno == $0`, user._id);
   const contacts =
     user.role == "Handler" || user.role == "Supervisor"
       ? useQuery(Account).filtered(
@@ -92,16 +92,21 @@ export default function MessageScreen({ navigation }) {
             const name = realm.objectForPrimaryKey(
               "account",
               user._id == item.senderId
-                ? Realm.BSON.ObjectId(item.recieverId)
-                : Realm.BSON.ObjectId(item.senderId)
+                ? Realm.BSON.ObjectId(
+                    item.recieverId.length > 10 ? item.recieverId : null
+                  )
+                : Realm.BSON.ObjectId(
+                    item.senderId.length > 10 ? item.senderId : null
+                  )
             );
 
             const chats = allChats.filtered(`roomId == $0`, item._id);
             const lastMessage = chats[chats.length - 1];
+            console.log(lastMessage);
             return (
               <View id='SINGLE_CONTACT_MESSSAGE_BOX'>
                 {lastMessage?.text ?? "" !== "" ? (
-                  <View className='h-[10vh] px-[2vw] items-center flex flex-row justify-between pt-[1vh]'>
+                  <View className='h-[8vh] px-[2vw]  items-center flex flex-row justify-between pt-[1vh]'>
                     <TouchableHighlight
                       className='rounded-md p-[1vw]'
                       underlayColor={"rgba(0,0,200,.2)"}
@@ -112,7 +117,9 @@ export default function MessageScreen({ navigation }) {
                       }}
                     >
                       <View className='w-[87vw] '>
-                        <Text className=''>{name && name?.name}</Text>
+                        <Text className=''>
+                          {name ? name?.name ?? "" : lastMessage.user._id}
+                        </Text>
                         <Text className='' style={[styles.text_tiny]}>
                           {lastMessage.text}
                         </Text>

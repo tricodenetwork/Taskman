@@ -15,6 +15,7 @@ const { useRealm, useQuery } = AccountRealmContext;
 
 export default function IndividualTask({ navigation }) {
   const { currenttask, handler } = useSelector((state) => state.ActiveJob);
+  const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
   const dispatch = useDispatch();
   const Accounts = useQuery(Account);
   const { user } = useSelector((state) => state);
@@ -114,23 +115,25 @@ export default function IndividualTask({ navigation }) {
         </View>
         <View
           id='BUTTONS'
-          className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
+          className='flex justify-between align-bottom w-[65vw]  self-center flex-row'
         >
           <Button
-            disabled={!inProgess ? false : true}
+            disabled={inProgess || isWeekend || !isAllowedTime ? true : false}
             title='Activate'
             onPress={Activate}
             color={"#004343"}
           />
           <Button
-            disabled={handler == ""}
+            disabled={handler == "" || isWeekend || !isAllowedTime}
             title='Assign'
             onPress={assignNextTask}
           />
           <Button
             title='Back'
             onPress={() => {
-              navigation.navigate("activetasks");
+              navigation.navigate("activetasks", {
+                id: route.params.id,
+              });
             }}
           />
         </View>

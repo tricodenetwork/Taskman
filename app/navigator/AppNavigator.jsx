@@ -59,17 +59,7 @@ export const MainStack = () => {
 
   useFlipper(navRef);
   return (
-    <NavigationContainer
-      onStateChange={(state) =>
-        console.log(
-          state.routes[0].name,
-          state.routes[0].params
-          // state.routes[1].name,
-          // state.routes[1].params
-        )
-      }
-      ref={navRef}
-    >
+    <NavigationContainer ref={navRef}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,

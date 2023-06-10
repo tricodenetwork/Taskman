@@ -14,8 +14,6 @@ import {
   setHandler,
   setJob,
   setEmail,
-  setId,
-  setTasks,
   setCurrentTask,
   Replace,
 } from "../store/slice-reducers/ActiveJob";
@@ -60,10 +58,10 @@ const ActivateJob = ({ navigation }) => {
     useQuery("account").filtered(`name == $0 AND role == "Handler"`, handler)[0]
       ?.pushToken ?? "";
 
-  const { matNo, dept, handler, job, email, currenttask, id } = useSelector(
+  const { matno, dept, handler, job, email, currenttask, id } = useSelector(
     (state) => state.ActiveJob
   );
-  const clientExist = useObject("client", matNo);
+  const clientExist = useObject("client", matno);
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
 
@@ -82,7 +80,6 @@ const ActivateJob = ({ navigation }) => {
 
   const EditActiveJob = useCallback(
     (item) => {
-      // console.log(item);
       realm.write(() => {
         try {
           const project = realm.objectForPrimaryKey(
@@ -90,21 +87,11 @@ const ActivateJob = ({ navigation }) => {
             Realm.BSON.ObjectId(route.params.id)
           );
 
-          project.job = item.job;
           project.dept = item.dept;
-          project.matNo = item.matNo;
+          project.matno = item.matno;
           project.email = item.email;
-
-          project.job.tasks.map((task) => {
-            const { name, handler } = task;
-
-            if (name == item.currenttask) {
-              task.handler = item.handler;
-              alert("Activejob edited successfully!");
-
-              return;
-            }
-          });
+          project.supervisor = name;
+          alert("Activejob edited successfully!");
         } catch (error) {
           console.log({ error, msg: "Error writing to realm" });
         }
@@ -119,12 +106,12 @@ const ActivateJob = ({ navigation }) => {
         return;
       }
 
-      if (clientExist) {
+      if (clientExist !== null) {
         alert("Client Exists already");
         return;
       } else {
         realm.write(() => {
-          const user = { email: item.email, _id: item.matNo };
+          const user = { email: item.email, _id: item.matno };
           return new client(realm, user);
         });
       }
@@ -139,13 +126,11 @@ const ActivateJob = ({ navigation }) => {
           // project.job.tasks = tasksArray;
 
           project.job.tasks.map((task) => {
-            const { name, handler } = task;
-            if (name == item.currenttask) {
+            if (task.name == item.currenttask) {
               task.handler = item.handler;
             }
           });
-          // project.tasks[0].handler = item.handler;
-          project.supervisor = supervisor;
+          project.supervisor = name;
           alert("Job Activated");
         } catch (error) {
           console.log({ error, msg: "Error writing to realm" });
@@ -200,7 +185,7 @@ const ActivateJob = ({ navigation }) => {
             >
               <Text style={[styles.Pcard]}>ClientID:</Text>
               <TextInput
-                defaultValue={matNo}
+                defaultValue={matno}
                 style={styles.averageText}
                 maxLength={10}
                 onChangeText={(value) => {
@@ -253,18 +238,20 @@ const ActivateJob = ({ navigation }) => {
                   className='w-[60vw] bg-slate-300  rounded-sm h-10'
                 />
               </View>
-              <TouchableOpacity
-                onPress={() => {
-                  dispatch(setVisible2());
-                }}
-                className='absolute right-[1vw]'
-              >
-                <AntDesign
-                  name='caretdown'
-                  size={actuatedNormalize(18)}
-                  color='gray'
-                />
-              </TouchableOpacity>
+              {route.params?.id ? null : (
+                <TouchableOpacity
+                  onPress={() => {
+                    dispatch(setVisible2());
+                  }}
+                  className='absolute right-[1vw]'
+                >
+                  <AntDesign
+                    name='caretdown'
+                    size={actuatedNormalize(18)}
+                    color='gray'
+                  />
+                </TouchableOpacity>
+              )}
             </View>
             <View
               id='DEPT'
@@ -330,18 +317,20 @@ const ActivateJob = ({ navigation }) => {
                   className='w-[56vw] bg-slate-300  rounded-sm h-10'
                 />
               </View>
-              <TouchableOpacity
-                onPress={() => {
-                  dispatch(setVisible3());
-                }}
-                className='absolute right-[1vw]'
-              >
-                <AntDesign
-                  name='caretdown'
-                  size={actuatedNormalize(18)}
-                  color='gray'
-                />
-              </TouchableOpacity>
+              {route.params?.id ? null : (
+                <TouchableOpacity
+                  onPress={() => {
+                    dispatch(setVisible3());
+                  }}
+                  className='absolute right-[1vw]'
+                >
+                  <AntDesign
+                    name='caretdown'
+                    size={actuatedNormalize(18)}
+                    color='gray'
+                  />
+                </TouchableOpacity>
+              )}
             </View>
             <View
               id='HANDLER'
@@ -361,7 +350,7 @@ const ActivateJob = ({ navigation }) => {
                       style={{ height: 200 }}
                       data={handlers}
                       renderItem={({ item }) =>
-                        item.category === category && (
+                        item.category.name === category.name && (
                           <TouchableOpacity
                             onPress={() => {
                               dispatch(setHandler(item.name));
@@ -393,18 +382,20 @@ const ActivateJob = ({ navigation }) => {
                   className='w-[60vw] bg-slate-300  rounded-sm h-10'
                 />
               </View>
-              <TouchableOpacity
-                onPress={() => {
-                  dispatch(setVisible());
-                }}
-                className='absolute right-[1vw]'
-              >
-                <AntDesign
-                  name='caretdown'
-                  size={actuatedNormalize(18)}
-                  color='gray'
-                />
-              </TouchableOpacity>
+              {route.params?.id ? null : (
+                <TouchableOpacity
+                  onPress={() => {
+                    dispatch(setVisible());
+                  }}
+                  className='absolute right-[1vw]'
+                >
+                  <AntDesign
+                    name='caretdown'
+                    size={actuatedNormalize(18)}
+                    color='gray'
+                  />
+                </TouchableOpacity>
+              )}
             </View>
             <View
               id='EMAIL'
@@ -425,7 +416,7 @@ const ActivateJob = ({ navigation }) => {
             disabled={
               route.params
                 ? false
-                : matNo === "" || dept === "" || job === "" || email === ""
+                : matno === "" || job === "" || email === ""
                 ? //  || currenttask == ""
                   true
                 : false

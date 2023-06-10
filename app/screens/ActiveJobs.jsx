@@ -25,7 +25,7 @@ export default function ActiveJobs({ navigation }) {
       >
         <View className='mb-1'>
           <SearchComponent
-            filterItems={["Job", "Dept", "Supervisor", "Status"]}
+            filterItems={["Job", "MatNo", "Supervisor", "Status"]}
           />
         </View>
         <View>

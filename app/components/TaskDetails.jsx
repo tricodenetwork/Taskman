@@ -63,7 +63,7 @@ export default function TaskDetails({
       }}
       data={data}
       renderItem={({ item, drag, isActive, getIndex }) => {
-        const { name, id, job, matNo, supervisor, handler, status } = item;
+        const { name, id, job, matno, supervisor, handler, status } = item;
         return (
           <ScaleDecorator>
             <TouchableOpacity
@@ -77,7 +77,7 @@ export default function TaskDetails({
                 route.name == "mytasks" &&
                   navigation.navigate("taskdetailsscreen", {
                     name: name,
-                    matNo: matNo,
+                    matno: matno,
                     supervisor: supervisor,
                     id: id,
                     job: job.name,
