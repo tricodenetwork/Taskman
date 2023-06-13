@@ -16,6 +16,9 @@ import {
   setEmail,
   setCurrentTask,
   Replace,
+  setPassword,
+  setSupervisor,
+  setTasks,
 } from "../store/slice-reducers/ActiveJob";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
@@ -26,7 +29,11 @@ import {
   setVisible3,
 } from "../store/slice-reducers/Formslice";
 import { Motion } from "@legendapp/motion";
-import { actuatedNormalize, styles } from "../styles/stylesheet";
+import {
+  actuatedNormalize,
+  actuatedNormalizeVertical,
+  styles,
+} from "../styles/stylesheet";
 import { AntDesign } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import LowerButton from "../components/LowerButton";
@@ -35,7 +42,11 @@ import { activejob, job as jobSchema } from "../models/Task";
 import { Account, client } from "../models/Account";
 import { useUser } from "@realm/react";
 import Realm from "realm";
-import { sendClientDetails, sendPushNotification } from "../api/Functions";
+import {
+  generatePassword,
+  sendClientDetails,
+  sendPushNotification,
+} from "../api/Functions";
 import OdinaryButton from "../components/OdinaryButton";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
@@ -45,14 +56,19 @@ const ActivateJob = ({ navigation }) => {
 
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [visible2, setVisible2] = useState(false);
   const route = useRoute();
   const realm = useRealm();
   const activeJobs = useQuery(activejob);
   const allJobs = useQuery(jobSchema);
-  const handlers = useQuery(Account).filtered(`role == "Handler"`);
-  const { visible, visible2, visible3 } = useSelector((state) => state.app);
+  const { visible, visible3 } = useSelector((state) => state.app);
+
   const { ActiveJob } = useSelector((state) => state);
   const { category, role, name } = useSelector((state) => state.user);
+  const supervisors = useQuery(Account).filtered(
+    `role == "Supervisor" AND category.name ==$0`,
+    category.name
+  );
 
   const pushToken =
     useQuery("account").filtered(`name == $0 AND role == "Handler"`, handler)[0]
@@ -61,7 +77,7 @@ const ActivateJob = ({ navigation }) => {
   const { matno, dept, handler, job, email, currenttask, id } = useSelector(
     (state) => state.ActiveJob
   );
-  const clientExist = useObject("client", matno);
+  const clientExist = useQuery("client").filtered(`clientId == $0`, matno);
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
 
@@ -71,6 +87,12 @@ const ActivateJob = ({ navigation }) => {
         "activejob",
         Realm.BSON.ObjectId(route.params?.id)
       );
+      const currentActiveJob = {
+        matno: useThis.matno,
+        supervisor: useThis.supervisor,
+        email: useThis.email,
+        job: { name: useThis.job.name },
+      };
       useThis && dispatch(Replace(useThis));
     } else {
       dispatch(Replace());
@@ -86,11 +108,9 @@ const ActivateJob = ({ navigation }) => {
             "activejob",
             Realm.BSON.ObjectId(route.params.id)
           );
-
-          project.dept = item.dept;
           project.matno = item.matno;
           project.email = item.email;
-          project.supervisor = name;
+          project.supervisor = item.supervisor;
           alert("Activejob edited successfully!");
         } catch (error) {
           console.log({ error, msg: "Error writing to realm" });
@@ -106,38 +126,42 @@ const ActivateJob = ({ navigation }) => {
         return;
       }
 
-      if (clientExist !== null) {
-        alert("Client Exists already");
-        return;
-      } else {
-        realm.write(() => {
-          const user = { email: item.email, _id: item.matno };
-          return new client(realm, user);
-        });
-      }
+      // console.log(clientExist);
+      // if (clientExist.length !== 0) {
+      //   alert("Client Exists already");
+      //   return;
+      // }
+      realm.write(() => {
+        const user = {
+          email: item.email,
+          clientId: item.matno,
+          password: item.password,
+        };
+        return new client(realm, user);
+      });
 
       realm.write(() => {
         try {
           const { tasks, ...rest } = item;
-          // const tasksArray = JSON.parse(JSON.stringify(tasks));
+          const tasksArray = JSON.parse(JSON.stringify(tasks));
           // const Item = JSON.parse(JSON.stringify(item));
 
           const project = new activejob(realm, item);
-          // project.job.tasks = tasksArray;
+          project.tasks = tasksArray;
 
-          project.job.tasks.map((task) => {
-            if (task.name == item.currenttask) {
-              task.handler = item.handler;
-            }
-          });
+          // project.tasks.map((task) => {
+          //   if (task.name == item.currenttask) {
+          //     task.handler = item.handler;
+          //   }
+          // });
           project.supervisor = name;
-          alert("Job Activated");
+          alert("Job Activated ✔");
         } catch (error) {
           console.log({ error, msg: "Error writing to realm" });
         }
       });
 
-      // sendClientDetails(item.email, item);
+      sendClientDetails(item.email, item);
       sendPushNotification(pushToken);
     },
     [realm]
@@ -171,13 +195,6 @@ const ActivateJob = ({ navigation }) => {
           id='FULL_VIEW'
           className='bg-slate-200 h-[80vh] rounded-t-3xl justify-center  p-2 w-full absolute bottom-0'
         >
-          <OdinaryButton
-            text={"Send"}
-            navigate={() => {
-              sendClientDetails(ActiveJob.email, ActiveJob);
-            }}
-            style={"bg-Handler3 absolute top-[5vh] right-[5vw]"}
-          />
           <View className='flex items-center justify-between h-[55vh]'>
             <View
               id='MAT_NO'
@@ -200,11 +217,8 @@ const ActivateJob = ({ navigation }) => {
             >
               <Text style={[styles.Pcard]}>Job:</Text>
               <View className='w-[60vw] relative bg-slate-300  rounded-sm h-10'>
-                {visible2 && (
-                  <Motion.View
-                    initial={{ x: 100 }}
-                    animate={{ x: 0 }}
-                    transition={{ duration: 0.2 }}
+                {visible2 ? (
+                  <View
                     style={styles.box}
                     className='bg-white absolute bottom-0 right-0  space-y-1  border-2 border-black w-[60vw] flex justify-around rounded-md'
                   >
@@ -214,9 +228,17 @@ const ActivateJob = ({ navigation }) => {
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           onPress={() => {
-                            dispatch(setJob(item));
+                            const jobObject = {
+                              _id: new Realm.BSON.ObjectId(),
+                              name: item.name,
+                              category: item.category,
+                              tasks: item.tasks,
+                            };
 
-                            dispatch(setVisible2());
+                            dispatch(setJob(item));
+                            dispatch(setTasks(item.tasks));
+
+                            setVisible2(!visible2);
                           }}
                         >
                           <Text
@@ -228,20 +250,20 @@ const ActivateJob = ({ navigation }) => {
                         </TouchableOpacity>
                       )}
                     />
-                  </Motion.View>
-                )}
+                  </View>
+                ) : null}
                 <TextInput
-                  defaultValue={ActiveJob.job.name ?? ""}
+                  defaultValue={ActiveJob.job ?? ""}
                   editable={false}
                   style={[styles.averageText, { color: "black" }]}
-                  value={job.name ?? ""}
+                  value={job ?? ""}
                   className='w-[60vw] bg-slate-300  rounded-sm h-10'
                 />
               </View>
               {route.params?.id ? null : (
                 <TouchableOpacity
                   onPress={() => {
-                    dispatch(setVisible2());
+                    setVisible2(!visible2);
                   }}
                   className='absolute right-[1vw]'
                 >
@@ -253,21 +275,8 @@ const ActivateJob = ({ navigation }) => {
                 </TouchableOpacity>
               )}
             </View>
-            <View
-              id='DEPT'
-              className='flex items-center justify-between w-[90%] flex-row'
-            >
-              <Text style={[styles.Pcard]}>Dept:</Text>
-              <TextInput
-                defaultValue={dept}
-                style={styles.averageText}
-                onChangeText={(value) => {
-                  dispatch(setDept(value));
-                }}
-                className='w-[60vw] bg-slate-300  rounded-sm h-10'
-              />
-            </View>
-            <View
+
+            {/* <View
               id='TASK'
               className='flex items-center justify-between w-[90%] flex-row'
             >
@@ -283,7 +292,7 @@ const ActivateJob = ({ navigation }) => {
                   >
                     <FlatList
                       style={{ height: 200 }}
-                      data={ActiveJob.job.tasks ?? []}
+                      data={ActiveJob.job?.tasks ?? []}
                       // data={[]}
                       renderItem={({ item }) => (
                         <TouchableOpacity
@@ -306,8 +315,8 @@ const ActivateJob = ({ navigation }) => {
                 <TextInput
                   // defaultValue={ActiveJob.job.tasks[0]?.name ?? ""}
                   defaultValue={
-                    ActiveJob.job.tasks && ActiveJob.job.tasks.length > 0
-                      ? ActiveJob.job.tasks[0].name
+                    ActiveJob.job?.tasks && ActiveJob.job?.tasks.length > 0
+                      ? ActiveJob.job?.tasks[0].name
                       : ""
                   }
                   editable={false}
@@ -331,58 +340,55 @@ const ActivateJob = ({ navigation }) => {
                   />
                 </TouchableOpacity>
               )}
-            </View>
-            <View
-              id='HANDLER'
-              className='flex items-center justify-between w-[90%] flex-row'
-            >
-              <Text style={[styles.Pcard]}>Handler:</Text>
-              <View className='w-[60vw] relative bg-slate-300  rounded-sm h-10'>
-                {visible && (
-                  <Motion.View
-                    initial={{ x: 100 }}
-                    animate={{ x: 0 }}
-                    transition={{ duration: 0.2 }}
-                    style={styles.box}
-                    className='bg-white absolute bottom-0 right-0  space-y-1  border-2 border-black w-[60vw] flex justify-around rounded-md'
-                  >
-                    <FlatList
-                      style={{ height: 200 }}
-                      data={handlers}
-                      renderItem={({ item }) =>
-                        item.category.name === category.name && (
-                          <TouchableOpacity
-                            onPress={() => {
-                              dispatch(setHandler(item.name));
-                              dispatch(setVisible());
-                            }}
-                          >
-                            <Text
-                              style={styles.averageText}
-                              className='border-b-[1px] my-[1vh] border-b-slate-700'
+            </View> */}
+            {route.params?.id ? (
+              <View
+                id='SUPERVISOR'
+                className='flex items-center justify-between w-[90%] flex-row'
+              >
+                <Text style={[styles.Pcard]}>Supervisor:</Text>
+                <View className='w-[60vw] relative bg-slate-300  rounded-sm h-10'>
+                  {visible && (
+                    <Motion.View
+                      initial={{ x: 100 }}
+                      animate={{ x: 0 }}
+                      transition={{ duration: 0.2 }}
+                      style={styles.box}
+                      className='bg-white absolute bottom-0 right-0  space-y-1  border-2 border-black w-[60vw] flex justify-around rounded-md'
+                    >
+                      <FlatList
+                        style={{ height: 200 }}
+                        data={supervisors}
+                        renderItem={({ item }) =>
+                          item.category.name === category.name && (
+                            <TouchableOpacity
+                              onPress={() => {
+                                dispatch(setSupervisor(item.name));
+                                dispatch(setVisible());
+                              }}
                             >
-                              {item.name}
-                            </Text>
-                          </TouchableOpacity>
-                        )
-                      }
-                    />
-                  </Motion.View>
-                )}
-                <TextInput
-                  // defaultValue={ActiveJob.job.tasks[0]?.handler ?? ""}
-                  defaultValue={
-                    ActiveJob.job.tasks && ActiveJob.job.tasks.length > 0
-                      ? ActiveJob.job.tasks[0].handler
-                      : ""
-                  }
-                  editable={false}
-                  style={[styles.averageText, { color: "black" }]}
-                  value={handler}
-                  className='w-[60vw] bg-slate-300  rounded-sm h-10'
-                />
-              </View>
-              {route.params?.id ? null : (
+                              <Text
+                                style={styles.averageText}
+                                className='border-b-[1px] my-[1vh] border-b-slate-700'
+                              >
+                                {item.name}
+                              </Text>
+                            </TouchableOpacity>
+                          )
+                        }
+                      />
+                    </Motion.View>
+                  )}
+                  <TextInput
+                    // defaultValue={ActiveJob.job.tasks[0]?.handler ?? ""}
+                    defaultValue={ActiveJob.supervisor ?? ""}
+                    editable={false}
+                    style={[styles.averageText, { color: "black" }]}
+                    value={ActiveJob.supervisor ?? ""}
+                    className='w-[60vw] bg-slate-300  rounded-sm h-10'
+                  />
+                </View>
+
                 <TouchableOpacity
                   onPress={() => {
                     dispatch(setVisible());
@@ -395,8 +401,8 @@ const ActivateJob = ({ navigation }) => {
                     color='gray'
                   />
                 </TouchableOpacity>
-              )}
-            </View>
+              </View>
+            ) : null}
             <View
               id='EMAIL'
               className='flex items-center justify-between w-[90%] flex-row'
@@ -409,6 +415,27 @@ const ActivateJob = ({ navigation }) => {
                   dispatch(setEmail(value));
                 }}
                 className='w-[60vw] bg-slate-300  rounded-sm h-10'
+              />
+            </View>
+            <View className='flex  items-end relative left-[23vw] justify-center'>
+              <TouchableOpacity
+                onPress={() => {
+                  const pass = generatePassword(10);
+                  dispatch(setPassword(pass));
+                }}
+                className='bg-Supervisor2 p-2 rounded-md'
+              >
+                <Text style={styles.text_md}>Generate Password</Text>
+              </TouchableOpacity>
+              <TextInput
+                editable={false}
+                style={[
+                  styles.averageText,
+                  { height: actuatedNormalizeVertical(50) },
+                ]}
+                secureTextEntry={false}
+                value={ActiveJob.password}
+                className='w-[30vw] bg-slate-300 mt-2 text-black  rounded-sm'
               />
             </View>
           </View>

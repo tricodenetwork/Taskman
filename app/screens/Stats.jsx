@@ -33,7 +33,7 @@ export default function Stats() {
     const taskStats = [];
 
     data.forEach((object) => {
-      object.job?.tasks.forEach((task) => {
+      object.tasks.forEach((task) => {
         const handler = task.handler;
 
         // Skip tasks with null or empty string handler
@@ -132,7 +132,8 @@ export default function Stats() {
       }
 
       // Create the HTML content dynamically based on the data
-      let htmlContent = "<h1>Task Statistics</h1>";
+      let htmlContent =
+        "<h1>Transcript Tracking And Performance Evaluation (TTAPE)</h1>";
       data.forEach((item) => {
         htmlContent += `<p>Handler: ${item.handler}</p>`;
         htmlContent += `<p>Assigned: ${item.Assigned}</p>`;

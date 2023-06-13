@@ -36,13 +36,13 @@ export default function Supervisor() {
   function updateJobStatus(supervisorName) {
     realm.write(() => {
       activeJobs.forEach((activejob) => {
-        if (activejob.supervisor !== supervisorName) {
-          return;
-        }
+        // if (activejob.supervisor !== supervisorName) {
+        //   return;
+        // }
         let jobstatus = "Pending";
         let allTasksCompleted = true;
 
-        activejob.job.tasks.forEach((task) => {
+        activejob.tasks.forEach((task) => {
           if (task.status == "InProgress" || task.status == "Completed") {
             jobstatus = "InProgress";
             // InProgress = true;

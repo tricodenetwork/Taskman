@@ -32,7 +32,7 @@ export default function Handler({ navigation }) {
     let pendingCount = 0;
 
     tasksArray.forEach((taskObj) => {
-      taskObj.job?.tasks.forEach((task) => {
+      taskObj.tasks.forEach((task) => {
         if (task.handler === handlerName) {
           if (task.status === "Completed") {
             completedCount++;
@@ -141,7 +141,7 @@ export default function Handler({ navigation }) {
           </View>
         </View>
       </HandlerTopscreen>
-      <View className='flex justify-start self-center pt-[3vh]'>
+      <View className='flex justify-between self-center  pt-[1.5vh]'>
         <View>
           <TouchableOpacity
             onPress={() => {
@@ -161,42 +161,50 @@ export default function Handler({ navigation }) {
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("profile");
-          }}
-          activeOpacity={0.5}
-        >
-          <OptionsCard
-            icon={
-              <FontAwesome5
-                name='user'
-                size={actuatedNormalize(25)}
-                color='black'
-              />
-            }
-            text={"Profile"}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("messages");
-          }}
-          activeOpacity={0.5}
-        >
-          <OptionsCard
-            icon={
-              <FontAwesome5
-                name='rocketchat'
-                size={actuatedNormalize(25)}
-                color='black'
-              />
-            }
-            text={"Messages"}
-          />
-        </TouchableOpacity>
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("profile");
+            }}
+            activeOpacity={0.5}
+          >
+            <OptionsCard
+              icon={
+                <FontAwesome5
+                  name='user'
+                  size={actuatedNormalize(25)}
+                  color='black'
+                />
+              }
+              text={"Profile"}
+            />
+          </TouchableOpacity>
+        </View>
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("messages");
+            }}
+            activeOpacity={0.5}
+          >
+            <OptionsCard
+              icon={
+                <FontAwesome5
+                  name='rocketchat'
+                  size={actuatedNormalize(25)}
+                  color='black'
+                />
+              }
+              text={"Messages"}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-      <LowerButton style={"w-[90vw]"} navigate={handleLogout} text={"Logout"} />
+      <LowerButton
+        style={"w-[90vw]"}
+        navigate={handleLogout}
+        text={"Log Out"}
+      />
     </Background>
   );
 }

@@ -21,6 +21,8 @@ import ChatScreen from "./ChatScreen";
 import { chats } from "../models/Chat";
 import { sendPushNotification } from "../api/Functions";
 import { millisecondSinceStartDate } from "../api/test";
+import { Motion } from "@legendapp/motion";
+import OdinaryButton from "../components/OdinaryButton";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -28,6 +30,7 @@ const TaskDetailsPage = () => {
   const [isNextTaskModalOpen, setIsNextTaskModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [visible, setVisible] = useState(false);
   const { currenttask, handler } = useSelector((state) => state.ActiveJob);
   const { user } = useSelector((state) => state);
   const route = useRoute();
@@ -96,7 +99,7 @@ const TaskDetailsPage = () => {
 
     realm.write(() => {
       try {
-        activeJob.job.tasks.map((task) => {
+        activeJob.tasks.map((task) => {
           // Set task to inProgress and begin counting
           if ((task.name == name) & (task.handler == route.params.handler)) {
             task.status = "InProgress";
@@ -109,11 +112,7 @@ const TaskDetailsPage = () => {
         alert("Error accepting message");
       }
     });
-
-    // calculateInterval(taskInfo.duration);
-
-    // navigation.navigate("mytasks");
-    // setIsNextTaskModalOpen(false);
+    navigation.navigate("mytasks");
   }, [realm, currenttask, handler]);
 
   const handleDoneButton = () => {
@@ -134,7 +133,7 @@ const TaskDetailsPage = () => {
 
     realm.write(() => {
       try {
-        activeJob.job.tasks.map((task) => {
+        activeJob.tasks.map((task) => {
           // on handling next task, first of all set your current task to completed
           if ((task.name == name) & (task.handler == route.params.handler)) {
             const timeCompleted = millisecondSinceStartDate(task.inProgress);
@@ -196,7 +195,7 @@ const TaskDetailsPage = () => {
     realm.write(() => {
       try {
         let Error;
-        activeJob.job.tasks.map((task) => {
+        activeJob.tasks.map((task) => {
           // set your recieved task to pending and not the time you've spent on the job
           if ((task.name == name) & (task.handler == route.params.handler)) {
             Error = millisecondSinceStartDate(task.inProgress);
@@ -233,9 +232,38 @@ const TaskDetailsPage = () => {
         <Text style={[styles.text_md]}>ClientId: {matno}</Text>
         <Text style={[styles.text_md]}>Supervisor: {supervisor}</Text>
         <Text style={[styles.text_md]}>Task: {name}</Text>
-        {/* <Text style={[styles.text_md]}>Job: {taskInfo.job}</Text> */}
-        {/* <Text style={[styles.text_sm2]}>Timer:{time}</Text> */}
 
+        {visible ? (
+          <TouchableOpacity
+            className='bg-primary_light rounded-2xl self-center absolute top-[5vh] justify-center w-[100%] h-[75%]'
+            activeOpacity={1}
+          >
+            <Motion.View
+              initial={{ x: -500 }}
+              animate={{ x: 0 }}
+              transition={{ type: "spring", stiffness: 100 }}
+              className='justify-center h-full  w-full  flex self-center'
+            >
+              <Text style={styles.text_sm} className='text-center mb-2'>
+                Press Ok to confirm
+              </Text>
+              <OdinaryButton
+                style={"rounded-sm mt-4 bg-primary"}
+                navigate={() => {
+                  !isErrorModalOpen & !isNextTaskModalOpen
+                    ? handleAcceptButton()
+                    : !isErrorModalOpen & isNextTaskModalOpen
+                    ? handleNextTaskSubmit()
+                    : isErrorModalOpen & !isNextTaskModalOpen
+                    ? handleErrorButton()
+                    : null;
+                  setVisible(!visible);
+                }}
+                text={"OK"}
+              />
+            </Motion.View>
+          </TouchableOpacity>
+        ) : null}
         <View
           id='BUTTONS'
           className='flex justify-around w-[80vw] self-center flex-row'
@@ -243,7 +271,7 @@ const TaskDetailsPage = () => {
           {/* Accept button */}
           <Button
             disabled={
-              status !== "InProgress" ||
+              status == "InProgress" ||
               status == "Completed" ||
               isWeekend ||
               !isAllowedTime
@@ -252,7 +280,9 @@ const TaskDetailsPage = () => {
             }
             color={"#00a3a3"}
             title='Accept'
-            onPress={handleAcceptButton}
+            onPress={() => {
+              setVisible(!visible);
+            }}
           />
           {/* Done button */}
           <Button
@@ -290,7 +320,7 @@ const TaskDetailsPage = () => {
                 <SelectComponent
                   title={"Tasks:"}
                   placeholder={"Assign Next Task"}
-                  data={activeJob.job.tasks.filter(
+                  data={activeJob.tasks.filter(
                     (obj) => obj.status == "Pending" || obj.status == ""
                   )}
                   setData={(params) => {
@@ -310,7 +340,7 @@ const TaskDetailsPage = () => {
                 id='BUTTONS'
                 className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
               >
-                <Button title='Submit' onPress={handleNextTaskSubmit} />
+                <Button title='Submit' onPress={() => setVisible(!visible)} />
                 <Button
                   title='Cancel'
                   onPress={() => {
@@ -325,7 +355,7 @@ const TaskDetailsPage = () => {
         {/* Error modal */}
         <Modal visible={isErrorModalOpen}>
           <Background>
-            <View className=' h-[70%] pt-[5vh] flex self-center justify-between items-center'>
+            <View className=' h-[70%] pt-[5vh] flex min-h-[40vh] self-center justify-between items-center'>
               <Text
                 className='self-center  text-center w-[50vw]'
                 style={[styles.text_sm2, { fontSize: actuatedNormalize(20) }]}
@@ -333,44 +363,47 @@ const TaskDetailsPage = () => {
                 Report Error
               </Text>
 
-              <View className='h-[30vh] self-start px-[5vw] flex justify-around'>
-                <SelectComponent
-                  title={"Task"}
-                  placeholder={"Choose faulty task"}
-                  data={activeJob.job.tasks.filter(
-                    (obj) => obj.status == "Completed"
-                  )}
-                  setData={(params) => {
-                    dispatch(setCurrentTask(params));
-                  }}
+              <View className='h-[70vh] flex justify-between'>
+                <View className='h-[40vh] self-start px-[5vw] flex justify-between'>
+                  <SelectComponent
+                    title={"Task"}
+                    placeholder={"Choose faulty task"}
+                    data={activeJob.tasks.filter(
+                      (obj) => obj.status == "Completed"
+                    )}
+                    setData={(params) => {
+                      dispatch(setCurrentTask(params));
+                    }}
+                  />
+                  <SelectComponent
+                    title={"Handler"}
+                    placeholder={"Send to Handler"}
+                    data={handlers}
+                    setData={(params) => {
+                      dispatch(setHandler(params));
+                    }}
+                  />
+                </View>
+                <TextInput
+                  style={[styles.averageText]}
+                  multiline={true}
+                  placeholder='Error Message to Handler'
+                  // value={errorMessage}
+                  className='w-[70vw] h-[10vh] border-2 border-gray-400 self-center rounded-md p-2'
+                  onChangeText={(text) => setErrorMessage(text)}
                 />
-                <SelectComponent
-                  title={"Handler"}
-                  placeholder={"Send to Handler"}
-                  data={handlers}
-                  setData={(params) => {
-                    dispatch(setHandler(params));
-                  }}
-                />
-              </View>
-              <TextInput
-                multiline={true}
-                placeholder='Error Message to Handler'
-                value={errorMessage}
-                className='w-[70vw] h-[10vh] border-2 border-gray-400 self-center rounded-md p-2'
-                onChangeText={(text) => setErrorMessage(text)}
-              />
-              <View
-                id='BUTTONS'
-                className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
-              >
-                <Button title='Submit' onPress={handleErrorSubmit} />
-                <Button
-                  title='Cancel'
-                  onPress={() => {
-                    setIsErrorModalOpen(false);
-                  }}
-                />
+                <View
+                  id='BUTTONS'
+                  className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
+                >
+                  <Button title='Submit' onPress={() => setVisible(!visible)} />
+                  <Button
+                    title='Cancel'
+                    onPress={() => {
+                      setIsErrorModalOpen(false);
+                    }}
+                  />
+                </View>
               </View>
             </View>
           </Background>

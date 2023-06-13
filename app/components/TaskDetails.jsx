@@ -22,6 +22,7 @@ export default function TaskDetails({
   reArrange,
   taskdata,
   foreignSupervisor,
+  clientId,
 }) {
   const [data, setData] = useState(taskdata);
   const [refreshing, setRefreshing] = useState(false);
@@ -56,7 +57,7 @@ export default function TaskDetails({
   return (
     <DraggableFlatList
       containerStyle={{
-        height: route.name == "tasks" || user.role == "Client" ? "96%" : "91%",
+        height: route.name == "tasks" || user.role == "Client" ? "95%" : "95%",
       }}
       onDragEnd={({ data }) => {
         route.name !== "mytasks" && reArrange(data);
@@ -80,7 +81,7 @@ export default function TaskDetails({
                     matno: matno,
                     supervisor: supervisor,
                     id: id,
-                    job: job.name,
+                    job: job,
                     handler: handler,
                     status: status,
                   });
@@ -89,6 +90,8 @@ export default function TaskDetails({
                   navigation.navigate("it", {
                     taskName: name,
                     id: route.params.id,
+                    clientId: clientId,
+                    taskHandler: handler,
                   });
               }}
             >

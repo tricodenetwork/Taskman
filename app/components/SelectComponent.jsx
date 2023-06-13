@@ -44,7 +44,7 @@ export default function SelectComponent({
             className={`bg-white absolute  bottom-0 right-0  space-y-1  border-[1px] border-black ${visibleStyles}  rounded-md`}
           >
             <FlatList
-              style={{ height: 150, backgroundColor: "yellow" }}
+              style={{ height: actuatedNormalize(150) }}
               data={data}
               renderItem={({ item }) => (
                 <TouchableOpacity

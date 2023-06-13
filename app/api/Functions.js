@@ -8,17 +8,17 @@ export const sendUserDetails = async (recipient, userDetails) => {
   let url = `mailto:${recipient}`;
   console.log(recipient);
 
-  const subject = "Welcome to MyApp"; // Specify the email subject
+  const subject = "Welcome to Taskman"; // Specify the email subject
   const body = `
     Hello ${name},
 
     Welcome! Your account details are as follows:
 
     Name:${name}
+    Password: ${password}
     Email: ${email}
     Department: ${dept}
     Phone: ${phone}
-    Password: ${password}
     Role:${role}
 
     Thank you for joining!
@@ -54,18 +54,17 @@ export const sendUserDetails = async (recipient, userDetails) => {
   // });
 };
 export const sendClientDetails = async (recipient, userDetails) => {
-  const { matno, email } = userDetails;
+  const { matno, email, password } = userDetails;
   let url = `mailto:${recipient}`;
-  console.log(recipient);
 
   const subject = "Welcome to Taskman"; // Specify the email subject
   const body = `
-    Hello,
+    Hello, ${matno}
 
-    Welcome! Your account details are as follows:
+    Welcome to Taskman! Your account details are as follows:
 
     Email: ${email}
-    Password: ${matno}
+    Password: ${password}
 
     Thank you for joining!
 
@@ -84,7 +83,7 @@ export const sendClientDetails = async (recipient, userDetails) => {
 
   // check if we can use this link
   const canOpen = await Linking.canOpenURL(url);
-  console.log(canOpen);
+  // console.log(canOpen);
 
   // if (!canOpen) {
   //   throw new Error("Provided URL can not be handled");

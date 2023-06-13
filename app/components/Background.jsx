@@ -62,7 +62,7 @@ const Background = ({ children, bgColor = "bg-slate-200" }) => {
         <DismissKeyboard>
           <SafeAreaView
             // style={[{ minHeight: Math.round(windowHeight) }]}
-            className={`h-full ${bgColor} border- border-red-  w-full relative`}
+            className={`${bgColor} h-full  border-red-  w-full relative`}
           >
             {children}
           </SafeAreaView>

@@ -80,6 +80,8 @@ export class task extends Realm.Object {
       completedIn: { type: "date?" },
       inProgress: { type: "date?" },
       error: "int?",
+      started: "date?",
+      finished: "date?",
     },
   };
 }
@@ -107,13 +109,16 @@ export class activejob extends Realm.Object {
     primaryKey: "_id",
     properties: {
       _id: { type: "objectId", default: () => new Realm.BSON.ObjectId() },
-      job: "job",
+      job: "string?",
       matno: "string?",
+      category: "string?",
       supervisor: "string?",
-      dept: "string?",
       email: "string?",
+      started: "date?",
+      finished: "date?",
+      tasks: { type: "list", objectType: "task", default: [] },
       status: { type: "string", default: "Pending" },
-      time: { type: "string?", default: "0d 0h 0m" },
+      // time: { type: "string?", default: "0d 0h 0m" },
       completedIn: { type: "date?" },
       inProgress: { type: "date?" },
     },

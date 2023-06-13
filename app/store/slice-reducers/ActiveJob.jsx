@@ -1,12 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
+import Realm from "realm";
+import { category } from "../../models/Task";
 
 const initialState = {
   id: "",
   matno: "",
-  dept: "",
+  password: "",
   handler: "",
   currenttask: "",
-  job: {},
+  job: "",
+  category: "",
+  tasks: [],
   email: "",
   supervisor: "",
 };
@@ -19,24 +23,26 @@ const ActiveJob = createSlice({
     setMatNo: (state, action) => {
       state.matno = action.payload;
     },
-    setDept: (state, action) => {
-      state.dept = action.payload;
+    setPassword: (state, action) => {
+      state.password = action.payload;
     },
     setHandler: (state, action) => {
       state.handler = action.payload;
       return state;
     },
     setJob: (state, action) => {
-      state.job = action.payload;
+      state.job = action.payload.name;
+      state.category = action.payload.category.name;
+      // state.job._id = new Realm.BSON.ObjectId();
     },
     setEmail: (state, action) => {
       state.email = action.payload;
     },
-    setId: (state, action) => {
-      state.id = action.payload;
+    setSupervisor: (state, action) => {
+      state.supervisor = action.payload;
     },
     setTasks: (state, action) => {
-      state.job.tasks = action.payload;
+      state.tasks = action.payload;
     },
     setCurrentTask: (state, action) => {
       state.currenttask = action.payload || "";
@@ -55,11 +61,11 @@ const ActiveJob = createSlice({
 
 export const {
   setMatNo,
-  setDept,
+  setPassword,
   setHandler,
   setJob,
   setEmail,
-  setId,
+  setSupervisor,
   setTasks,
   setCurrentTask,
   Replace,

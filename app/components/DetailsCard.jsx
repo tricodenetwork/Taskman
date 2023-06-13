@@ -19,7 +19,7 @@ export default function DetailsCard({ item, id, index }) {
   const route = useRoute();
   const realm = useRealm();
   const job = useObject(activejob, Realm.BSON.ObjectId(route.params.id));
-  const task = job.job.tasks.filter((obj) => obj.name === item.name)[0];
+  const task = job.tasks.filter((obj) => obj.name === item.name)[0];
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
   const { user } = useSelector((state) => state);
 

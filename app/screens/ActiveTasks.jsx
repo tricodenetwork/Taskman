@@ -53,41 +53,15 @@ export default function ActiveTasks({ navigation }) {
     "activejob",
     Realm.BSON.ObjectId(route.params?.id)
   );
-  const [task, setTask] = useState(job.job.tasks);
+  const [task, setTask] = useState(job.tasks);
   const Accounts = useQuery(Account);
   const { currenttask, handler } = useSelector((state) => state.ActiveJob);
   const { user } = useSelector((state) => state);
   const foreignSupervisor = job.supervisor !== user.name ?? true;
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
+  // console.log(job.job.tasks);
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
-
-  const assignNextTask = useCallback(() => {
-    // Perform the necessary actions to assign the next task and handler
-    // based on the values of nextTask and nextHandler
-
-    realm.write(() => {
-      try {
-        job.job.tasks.map((task) => {
-          const { name } = task;
-
-          if (name == currenttask) {
-            task.handler = handler;
-            task.status = "Pending";
-            task.inProgress = null;
-            alert("Next Task Assigned!");
-
-            return;
-          }
-        });
-      } catch (error) {
-        console.log({ error, msg: "Error Assigning next task" });
-      }
-    });
-
-    // navigation.navigate("activejobs");
-    setModalVisible(false);
-  }, [realm, currenttask, handler]);
 
   useEffect(() => {
     dispatch(setFilter("Status"));
@@ -102,9 +76,9 @@ export default function ActiveTasks({ navigation }) {
             id: route.params.id,
           });
         }}
-        text2={job ? job.job.tasks.length : item.supervisor}
-        text3={job.duration}
-        text={job.job.name}
+        text2={job ? job.tasks.length : item.supervisor}
+        text3={job.job}
+        text={job.matno}
       />
 
       <View
@@ -122,10 +96,11 @@ export default function ActiveTasks({ navigation }) {
             }}
             taskdata={task}
             jobId={route.params.id}
+            clientId={job?.matno}
           />
         </View>
       </View>
-      {user.role !== "Client" && (
+      {/* {user.role !== "Client" && (
         <LowerButton
           disabled={
             foreignSupervisor || isWeekend || !isAllowedTime ? true : false
@@ -140,56 +115,7 @@ export default function ActiveTasks({ navigation }) {
               : "Assign Task"
           }
         />
-      )}
-      <Modal visible={modalVisible}>
-        <Background>
-          <View className=' h-[70%] pt-[5vh] self-center flex justify-between items-center'>
-            <Text
-              className='self-center text-center w-[50vw]'
-              style={[styles.text_sm2, { fontSize: actuatedNormalize(20) }]}
-            >
-              Assign Task
-            </Text>
-
-            <View className='h-[30vh] self-start px-[5vw] flex justify-around'>
-              <SelectComponent
-                value={currenttask}
-                title={"Tasks:"}
-                placeholder={"Assign Next Task"}
-                data={job.job.tasks}
-                setData={(params) => {
-                  dispatch(setCurrentTask(params));
-                }}
-              />
-              <SelectComponent
-                value={handler}
-                title={"Handler:"}
-                placeholder={"Assign Next Handler"}
-                data={Accounts.filter(
-                  (obj) =>
-                    (obj.role == "Handler") &
-                    (obj.category?.name == user.category)
-                )}
-                setData={(params) => {
-                  dispatch(setHandler(params));
-                }}
-              />
-            </View>
-            <View
-              id='BUTTONS'
-              className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
-            >
-              <Button title='Submit' onPress={assignNextTask} />
-              <Button
-                title='Cancel'
-                onPress={() => {
-                  setModalVisible(false);
-                }}
-              />
-            </View>
-          </View>
-        </Background>
-      </Modal>
+      )} */}
     </Background>
   );
 }

@@ -33,12 +33,13 @@ export default function JobCard({ isActive, id, name, item }) {
   // });
 
   const sumAll = sumField(
-    item.tasks ? item.tasks : item.job && item.job.tasks ? item.job.tasks : [],
+    item.tasks ? item.tasks : item.job && item.tasks ? item.tasks : [],
     "duration"
   );
 
   const convert = convertToMinutes(sumAll);
   const sum = formatDuration(convert);
+  // const sum = { days: 0, hours: 5, minutes: 20 };
 
   return (
     <View
@@ -61,7 +62,7 @@ export default function JobCard({ isActive, id, name, item }) {
         {route.name == "jobs" ? (
           <Text>Tasks:{item.tasks.length}</Text>
         ) : (
-          <Text>{item.job && item.job.name}</Text>
+          <Text>{item.job && item.job}</Text>
         )}
         <Text style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}>
           {route.name == "tasks"

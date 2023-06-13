@@ -44,7 +44,7 @@ export default function MyTasks({ navigation }) {
 
   const myTasks = ActiveJobs.map((job) => {
     const assigned =
-      job.job?.tasks.filter((obj) => obj.handler === user.name) ?? [];
+      job?.tasks.filter((obj) => obj.handler === user.name) ?? [];
     assigned.map((obj) => {
       obj.id = job._id.toString();
       obj.job = job.job;
@@ -72,11 +72,6 @@ export default function MyTasks({ navigation }) {
           setEdit({ name: item.name, duration: item.duration });
           setName(item.name);
           setDurations(item.duration);
-          const value = job.job.tasks.filtered(
-            `name == $0 AND duration == $1`,
-            item.name,
-            item.duration
-          );
         }}
       >
         <View
@@ -104,7 +99,7 @@ export default function MyTasks({ navigation }) {
   return (
     <Background bgColor='min-h-98vh'>
       <Topscreen
-        text={"Tasks"}
+        text={"My Tasks"}
 
         // Edit={() => {
         //   navigation.navigate("ActivateJob", {
@@ -127,93 +122,6 @@ export default function MyTasks({ navigation }) {
           />
         </View>
       </View>
-
-      <Modal
-        animationType='slide'
-        className='h-[50vh]'
-        onRequestClose={() => {
-          setModalVisible(false);
-        }}
-        visible={modalVisible}
-      >
-        <View className='bg-primary pt-10 h-full'>
-          <View className=' mb-[2vh]'>
-            <View className='flex items-center justify-between self-center mb-[2vh] w-[90%] flex-row'>
-              <Text className='text-Handler2' style={styles.text}>
-                Name:
-              </Text>
-              <TextInput
-                value={name}
-                style={[
-                  styles.averageText,
-                  { height: actuatedNormalizeVertical(50) },
-                ]}
-                onChangeText={(value) => {
-                  setName(value);
-                }}
-                className='w-[65vw] bg-slate-300 mb-2 rounded-sm h-10'
-              />
-            </View>
-            <View className='flex items-center justify-between self-center w-[90%] flex-row'>
-              <Text className='text-Handler2' style={styles.text}>
-                Duration:
-              </Text>
-              <TextInput
-                value={durations}
-                keyboardType='numeric'
-                style={[
-                  styles.averageText,
-                  { height: actuatedNormalizeVertical(50) },
-                ]}
-                onChangeText={(value) => {
-                  setDurations(value);
-                }}
-                className='w-[65vw] bg-slate-300 mb-2 rounded-sm h-10'
-              />
-            </View>
-            <View className='flex flex-row' style={[styles.Pcard]}>
-              <OdinaryButton
-                text={"Add"}
-                navigate={() => {
-                  addTask({ name: name, duration: durations });
-                }}
-                style={"mt-5 relative left-[15%]"}
-              />
-              <OdinaryButton
-                text={"Delete"}
-                navigate={() => {
-                  deleteTask();
-                }}
-                style={"mt-5 relative left-[15%]"}
-              />
-            </View>
-          </View>
-          <View id='TASKS_CONTAINER' className='mx-[4vw]'>
-            <Text className='text-white underline' style={styles.text}>
-              Tasks
-            </Text>
-            <FlatList
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={() => {
-                    setRefreshing(true);
-                  }}
-                />
-              }
-              data={task}
-              renderItem={render}
-              keyExtractor={(item) => item.name}
-              style={{ height: "55%" }}
-            />
-          </View>
-          <LowerButton
-            style={"w-[90vw]"}
-            text={"Done"}
-            navigate={() => setModalVisible(false)}
-          />
-        </View>
-      </Modal>
     </Background>
   );
 }

@@ -42,6 +42,7 @@ export default function ActiveJobs({ navigation }) {
           text={
             isWeekend || !isAllowedTime ? "Outside working hours" : "Activate"
           }
+          p
         />
       )}
     </Background>

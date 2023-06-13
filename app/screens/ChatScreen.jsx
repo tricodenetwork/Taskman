@@ -23,7 +23,7 @@ export default function ChatScreen() {
   const chatUser =
     user.role !== "Client"
       ? realm.objectForPrimaryKey("account", Realm.BSON.ObjectId(user._id))
-      : realm.objectForPrimaryKey("client", user._id);
+      : useQuery("client").filtered(`clientId == $0`, user._id)[0];
 
   useEffect(() => {
     // Fetch existing messages from the Realm DB

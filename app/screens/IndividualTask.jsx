@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { setCurrentTask, setHandler } from "../store/slice-reducers/ActiveJob";
@@ -10,12 +10,18 @@ import Background from "../components/Background";
 import { useCallback } from "react";
 import { Button } from "react-native";
 import { useRoute } from "@react-navigation/native";
+import { log } from "react-native-reanimated";
+import OdinaryButton from "../components/OdinaryButton";
+import { Motion } from "@legendapp/motion";
+import { TouchableOpacity } from "react-native";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
 export default function IndividualTask({ navigation }) {
   const { currenttask, handler } = useSelector((state) => state.ActiveJob);
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
+  const [visible, setVisible] = useState(false);
+
   const dispatch = useDispatch();
   const Accounts = useQuery(Account);
   const { user } = useSelector((state) => state);
@@ -26,51 +32,28 @@ export default function IndividualTask({ navigation }) {
     Realm.BSON.ObjectId(route.params.id)
   );
 
-  const inProgess = job?.job.tasks.filter(
+  const inProgess = job.tasks.filter(
     (item) => item.name == route.params?.taskName
   )[0].inProgress;
 
+  console.log(handler);
+
   const Activate = useCallback(() => {
-    // Perform the necessary actions to assign the next task and handler
-    // based on the values of nextTask and nextHandler
+    // Perform the necessary actions to activate a certain task and handler by setting it to InProgress
 
     realm.write(() => {
       try {
-        job?.job.tasks.map((task) => {
+        job.tasks.map((task) => {
           const { name } = task;
-
           if (name == route.params.taskName) {
-            task.handler = handler;
+            // task.handler = handler;
             task.status = "InProgress";
             task.inProgress = new Date();
             alert("Task Activated! ✔");
 
             return;
-          }
-        });
-      } catch (error) {
-        console.log({ error, msg: "Error Assigning next task" });
-      }
-    });
-
-    // navigation.navigate("activejobs");
-    navigation.navigate("activeJobs");
-  }, [realm, currenttask, handler]);
-  const assignNextTask = useCallback(() => {
-    // Perform the necessary actions to assign the next task and handler
-    // based on the values of nextTask and nextHandler
-
-    realm.write(() => {
-      try {
-        job.job.tasks.map((task) => {
-          const { name } = task;
-
-          if (name == route.params.taskName) {
-            task.handler = handler;
-            task.status = "Pending";
-            task.inProgress = null;
-            alert("Next Task Assigned!");
-
+          } else {
+            console.log("Not Active Job.");
             return;
           }
         });
@@ -79,8 +62,26 @@ export default function IndividualTask({ navigation }) {
       }
     });
 
-    // navigation.navigate("activejobs");
-    navigation.navigate("activetasks");
+    navigation.navigate("activetasks", { id: route.params });
+  }, [realm, currenttask, handler]);
+  const assignNextTask = useCallback(() => {
+    realm.write(() => {
+      try {
+        job.tasks.map((task) => {
+          const { name } = task;
+          if (name == route.params.taskName) {
+            task.handler = handler;
+            task.status = "Pending";
+            task.inProgress = null;
+            alert(`${route.params.taskName} 📃 assigned to ${handler} 👤 `);
+            return;
+          }
+        });
+      } catch (error) {
+        console.log({ error, msg: "Error Assigning next task" });
+      }
+    });
+    navigation.navigate("activetasks", { id: route.params.id });
   }, [realm, currenttask, handler]);
 
   return (
@@ -113,12 +114,44 @@ export default function IndividualTask({ navigation }) {
             }}
           />
         </View>
+        {visible ? (
+          <TouchableOpacity
+            className='bg-primary_light rounded-2xl self-center absolute top-[5vh] justify-center w-[100%] h-[75%]'
+            activeOpacity={1}
+          >
+            <Motion.View
+              initial={{ x: -500 }}
+              animate={{ x: 0 }}
+              transition={{ type: "spring", stiffness: 100 }}
+              className='justify-center h-full  w-full  flex self-center'
+            >
+              <Text style={styles.text_sm} className='text-center mb-2'>
+                Press Ok to confirm
+              </Text>
+              <OdinaryButton
+                style={"rounded-sm mt-4 bg-primary"}
+                navigate={() => {
+                  assignNextTask();
+                  setVisible(!visible);
+                }}
+                text={"OK"}
+              />
+            </Motion.View>
+          </TouchableOpacity>
+        ) : null}
         <View
           id='BUTTONS'
           className='flex justify-between align-bottom w-[65vw]  self-center flex-row'
         >
           <Button
-            disabled={inProgess || isWeekend || !isAllowedTime ? true : false}
+            disabled={
+              inProgess ||
+              isWeekend ||
+              !isAllowedTime ||
+              !route.params.taskHandler
+                ? true
+                : false
+            }
             title='Activate'
             onPress={Activate}
             color={"#004343"}
@@ -126,7 +159,7 @@ export default function IndividualTask({ navigation }) {
           <Button
             disabled={handler == "" || isWeekend || !isAllowedTime}
             title='Assign'
-            onPress={assignNextTask}
+            onPress={() => setVisible(!visible)}
           />
           <Button
             title='Back'

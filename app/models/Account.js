@@ -49,8 +49,10 @@ export class client extends Realm.Object {
     primaryKey: "_id",
     properties: {
       email: "string",
-      _id: "string",
+      _id: { type: "objectId?", default: () => new Realm.BSON.ObjectId() },
+      clientId: "string?",
       role: { type: "string", default: "Client" },
+      password: "string?",
     },
   };
 }

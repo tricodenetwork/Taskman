@@ -161,18 +161,19 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
             {text}
           </Text>
           {route.name == "tasks" && (
-            <>
-              <Text style={styles.text_sm} className='text-white self-center'>
-                Tasks:{text2}
-              </Text>
+            <Text style={styles.text_sm} className='text-white self-center'>
+              Tasks:{text2}
+            </Text>
+          )}
+          {route.name == "activetasks" ||
+            (route.name == "taskdetailsscreen" && (
               <Text
                 style={styles.text_sm}
-                className='text-white absolute w-[100vw] text-center top-[145%]'
+                className='text-white mt-[1vh] self-center'
               >
                 {text3}
               </Text>
-            </>
-          )}
+            ))}
         </View>
         {user.role !== "Client" && (
           <View className='absolute right-[3vw]'>

@@ -303,13 +303,7 @@ const CreateAccount = ({ navigation }) => {
                 className='w-[65vw] bg-slate-300  rounded-sm'
               />
             </View>
-            <OdinaryButton
-              navigate={() => {
-                sendUserDetails(user.email, user);
-              }}
-              text={"Send"}
-              style={"bg-Handler3 absolute left-[5vw] bottom-[4vh]"}
-            />
+
             <View className='flex  items-end relative left-[23vw] justify-center'>
               <TouchableOpacity
                 onPress={() => {

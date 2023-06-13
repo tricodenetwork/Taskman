@@ -102,7 +102,6 @@ export default function MessageScreen({ navigation }) {
 
             const chats = allChats.filtered(`roomId == $0`, item._id);
             const lastMessage = chats[chats.length - 1];
-            console.log(lastMessage);
             return (
               <View id='SINGLE_CONTACT_MESSSAGE_BOX'>
                 {lastMessage?.text ?? "" !== "" ? (

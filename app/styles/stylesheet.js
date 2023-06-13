@@ -103,7 +103,7 @@ export const styles = StyleSheet.create({
   text_sm2: {
     fontFamily: "AxiformaRegular",
     fontSize: actuatedNormalize(16),
-    lineHeight: actuatedNormalize(24),
+    lineHeight: actuatedNormalizeVertical(24),
     // fontWeight:'400'
   },
   input2: {

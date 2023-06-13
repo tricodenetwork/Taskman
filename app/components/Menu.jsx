@@ -30,7 +30,7 @@ export default function Menu() {
         initial={{ x: -100 }}
         animate={{ x: 0 }}
         transition={{ type: "spring", stiffness: 100 }}
-        className='h-[80vh]  pt-[8vh] absolute top-[-3vh] border-b-2 border-r-2 border-primary bg-white left-0 w-[60vw]'
+        className='h-[100vh]  pt-[8vh] absolute top-[-1.5vh] border-b-2 border-r-2 border-primary bg-white left-0 w-[60vw]'
       >
         <View className='relative w-auto z-50 h-[100%] gap-3 mx-[2vw]'>
           <TouchableOpacity
@@ -65,18 +65,18 @@ export default function Menu() {
           </TouchableOpacity>
 
           <View className='absolute flex flex-row-reverse items-center justify-between w-full border- bottom-[-2%] self-center px-[2vw]'>
-            <TouchableOpacity onPress={handleLogout}>
+            {/* <TouchableOpacity onPress={handleLogout}>
               <Text
                 style={styles.text_md2}
                 className=' text-primary underline '
               >
                 Logout
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
-            <Text style={styles.text_md2} className='text-[8px]  text-primary'>
+            {/* <Text style={styles.text_md2} className='text-[8px]  text-primary'>
               &copy; 2023
-            </Text>
+            </Text> */}
           </View>
         </View>
       </Motion.View>

@@ -51,7 +51,7 @@ export const MainStack = () => {
   const account =
     cleanedOid.length > 10
       ? useObject("account", Realm.BSON.ObjectId(cleanedOid))
-      : useObject("client", cleanedOid);
+      : useQuery("client").filtered(`clientId == $0`, cleanedOid)[0];
 
   useEffect(() => {
     dispatch(setUser(account));

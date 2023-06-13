@@ -224,7 +224,7 @@ export default function Tasks({ navigation }) {
         navigate={() => {
           setModalVisible(true);
         }}
-        text={"Add Task"}
+        text={"Add /Edit Task"}
       />
       <Modal
         animationType='slide'
@@ -235,7 +235,7 @@ export default function Tasks({ navigation }) {
         visible={modalVisible}
       >
         <Background>
-          <View className='bg-primary pt-10  min-h-[98vh]'>
+          <View className='bg-primary pt-10  min-h-screen'>
             <View className=' mb-[2vh]'>
               <View className='flex items-center justify-between self-center mb-[2vh] w-[90%] flex-row'>
                 <Text className='text-Handler2' style={styles.text_md2}>

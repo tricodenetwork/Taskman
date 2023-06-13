@@ -161,7 +161,7 @@ export default function HandlerCard({ item }) {
           style={[styles.text_md, { fontSize: actuatedNormalize(12) }]}
           className='text-primary'
         >
-          {item.job.name}
+          {item.job}
         </Text>
         <Text
           style={[styles.text_sm, { fontSize: actuatedNormalize(12) }]}

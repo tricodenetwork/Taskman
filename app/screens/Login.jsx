@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Modal,
   Image,
+  Button,
 } from "react-native";
 import Background from "../components/Background";
 import {
@@ -23,6 +24,8 @@ import Eye from "../../assets/icons/eye.svg";
 import EyesClosed from "../../assets/icons/closed.svg";
 import Error from "../../assets/icons/error.svg";
 import Logo from "../../assets/images/C.svg";
+// import { TouchableOpacity } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native";
 
 let AuthState;
 (function (AuthState) {
@@ -64,15 +67,12 @@ const Login = ({ navigation }) => {
   }, [usermail, password, setAuthState, app]);
 
   return (
-    <Background bgColor='bg-primary min-h-[90vh] items-center justify-center'>
-      <Text className='text-[#FFD700] text-2xl absolute top-[3vh] left-[5vw]'>
-        {/* Uniben */}
-      </Text>
-      <View className='absolute top-0  scale-[.25]'>
-        <Logo />
-      </View>
-      <View className=' rounded-3xl relative my-auto bg-slate-300 px-[12vw] pt-[4vh] pb-[12vh] border-2 border-Supervisor2'>
-        <View className='w-[55vw] mt-[7vh] self-center'>
+    <Background bgColor='bg-primary min-h-[90vh]   items-center justify-center'>
+      <View
+        style={{ borderRadius: actuatedNormalize(25) }}
+        className='relative w-[80vw] h-[55vh] bg-slate-300 px-[12vw] pt-[4vh] pb-[12vh] border-2 border-Supervisor2'
+      >
+        <View className='w-[50vw] mt-[2vh] self-center'>
           <Text
             style={styles.text_md}
             className='text-purple-600 text-center mb-[1vh]'
@@ -89,7 +89,7 @@ const Login = ({ navigation }) => {
             <View className={"absolute right-[1vw]"}></View>
           </View>
         </View>
-        <View className='w-[55vw] mt-[3vh] self-center'>
+        <View className='w-[50vw] mt-[7.5vh] self-center'>
           <Text
             style={styles.text_md}
             className='text-purple-600 text-center mb-[1vh]'
@@ -127,20 +127,34 @@ const Login = ({ navigation }) => {
             </View>
           </View>
         </View>
-        <Text className='text-purple-600 mt-[5vh] text-center'>
+        <Text
+          style={[styles.averageText, { fontSize: actuatedNormalize(12) }]}
+          className='text-purple-600 mt-[9.5vh] text-center'
+        >
           Forgot Password? Check your mail!
         </Text>
 
-        <LowerButton
+        {/* <LowerButton
           disabled={authState == 1}
-          style={"bg-[#FFb700] w-[35vw]"}
+          style={"bg-[#FFCB47]  w-[30vw]"}
           textStyle='text-slate-900'
-          navigate={() => {
-            handleLogin();
-            // navigation.navigate("accounts");
-          }}
+          navigate={}
           text={"Log in"}
-        />
+        /> */}
+        <View className='absolute bottom-[2%] self-center'>
+          <TouchableOpacity
+            onPress={handleLogin}
+            style={[{ borderRadius: actuatedNormalize(10) }]}
+            className='bg-[#FFBA0A] px-[8vw] py-[1.2vh]'
+          >
+            <Text
+              className='text-center text-slate-900'
+              style={[styles.text_md]}
+            >
+              Log in
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <Modal visible={authState == 1}>
         <View className='flex bg-slate-300 h-full justify-center items-center'>
@@ -158,6 +172,17 @@ const Login = ({ navigation }) => {
           </Text>
         </View>
       </Modal>
+      <View className='flex flex-row items-end absolute bottom-[1.5vh] self-center '>
+        <View className=' left-0 bottom-0'>
+          <Logo width={actuatedNormalize(35)} height={actuatedNormalize(35)} />
+        </View>
+        <Text
+          style={[styles.averageText, { fontStyle: "normal" }]}
+          className='text-cyan-500'
+        >
+          {` Powered by Tricode Network`}{" "}
+        </Text>
+      </View>
     </Background>
   );
 };

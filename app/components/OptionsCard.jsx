@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import React from "react";
+import { View, StyleSheet, Text } from "react-native";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { MaterialIcons } from "@expo/vector-icons";
 const OptionsCard = ({ text, icon }) => {
@@ -18,6 +18,5 @@ const OptionsCard = ({ text, icon }) => {
     </View>
   );
 };
-
 
 export default OptionsCard;

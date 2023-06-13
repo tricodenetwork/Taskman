@@ -10,8 +10,22 @@ import Topscreen from "../components/Topscreen";
 import Constants from "expo-constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Motion } from "@legendapp/motion";
+import { useIsFocused } from "@react-navigation/native";
+import { useUser } from "@realm/react";
+import { AccountRealmContext } from "../models";
+import { setUser } from "../store/slice-reducers/userSlice";
+import { useDispatch } from "react-redux";
+
+const { useObject, useQuery } = AccountRealmContext;
 
 export default function Taskman({ navigation }) {
+  const dispatch = useDispatch();
+  const isFocused = useIsFocused();
+  const user = useUser();
+  const oid = user.identities[0].id;
+  const cleanedOid = oid.replace(/[^0-9a-zA-Z]/g, "");
+
+  const account = useObject("account", Realm.BSON.ObjectId(cleanedOid));
   // fadeAnim will be used as the value for opacity. Initial Value: 0
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -33,6 +47,9 @@ export default function Taskman({ navigation }) {
     }).start();
   };
 
+  useEffect(() => {
+    dispatch(setUser(account));
+  }, [isFocused]);
   useEffect(() => {
     initial();
     setTimeout(() => {

@@ -167,6 +167,10 @@ function timeSpentz(dateTimeString) {
 }
 
 export function millisecondSinceStartDate(startDate) {
+  if (!startDate) {
+    return;
+  }
+
   const startDateTime = new Date(startDate);
   const currentDate = new Date();
 
@@ -182,7 +186,7 @@ export function millisecondSinceStartDate(startDate) {
     startDateTime.getHours() >= 16 ||
     (startDateTime.getHours() === 16 && startDateTime.getMinutes() > 0)
   ) {
-    console.log("Start time is outside working hours.");
+    console.log(startDate, "Start time is outside working hours.");
     return;
   }
 
