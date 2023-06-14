@@ -11,6 +11,7 @@ import { activejob } from "../models/Task";
 import { remainingTimetohours } from "../api/Realm";
 import { millisecondSinceStartDate, morning } from "../api/test";
 import { useSelector } from "react-redux";
+import { holiday } from "../models/Account";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -18,6 +19,8 @@ export default function DetailsCard({ item, id, index }) {
   const [time, setTime] = useState("");
   const route = useRoute();
   const realm = useRealm();
+  const hols = useQuery(holiday);
+
   const job = useObject(activejob, Realm.BSON.ObjectId(route.params.id));
   const task = job.tasks.filter((obj) => obj.name === item.name)[0];
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
@@ -62,22 +65,28 @@ export default function DetailsCard({ item, id, index }) {
   const Time = Completed(item.completedIn, item.inProgress); // Variable to store the remaining time when the interval is paused
 
   const { days, hours, minutes } = item.duration;
-  const milliseconds =
+  const taskDuration =
     days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
 
   useEffect(() => {
     let interval = null;
     // let newTargetTime = Date.now(); // Initialize newTargetTime outside the interval
 
-    function calculateRemainingTime(targetTime) {
+    function calculateRemainingTime(duration) {
       // Check if the task is completed
       if (item.status == "Completed") {
         clearInterval(interval);
         return;
       }
       let countDownTimer;
+      let timeSpent = item.error
+        ? item.completedIn.getTime() +
+          task.error +
+          millisecondSinceStartDate(item.inProgress, hols)
+        : millisecondSinceStartDate(item.inProgress, hols);
+
       // Calculate the remaining time in milliseconds
-      countDownTimer = targetTime - millisecondSinceStartDate(item.inProgress);
+      countDownTimer = duration - timeSpent;
 
       // Calculate the remaining days, hours, minutes, and seconds
 
@@ -111,7 +120,7 @@ export default function DetailsCard({ item, id, index }) {
 
       // Set up the interval to update the remaining time every second
       interval = setInterval(() => {
-        calculateRemainingTime(milliseconds);
+        calculateRemainingTime(taskDuration);
       }, 1000);
     }
 
@@ -119,7 +128,7 @@ export default function DetailsCard({ item, id, index }) {
     !isWeekend & isAllowedTime &&
       calculateInterval(item.duration, item.inProgress, item.completedIn);
 
-    calculateRemainingTime(milliseconds);
+    calculateRemainingTime(taskDuration);
 
     // Clear the interval when the component is unmounted
     return () => {

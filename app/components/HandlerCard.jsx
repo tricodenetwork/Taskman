@@ -15,6 +15,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { AccountRealmContext } from "../models";
 import { millisecondSinceStartDate } from "../api/test";
 import { useSelector } from "react-redux";
+import { holiday } from "../models/Account";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -23,6 +24,7 @@ export default function HandlerCard({ item }) {
   const [time, setTime] = useState("");
   const route = useRoute();
   const realm = useRealm();
+  const hols = useQuery(holiday);
   const Time = Completed(item.completedIn, item.inProgress);
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
   const status =
@@ -53,8 +55,8 @@ export default function HandlerCard({ item }) {
       let timeSpent = item.error
         ? item.completedIn.getTime() +
           task.error +
-          millisecondSinceStartDate(item.inProgress)
-        : millisecondSinceStartDate(item.inProgress);
+          millisecondSinceStartDate(item.inProgress, hols)
+        : millisecondSinceStartDate(item.inProgress, hols);
 
       // Calculate the remaining time in milliseconds
       countDownTimer = duration - timeSpent;

@@ -20,6 +20,7 @@ const initialState = {
   isAllowedTime: isAllowedTime,
   isWeekend: isWeekend,
   clock: "00:00",
+  holiday: [new Date()],
 };
 
 const formSlice = createSlice({
@@ -47,6 +48,9 @@ const formSlice = createSlice({
     setMenu(state, action) {
       state.menu = !state.menu;
     },
+    AddHoliday(state, action) {
+      state.holiday.push(action.payload);
+    },
   },
 });
 
@@ -58,6 +62,7 @@ export const {
   setFilter,
   setMenu,
   setClock,
+  AddHoliday,
 } = formSlice.actions;
 
 export default formSlice.reducer;

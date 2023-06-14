@@ -56,3 +56,18 @@ export class client extends Realm.Object {
     },
   };
 }
+export class holiday extends Realm.Object {
+  constructor(realm, holiday) {
+    super(realm, holiday);
+  }
+
+  // To use a class as a Realm object type in JS, define the object schema on the static property "schema".
+  static schema = {
+    name: "holiday",
+    primaryKey: "_id",
+    properties: {
+      _id: { type: "objectId?", default: () => new Realm.BSON.ObjectId() },
+      day: "date?",
+    },
+  };
+}

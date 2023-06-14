@@ -91,19 +91,59 @@ export default function Taskman({ navigation }) {
         </Text>
 
         <View className='mt-[5vh] h-[30vh] flex justify-around'>
-          <Text style={[styles.text_tiny, { fontSize: actuatedNormalize(14) }]}>
+          <Text
+            style={[
+              styles.text_tiny,
+              {
+                fontSize: actuatedNormalize(14),
+                lineHeight: actuatedNormalizeVertical(22),
+              },
+            ]}
+          >
             * Set time target for tasks
           </Text>
-          <Text style={[styles.text_tiny, { fontSize: actuatedNormalize(14) }]}>
+          <Text
+            style={[
+              styles.text_tiny,
+              {
+                fontSize: actuatedNormalize(14),
+                lineHeight: actuatedNormalizeVertical(22),
+              },
+            ]}
+          >
             * Record tasks history
           </Text>
-          <Text style={[styles.text_tiny, { fontSize: actuatedNormalize(14) }]}>
+          <Text
+            style={[
+              styles.text_tiny,
+              {
+                fontSize: actuatedNormalize(14),
+                lineHeight: actuatedNormalizeVertical(22),
+              },
+            ]}
+          >
             * Supervise tasks among handlers
           </Text>
-          <Text style={[styles.text_tiny, { fontSize: actuatedNormalize(14) }]}>
+          <Text
+            style={[
+              styles.text_tiny,
+              {
+                fontSize: actuatedNormalize(14),
+                lineHeight: actuatedNormalizeVertical(22),
+              },
+            ]}
+          >
             * Evaluate handlers performance
           </Text>
-          <Text style={[styles.text_tiny, { fontSize: actuatedNormalize(14) }]}>
+          <Text
+            style={[
+              styles.text_tiny,
+              {
+                fontSize: actuatedNormalize(14),
+                lineHeight: actuatedNormalizeVertical(22),
+              },
+            ]}
+          >
             * Give feedback to clients
           </Text>
         </View>

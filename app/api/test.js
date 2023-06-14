@@ -166,69 +166,69 @@ function timeSpentz(dateTimeString) {
   }, m: ${minutes}, s: ${seconds}}`;
 }
 
-export function millisecondSinceStartDate(startDate) {
-  if (!startDate) {
-    return;
-  }
+// function millisecondSinceStartDate(startDate) {
+//   if (!startDate) {
+//     return;
+//   }
 
-  const startDateTime = new Date(startDate);
-  const currentDate = new Date();
+//   const startDateTime = new Date(startDate);
+//   const currentDate = new Date();
 
-  // Check if the start date is on a weekend
-  if (startDateTime.getDay() === 6 || startDateTime.getDay() === 0) {
-    console.log("Start date falls on a weekend. No working hours.");
-    return;
-  }
+//   // Check if the start date is on a weekend
+//   if (startDateTime.getDay() === 6 || startDateTime.getDay() === 0) {
+//     console.log("Start date falls on a weekend. No working hours.");
+//     return;
+//   }
 
-  // Check if the start date is outside working hours
-  if (
-    startDateTime.getHours() < 8 ||
-    startDateTime.getHours() >= 16 ||
-    (startDateTime.getHours() === 16 && startDateTime.getMinutes() > 0)
-  ) {
-    console.log(startDate, "Start time is outside working hours.");
-    return;
-  }
+//   // Check if the start date is outside working hours
+//   if (
+//     startDateTime.getHours() < 8 ||
+//     startDateTime.getHours() >= 16 ||
+//     (startDateTime.getHours() === 16 && startDateTime.getMinutes() > 0)
+//   ) {
+//     console.log(startDate, "Start time is outside working hours.");
+//     return;
+//   }
 
-  let elapsedTime = currentDate - startDateTime;
+//   let elapsedTime = currentDate - startDateTime;
 
-  // Subtract weekends from the elapsed time
-  const elapsedDays = Math.floor(elapsedTime / (24 * 60 * 60 * 1000));
-  const elapsedWeekends =
-    Math.floor((elapsedDays + startDateTime.getDay()) / 7) * 2;
-  elapsedTime -= elapsedWeekends * 24 * 60 * 60 * 1000;
+//   // Subtract weekends from the elapsed time
+//   const elapsedDays = Math.floor(elapsedTime / (24 * 60 * 60 * 1000));
+//   const elapsedWeekends =
+//     Math.floor((elapsedDays + startDateTime.getDay()) / 7) * 2;
+//   elapsedTime -= elapsedWeekends * 24 * 60 * 60 * 1000;
 
-  // Subtract time outside working hours from the elapsed time
-  const startHour = startDateTime.getHours();
-  const startMinutes = startDateTime.getMinutes();
-  const endHour = 16; // 4 PM
-  const endMinutes = 0;
+//   // Subtract time outside working hours from the elapsed time
+//   const startHour = 8;
+//   const startMinutes = 0;
+//   const endHour = 16; // 4 PM
+//   const endMinutes = 0;
 
-  if (currentDate.getDay() > 0 && currentDate.getDay() < 6) {
-    // Check if the current day is a weekday
-    const currentHour = currentDate.getHours();
-    const currentMinutes = currentDate.getMinutes();
+//   if (currentDate.getDay() > 0 && currentDate.getDay() < 6) {
+//     // Check if the current day is a weekday
+//     const currentHour = currentDate.getHours();
+//     const currentMinutes = currentDate.getMinutes();
 
-    if (
-      currentHour < startHour ||
-      (currentHour === startHour && currentMinutes < startMinutes)
-    ) {
-      console.log("Current time is outside working hours.");
-      return;
-    }
+//     if (
+//       currentHour < startHour ||
+//       (currentHour === startHour && currentMinutes < startMinutes)
+//     ) {
+//       console.log("Current time is outside working hours.");
+//       return;
+//     }
 
-    if (
-      currentHour > endHour ||
-      (currentHour === endHour && currentMinutes > endMinutes)
-    ) {
-      const remainingHours =
-        (currentHour - endHour) * 60 + (currentMinutes - endMinutes);
-      elapsedTime -= remainingHours * 60 * 1000;
-    }
-  }
+//     if (
+//       currentHour > endHour ||
+//       (currentHour === endHour && currentMinutes > endMinutes)
+//     ) {
+//       const remainingHours =
+//         (currentHour - endHour) * 60 + (currentMinutes - endMinutes);
+//       elapsedTime -= remainingHours * 60 * 1000;
+//     }
+//   }
 
-  return elapsedTime;
-}
+//   return elapsedTime / 3600000;
+// }
 
 function calculateRemainingTime(countDownTimer) {
   // Calculate the remaining days, hours, minutes, and seconds
@@ -257,9 +257,97 @@ function calculateRemainingTime(countDownTimer) {
   return Timer;
 }
 
-// const test = millisecondSinceStartDate("2023-06-07T10:43:39.249Z");
-// const use = test - undefined;
-// const us = 101795429;
-// const dates = new Date(us);
+export function millisecondSinceStartDate(startDate, holidays = []) {
+  if (!startDate) {
+    return;
+  }
+  const start = new Date(startDate);
+  const current = new Date();
+  let totalMillisecondsInRange = 0;
 
-// console.log(dates.getTime());
+  // Convert start and current dates to UTC timestamps
+  const startTimestamp = Date.UTC(
+    start.getUTCFullYear(),
+    start.getUTCMonth(),
+    start.getUTCDate(),
+    start.getUTCHours(),
+    start.getUTCMinutes(),
+    start.getUTCSeconds(),
+    start.getUTCMilliseconds()
+  );
+
+  const currentTimestamp = Date.UTC(
+    current.getUTCFullYear(),
+    current.getUTCMonth(),
+    current.getUTCDate(),
+    current.getUTCHours(),
+    current.getUTCMinutes(),
+    current.getUTCSeconds(),
+    current.getUTCMilliseconds()
+  );
+
+  // Adjust the start time to 8 AM if it's before 8 AM
+  const adjustedStartTimestamp = new Date(startTimestamp);
+  adjustedStartTimestamp.setUTCHours(8, 0, 0, 0);
+
+  // Calculate the number of milliseconds in a day
+  const millisecondsInADay = 24 * 60 * 60 * 1000;
+
+  // Iterate through each day between the start date and current date
+  for (
+    let timestamp = adjustedStartTimestamp.getTime();
+    timestamp <= currentTimestamp;
+    timestamp += millisecondsInADay
+  ) {
+    const date = new Date(timestamp);
+
+    const dayOfWeek = date.getUTCDay();
+
+    // Exclude weekends (Saturday and Sunday)
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      // Check if the date is a holiday
+      const isHoliday = holidays.some((holiday) => {
+        const holidayDate = new Date(holiday);
+        return (
+          holidayDate.getUTCFullYear() === date.getUTCFullYear() &&
+          holidayDate.getUTCMonth() === date.getUTCMonth() &&
+          holidayDate.getUTCDate() === date.getUTCDate()
+        );
+      });
+
+      if (!isHoliday) {
+        // Set the start and end times of the workday
+        const startOfWorkday = new Date(
+          date.getUTCFullYear(),
+          date.getUTCMonth(),
+          date.getUTCDate(),
+          8,
+          0,
+          0
+        );
+        const endOfWorkday = new Date(
+          date.getUTCFullYear(),
+          date.getUTCMonth(),
+          date.getUTCDate(),
+          16,
+          0,
+          0
+        );
+
+        // Check if the start time is beyond the end of the workday
+        if (startTimestamp > endOfWorkday.getTime()) {
+          continue; // Skip to the next day
+        }
+
+        // Calculate the milliseconds within the workday range
+        const dayStart = Math.max(startTimestamp, startOfWorkday.getTime());
+        const dayEnd = Math.min(currentTimestamp, endOfWorkday.getTime());
+        const timeDiff = dayEnd - dayStart;
+        totalMillisecondsInRange += Math.max(0, timeDiff);
+      }
+    }
+  }
+  return totalMillisecondsInRange;
+}
+
+console.log(millisecondSinceStartDate("2023-06-13T10:14:42.326+00:00"));

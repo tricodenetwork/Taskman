@@ -8,7 +8,6 @@ import {
 import { SafeAreaView, StyleSheet } from "react-native";
 
 import { AccountRealmContext } from "./models";
-import { LoginScreen } from "./components/LoginScreen";
 import colors from "./styles/colors";
 import { AppSync } from "./AppSync";
 import Login from "./screens/Login";

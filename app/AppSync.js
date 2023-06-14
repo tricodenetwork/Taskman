@@ -14,12 +14,11 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 
-import { Account, client } from "./models/Account";
+import { Account, client, holiday } from "./models/Account";
 import { AccountRealmContext } from "./models";
 import { buttonStyles } from "./styles/button";
 import { shadows } from "./styles/shadows";
 import colors from "./styles/colors";
-import { OfflineModeButton } from "./components/OfflineModeButton";
 import { Provider } from "react-redux";
 import { persistor, store } from "./store/store";
 import { PersistGate } from "redux-persist/lib/integration/react";
@@ -112,6 +111,7 @@ export const AppSync = () => {
       mutableSubs.add(realm.objects(chats));
       mutableSubs.add(realm.objects(chatroom));
       mutableSubs.add(realm.objects(category));
+      mutableSubs.add(realm.objects(holiday));
       // mutableSubs.add(realm.objects(client));
     });
   }, [realm]);
