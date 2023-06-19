@@ -13,7 +13,10 @@ const { useRealm, useQuery, useObject } = AccountRealmContext;
 export default function Security() {
   const { user } = useSelector((state) => state);
   const realm = useRealm();
-  const Account = useObject("account", Realm.BSON.ObjectId(user._id));
+  const Account =
+    user.role !== "Client"
+      ? useObject("account", Realm.BSON.ObjectId(user._id))
+      : useQuery("client").filtered(`clientId == $0`, user.clientId)[0];
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 

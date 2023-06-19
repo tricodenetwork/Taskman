@@ -8,7 +8,11 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import { actuatedNormalize, styles } from "../styles/stylesheet";
+import {
+  actuatedNormalize,
+  actuatedNormalizeVertical,
+  styles,
+} from "../styles/stylesheet";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import SelectComponent from "../components/SelectComponent";
@@ -54,7 +58,7 @@ const TaskDetailsPage = () => {
 
   const chatrooms = useQuery("chatroom").filtered(
     "senderId == $0 ||  recieverId == $0",
-    id
+    user._id
   );
 
   // Create a chat room
@@ -65,7 +69,7 @@ const TaskDetailsPage = () => {
     // Store the chat room in the Realm DB
     const chatRoom = {
       _id: chatRoomId,
-      senderId: id,
+      senderId: user._id,
       recieverId,
       // Additional properties if needed
     };
@@ -130,6 +134,12 @@ const TaskDetailsPage = () => {
     if (user.role !== "Handler") {
       alert("Unauthorized Handler!! ❌.");
     }
+    if (!handler) {
+      alert("No handler selected!! ❌.");
+    }
+    if (!currenttask) {
+      alert("No Task assigned ❌.");
+    }
 
     realm.write(() => {
       try {
@@ -157,7 +167,7 @@ const TaskDetailsPage = () => {
 
     sendPushNotification(pushToken);
 
-    // navigation.navigate("mytasks");
+    navigation.navigate("mytasks");
     // setIsNextTaskModalOpen(false);
   }, [realm, currenttask, handler]);
   const handleErrorSubmit = () => {
@@ -167,6 +177,13 @@ const TaskDetailsPage = () => {
 
     if (user.role !== "Handler") {
       alert("Unauthorized Handler!! ❌.");
+    }
+
+    if (!handler) {
+      alert("No handler selected!! ❌.");
+    }
+    if (!currenttask) {
+      alert("No Task selected ❌.");
     }
 
     //select handler Id to send error
@@ -190,7 +207,7 @@ const TaskDetailsPage = () => {
         return new chats(realm, messageObject);
       });
     };
-    errorMessage != "null" && onSend();
+    errorMessage != "null" ? onSend() : null;
 
     realm.write(() => {
       try {
@@ -203,6 +220,9 @@ const TaskDetailsPage = () => {
             task.inProgress = null;
             task.handler = "";
           }
+        });
+
+        activeJob.tasks.map((task) => {
           if (task.name == currenttask) {
             task.status = "Pending";
             task.inProgress = null;
@@ -228,7 +248,6 @@ const TaskDetailsPage = () => {
       <Topscreen text={job} />
       <View className='h-[75vh] absolute bottom-0 bg-white w-full flex items-start pb-[3vh] pt-[5vh] px-[3vw] justify-between'>
         {/* Display the task details */}
-        <Text style={[styles.text_md]}>Id: {id.toString()}</Text>
         <Text style={[styles.text_md]}>ClientId: {matno}</Text>
         <Text style={[styles.text_md]}>Supervisor: {supervisor}</Text>
         <Text style={[styles.text_md]}>Task: {name}</Text>
@@ -245,18 +264,13 @@ const TaskDetailsPage = () => {
               className='justify-center h-full  w-full  flex self-center'
             >
               <Text style={styles.text_sm} className='text-center mb-2'>
-                Press Ok to confirm
+                Press Ok to Accept
               </Text>
               <OdinaryButton
                 style={"rounded-sm mt-4 bg-primary"}
                 navigate={() => {
-                  !isErrorModalOpen & !isNextTaskModalOpen
-                    ? handleAcceptButton()
-                    : !isErrorModalOpen & isNextTaskModalOpen
-                    ? handleNextTaskSubmit()
-                    : isErrorModalOpen & !isNextTaskModalOpen
-                    ? handleErrorButton()
-                    : null;
+                  handleAcceptButton();
+
                   setVisible(!visible);
                 }}
                 text={"OK"}
@@ -336,6 +350,31 @@ const TaskDetailsPage = () => {
                   }}
                 />
               </View>
+              {visible ? (
+                <TouchableOpacity
+                  className='bg-primary_light rounded-2xl self-center absolute top-[12vh] justify-center w-[90%] h-[55%]'
+                  activeOpacity={1}
+                >
+                  <Motion.View
+                    initial={{ x: -500 }}
+                    animate={{ x: 0 }}
+                    transition={{ type: "spring", stiffness: 100 }}
+                    className='justify-center h-full  w-full  flex self-center'
+                  >
+                    <Text style={styles.text_sm} className='text-center mb-2'>
+                      Press Ok to confirm
+                    </Text>
+                    <OdinaryButton
+                      style={"rounded-sm mt-4 bg-primary"}
+                      navigate={() => {
+                        handleNextTaskSubmit();
+                        setVisible(!visible);
+                      }}
+                      text={"OK"}
+                    />
+                  </Motion.View>
+                </TouchableOpacity>
+              ) : null}
               <View
                 id='BUTTONS'
                 className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
@@ -358,7 +397,13 @@ const TaskDetailsPage = () => {
             <View className=' h-[70%] pt-[5vh] flex min-h-[40vh] self-center justify-between items-center'>
               <Text
                 className='self-center  text-center w-[50vw]'
-                style={[styles.text_sm2, { fontSize: actuatedNormalize(20) }]}
+                style={[
+                  styles.text_sm2,
+                  {
+                    fontSize: actuatedNormalize(20),
+                    lineHeight: actuatedNormalizeVertical(28),
+                  },
+                ]}
               >
                 Report Error
               </Text>
@@ -392,6 +437,31 @@ const TaskDetailsPage = () => {
                   className='w-[70vw] h-[10vh] border-2 border-gray-400 self-center rounded-md p-2'
                   onChangeText={(text) => setErrorMessage(text)}
                 />
+                {visible ? (
+                  <TouchableOpacity
+                    className='bg-primary_light rounded-2xl self-center absolute top-[12vh] justify-center w-[90%] h-[55%]'
+                    activeOpacity={1}
+                  >
+                    <Motion.View
+                      initial={{ x: -500 }}
+                      animate={{ x: 0 }}
+                      transition={{ type: "spring", stiffness: 100 }}
+                      className='justify-center h-full  w-full  flex self-center'
+                    >
+                      <Text style={styles.text_sm} className='text-center mb-2'>
+                        Press Ok to confirm
+                      </Text>
+                      <OdinaryButton
+                        style={"rounded-sm mt-4 bg-primary"}
+                        navigate={() => {
+                          handleErrorSubmit();
+                          setVisible(!visible);
+                        }}
+                        text={"OK"}
+                      />
+                    </Motion.View>
+                  </TouchableOpacity>
+                ) : null}
                 <View
                   id='BUTTONS'
                   className='flex justify-between align-bottom w-[50vw]  self-center flex-row'

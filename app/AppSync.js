@@ -103,7 +103,7 @@ export const AppSync = () => {
   const appuser =
     cleanedOid.length > 10
       ? useObject("account", Realm.BSON.ObjectId(cleanedOid))
-      : useQuery("client").filtered(`_id ==$0`, cleanedOid)[0];
+      : useQuery("client").filtered(`clientId ==$0`, cleanedOid)[0];
 
   // const tasks = useMemo(() => result.sorted("createdAt"), [result]);
   useEffect(() => {

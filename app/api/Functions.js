@@ -136,9 +136,6 @@ export function Completed(date1, date2) {
 const date1 = new Date("2023-05-20T14:39:34.527+00:00");
 const date2 = new Date("2023-05-22T14:39:34.527+00:00");
 
-const difference = Completed(date1, date2);
-console.log(difference);
-
 const date = moment(); // Assuming you want the current date
 export const formattedDate = date.format("dddd, D MMM YYYY");
 

@@ -97,7 +97,7 @@ export default function MyTasks({ navigation }) {
 
   //----------------------------------------------------RENDERED COMPONENT
   return (
-    <Background bgColor='min-h-98vh'>
+    <Background bgColor='min-h-[98vh]'>
       <Topscreen
         text={"My Tasks"}
 
@@ -113,7 +113,7 @@ export default function MyTasks({ navigation }) {
       '
       >
         <View className='mb-1'>
-          <SearchComponent filterItems={["Name", "Status", "Supervisor"]} />
+          <SearchComponent filterItems={["MatNo", "Status", "Supervisor"]} />
         </View>
         <View>
           <TaskDetails

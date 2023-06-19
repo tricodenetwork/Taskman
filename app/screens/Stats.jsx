@@ -7,8 +7,10 @@ import { activejob } from "../models/Task";
 import { useSelector } from "react-redux";
 import OdinaryButton from "../components/OdinaryButton";
 import {
+  SCREEN_WIDTH,
   actuatedNormalize,
   actuatedNormalizeVertical,
+  styles,
 } from "../styles/stylesheet";
 // import PDFLib, { PDFDocument, PDFPage } from "react-native-pdf-lib";
 // import * as Print from "expo-print";
@@ -65,7 +67,7 @@ export default function Stats() {
           const taskDurationInMinutes =
             duration.days * 24 * 60 + duration.hours * 60 + duration.minutes;
           const timeDifferenceInMinutes = Math.round(
-            (task.completedIn - task.inProgress) / (1000 * 60)
+            task.completedIn.getTime() / (1000 * 60)
           );
           const isPromptCompleted =
             timeDifferenceInMinutes <= taskDurationInMinutes;
@@ -180,10 +182,18 @@ export default function Stats() {
   const render = ({ item }) => {
     return (
       <View className='flex px-[1vw] border-b-[1px] py-[1vh] flex-row justify-center items-center'>
-        <Text className='w-[40%] text-left'>{item.handler}</Text>
-        <Text className='w-[20%] text-center'>{item.Assigned}</Text>
-        <Text className='w-[20%] text-center'>{item.promptCompleted}</Text>
-        <Text className='w-[20%] text-center'>{item.promptInPercentage}</Text>
+        <Text style={[styles.text_sm]} className='w-[40%] text-left'>
+          {item.handler}
+        </Text>
+        <Text style={[styles.text_sm]} className='w-[20%] text-center'>
+          {item.Assigned}
+        </Text>
+        <Text style={[styles.text_sm]} className='w-[20%] text-center'>
+          {item.promptCompleted}
+        </Text>
+        <Text style={[styles.text_sm]} className='w-[20%] text-center'>
+          {item.promptInPercentage}
+        </Text>
       </View>
     );
   };
@@ -191,20 +201,34 @@ export default function Stats() {
   return (
     <Background bgColor='flex flex-row items-start'>
       <FlatList
-        style={{ height: "100%" }}
+        style={{ height: "100%", padding: 0.01 * SCREEN_WIDTH }}
         contentContainerStyle={{ height: "100%" }}
         ListHeaderComponent={
           <View className='flex px-[1vw] border-b-[1px] flex-row items-center'>
-            <Text className='w-[40%] border-r-[1px] pt-[1vh] h-full'>
+            <Text
+              style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
+              className='w-[40%] border-r-[1px] pt-[1vh] h-full'
+            >
               Handler
             </Text>
-            <Text className='w-[20%] pt-[1vh] border-r-[1px] h-full text-center'>
+            <Text
+              style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
+              className='w-[20%] pt-[1vh] border-r-[1px] h-full text-center'
+            >
               Assigned
             </Text>
-            <Text className='w-[20%] border-r-[1px] h-full text-center'>
+            <Text
+              style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
+              className='w-[20%] border-r-[1px] h-full text-center'
+            >
               Prompt Completed
             </Text>
-            <Text className='w-[20%] text-center'>Prompt Completion(%)</Text>
+            <Text
+              style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
+              className='w-[20%] text-center'
+            >
+              Prompt Completion(%)
+            </Text>
           </View>
         }
         data={handlerTaskStats}

@@ -230,7 +230,7 @@ function timeSpentz(dateTimeString) {
 //   return elapsedTime / 3600000;
 // }
 
-function calculateRemainingTime(countDownTimer) {
+export function calculateTime(countDownTimer) {
   // Calculate the remaining days, hours, minutes, and seconds
 
   const remainingDays = Math.floor(
@@ -253,7 +253,7 @@ function calculateRemainingTime(countDownTimer) {
 
   // set the time variable to display on the UI
   const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s`;
-  console.log(Timer);
+  // console.log(Timer);
   return Timer;
 }
 
@@ -288,7 +288,7 @@ export function millisecondSinceStartDate(startDate, holidays = []) {
 
   // Adjust the start time to 8 AM if it's before 8 AM
   const adjustedStartTimestamp = new Date(startTimestamp);
-  adjustedStartTimestamp.setUTCHours(8, 0, 0, 0);
+  adjustedStartTimestamp.setUTCHours(7, 0, 0, 0);
 
   // Calculate the number of milliseconds in a day
   const millisecondsInADay = 24 * 60 * 60 * 1000;
@@ -350,4 +350,4 @@ export function millisecondSinceStartDate(startDate, holidays = []) {
   return totalMillisecondsInRange;
 }
 
-console.log(millisecondSinceStartDate("2023-06-13T10:14:42.326+00:00"));
+// console.log(millisecondSinceStartDate("2023-06-13T10:14:42.326+00:00"));

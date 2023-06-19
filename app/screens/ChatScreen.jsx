@@ -10,6 +10,7 @@ import { chats as Chats } from "../models/Chat";
 import { log } from "react-native-reanimated";
 import { render } from "react-dom";
 import { useSelector } from "react-redux";
+import { actuatedNormalize } from "../styles/stylesheet";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -23,7 +24,7 @@ export default function ChatScreen() {
   const chatUser =
     user.role !== "Client"
       ? realm.objectForPrimaryKey("account", Realm.BSON.ObjectId(user._id))
-      : useQuery("client").filtered(`clientId == $0`, user._id)[0];
+      : useQuery("client").filtered(`clientId == $0`, user.clientId)[0];
 
   useEffect(() => {
     // Fetch existing messages from the Realm DB
@@ -100,6 +101,8 @@ export default function ChatScreen() {
         wrapperStyle={{
           right: {
             backgroundColor: "#000",
+            marginRight: actuatedNormalize(10),
+            marginLeft: actuatedNormalize(10),
           },
         }}
         textStyle={{

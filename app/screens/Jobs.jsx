@@ -39,8 +39,8 @@ export default function Jobs({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const realm = useRealm();
   const Cat = useQuery(category);
-  const value =
-    realm.objectForPrimaryKey("category", Realm.BSON.ObjectId(edit.id)) || [];
+  // const value = realm.objectForPrimaryKey("category", edit.id) ?? [];
+  const value = Cat.filtered(`name == $0`, name);
 
   const dispatch = useDispatch();
 
@@ -52,7 +52,7 @@ export default function Jobs({ navigation }) {
       }
       const sameName = Cat.filtered(`name == $0`, item.name)[0]?.name ?? "";
       if (sameName !== "") {
-        alert(`${sameName} alreaddy exist `);
+        alert(`${sameName} already exist `);
         return;
       }
 
@@ -63,7 +63,7 @@ export default function Jobs({ navigation }) {
         alert("New Category added!");
       } else {
         realm.write(() => {
-          value.name = item.name;
+          value[0].name = item.name;
           alert("Category Edited");
         });
       }
@@ -73,15 +73,20 @@ export default function Jobs({ navigation }) {
 
   const deleteCat = useCallback(
     (item) => {
-      if (edit.name == "") {
-        alert("No name to delete");
+      if (item.name == "") {
+        alert("Select category and try again");
         return;
       }
-
+      console.log(edit.name);
       realm.write(() => {
-        const value = Cat.filtered(`name ==$0`, edit.name)[0];
-        realm.delete(value);
+        const val = Cat.filtered(`name ==$0`, item.name)[0];
+        console.log(val);
+        realm.delete(
+          // realm.objectForPrimaryKey("category", Realm.BSON.ObjectId(edit.id))
+          val
+        );
         alert("Deleted!!");
+        setName("");
         setEdit({ name: "" });
       });
     },
@@ -101,7 +106,8 @@ export default function Jobs({ navigation }) {
       <TouchableOpacity
         onPress={() => {
           setName(item.name);
-          setEdit({ name: item.name, id: item._id.toString() });
+          setEdit({ name: item.name, id: item._id });
+          console.log(name);
         }}
       >
         <View
@@ -205,7 +211,7 @@ export default function Jobs({ navigation }) {
               <OdinaryButton
                 text={"DEL"}
                 navigate={() => {
-                  deleteCat();
+                  deleteCat({ name: name });
                 }}
                 style={"mt-5 relative bg-[#B22222] left-[15%]"}
               />

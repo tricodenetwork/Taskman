@@ -32,10 +32,10 @@ export default function JobDetails({ onPress }) {
   const navigation = useNavigation();
   const col = filter && filter.toLowerCase();
   const isFocused = useIsFocused();
-  const client = activeJobs.filtered(`matno ==$0`, user._id) ?? [];
+  const client = activeJobs.filtered(`matno ==$0`, user.clientId) ?? [];
 
   useEffect(() => {
-    if (user._id.toString().length > 10) {
+    if (!user.clientId) {
       if (route.name == "activeJobs") {
         setData(activeJobs);
       } else {

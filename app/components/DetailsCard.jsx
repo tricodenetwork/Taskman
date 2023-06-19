@@ -3,13 +3,10 @@ import React, { useEffect, useState } from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import Svg, { Circle, Rect } from "react-native-svg";
 import { useIsFocused, useRoute } from "@react-navigation/native";
-import { Fragment as MainBox } from "react";
-import { Completed } from "../api/Functions";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AccountRealmContext } from "../models";
 import { activejob } from "../models/Task";
-import { remainingTimetohours } from "../api/Realm";
-import { millisecondSinceStartDate, morning } from "../api/test";
+import { calculateTime, millisecondSinceStartDate } from "../api/test";
 import { useSelector } from "react-redux";
 import { holiday } from "../models/Account";
 
@@ -62,7 +59,9 @@ export default function DetailsCard({ item, id, index }) {
 
     return { textColor, statusColor, backgroundColor, status };
   };
-  const Time = Completed(item.completedIn, item.inProgress); // Variable to store the remaining time when the interval is paused
+  const Time = item.completedIn
+    ? calculateTime(item.completedIn.getTime())
+    : null;
 
   const { days, hours, minutes } = item.duration;
   const taskDuration =

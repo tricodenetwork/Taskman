@@ -13,7 +13,7 @@ import { Fragment as MainBox } from "react";
 import { Completed } from "../api/Functions";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AccountRealmContext } from "../models";
-import { millisecondSinceStartDate } from "../api/test";
+import { calculateTime, millisecondSinceStartDate } from "../api/test";
 import { useSelector } from "react-redux";
 import { holiday } from "../models/Account";
 
@@ -25,7 +25,10 @@ export default function HandlerCard({ item }) {
   const route = useRoute();
   const realm = useRealm();
   const hols = useQuery(holiday);
-  const Time = Completed(item.completedIn, item.inProgress);
+  // const Time = Completed(item.completedIn, item.inProgress);
+  const Time = item.completedIn
+    ? calculateTime(item.completedIn.getTime())
+    : null;
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
   const status =
     item.status === "Pending" || item.status === ""
@@ -40,6 +43,7 @@ export default function HandlerCard({ item }) {
   const { days, hours, minutes } = item.duration;
   const taskDuration =
     days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
+  // console.log(item);
 
   useEffect(() => {
     let interval = null;
@@ -54,7 +58,7 @@ export default function HandlerCard({ item }) {
       let countDownTimer;
       let timeSpent = item.error
         ? item.completedIn.getTime() +
-          task.error +
+          item.error +
           millisecondSinceStartDate(item.inProgress, hols)
         : millisecondSinceStartDate(item.inProgress, hols);
 
@@ -157,19 +161,19 @@ export default function HandlerCard({ item }) {
           style={[styles.text_md2, { fontSize: actuatedNormalize(13) }]}
           className='text-primary'
         >
-          {item.name}
+          {item.matno}
         </Text>
         <Text
           style={[styles.text_md, { fontSize: actuatedNormalize(12) }]}
           className='text-primary'
         >
-          {item.job}
+          {item.name}
         </Text>
         <Text
           style={[styles.text_sm, { fontSize: actuatedNormalize(12) }]}
           className='text-Handler2 absolute bottom-1 left-[22%]'
         >
-          {item.supervisor}
+          {item.job}
         </Text>
       </View>
       <View

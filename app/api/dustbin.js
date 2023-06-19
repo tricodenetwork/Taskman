@@ -96,6 +96,3 @@
 
 // console.log(new Date());
 // console.log(Date.now(new Date()));
-
-const two = 4 - undefined;
-console.log(two);

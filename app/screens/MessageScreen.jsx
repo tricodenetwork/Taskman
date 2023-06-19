@@ -22,7 +22,7 @@ export default function MessageScreen({ navigation }) {
   const realm = useRealm();
   const { user } = useSelector((state) => state);
   // const { ActiveJob } = useSelector((state) => state);
-  const ActiveJob = useQuery(activejob).filtered(`matno == $0`, user._id);
+  const ActiveJob = useQuery(activejob).filtered(`matno == $0`, user.clientId);
   const contacts =
     user.role == "Handler" || user.role == "Supervisor"
       ? useQuery(Account).filtered(
@@ -39,7 +39,6 @@ export default function MessageScreen({ navigation }) {
     "senderId == $0 ||  recieverId == $0",
     user._id
   );
-
   // Create a chat room
   const createChatRoom = (recieverId) => {
     // Generate a unique chat room ID
@@ -77,31 +76,36 @@ export default function MessageScreen({ navigation }) {
       <SafeAreaView className='relative bg-red-100 w-full h-full'>
         {/* <SelectComponent title={"Add"} /> */}
         <FlatList
+          keyExtractor={(item) => item._id}
           ListHeaderComponent={
             <View>
               <Text
                 style={[styles.text, { fontSize: actuatedNormalize(17) }]}
-                className='px-[2vw] text-primary pt-[2vh]'
+                className='px-[2vw] text-primary mb-[2vh] pt-[0vh]'
               >
-                Messsages
+                Chats
               </Text>
             </View>
           }
           data={chatrooms}
           renderItem={({ item }) => {
-            const name = realm.objectForPrimaryKey(
-              "account",
-              user._id == item.senderId
-                ? Realm.BSON.ObjectId(
-                    item.recieverId.length > 10 ? item.recieverId : null
-                  )
-                : Realm.BSON.ObjectId(
-                    item.senderId.length > 10 ? item.senderId : null
-                  )
-            );
+            const name =
+              realm.objectForPrimaryKey(
+                "account",
+                user._id == item.senderId
+                  ? Realm.BSON.ObjectId(item.recieverId)
+                  : Realm.BSON.ObjectId(item.senderId)
+              ) ??
+              realm.objectForPrimaryKey(
+                "client",
+                user._id == item.senderId
+                  ? Realm.BSON.ObjectId(item.recieverId)
+                  : Realm.BSON.ObjectId(item.senderId)
+              );
 
             const chats = allChats.filtered(`roomId == $0`, item._id);
             const lastMessage = chats[chats.length - 1];
+
             return (
               <View id='SINGLE_CONTACT_MESSSAGE_BOX'>
                 {lastMessage?.text ?? "" !== "" ? (
@@ -117,7 +121,14 @@ export default function MessageScreen({ navigation }) {
                     >
                       <View className='w-[87vw] '>
                         <Text className=''>
-                          {name ? name?.name ?? "" : lastMessage.user._id}
+                          {name?.name ? name.name : null}
+                          {name?.clientId ? name.clientId : null}
+                          {/* {name == ""
+                            ? realm.objectForPrimaryKey(
+                                "client",
+                                Realm.BSON.ObjectId(lastMessage.user._id)
+                              )?.clientId
+                            : null} */}
                         </Text>
                         <Text className='' style={[styles.text_tiny]}>
                           {lastMessage.text}
@@ -134,7 +145,6 @@ export default function MessageScreen({ navigation }) {
           <Motion.View
             initial={{ x: 300 }}
             animate={{ x: 0 }}
-            exit={{ x: 300 }}
             className='bg-emerald-300 h-[100vh] w-[70vw] pl-[3vw] pt-[1vh] absolute top-0 right-0'
           >
             <Text style={styles.text_md} className=' mt-[2vh] text-center'>

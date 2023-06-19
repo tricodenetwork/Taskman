@@ -20,7 +20,6 @@ export default function Actions() {
   const hols = useQuery(holiday);
   const realm = useRealm();
   const dispatch = useDispatch();
-  console.log(hols);
 
   const addHoliday = useCallback(
     (item) => {
@@ -55,7 +54,7 @@ export default function Actions() {
                 style={[styles.text_md, { fontSize: actuatedNormalize(18) }]}
                 className='mx-[1vw] border-r-[1px] border-r-white pr-[1vh] text-white my-[1vh]'
               >
-                {`${item.day.getDate()}/${item.day.getMonth() + 1}`}
+                {`${item.day.getDate()} / ${item.day.getMonth() + 1}`}
               </Text>
             ))}
           </View>

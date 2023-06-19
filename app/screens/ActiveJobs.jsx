@@ -18,15 +18,17 @@ export default function ActiveJobs({ navigation }) {
 
   return (
     <Background bgColor='min-h-[98vh]'>
-      <Topscreen text={"ActiveJobs"} />
+      <Topscreen text={!user.clientId ? "ActiveJobs" : "MyJob"} />
       <View
         className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
       >
         <View className='mb-1'>
-          <SearchComponent
-            filterItems={["Job", "MatNo", "Supervisor", "Status"]}
-          />
+          {!user.clientId ? (
+            <SearchComponent
+              filterItems={["Job", "MatNo", "Supervisor", "Status"]}
+            />
+          ) : null}
         </View>
         <View>
           <JobDetails />

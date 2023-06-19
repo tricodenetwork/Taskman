@@ -95,8 +95,8 @@ function calculateHoursInRange(startDate, holidays = []) {
   return totalHoursInRange.toFixed(2); // Return the result rounded to two decimal places
 }
 
-// Usage example:
-const specifiedDate = "6/07/2023, 10:00:18 AM"; // Specify the date here
-const holidays = ["6/14/2023", "12/25/2023"]; // Specify holidays here (optional)
-const hoursInRange = calculateHoursInRange(specifiedDate, holidays);
-console.log(hoursInRange);
+// // Usage example:
+// const specifiedDate = "6/07/2023, 10:00:18 AM"; // Specify the date here
+// const holidays = ["6/14/2023", "12/25/2023"]; // Specify holidays here (optional)
+// const hoursInRange = calculateHoursInRange(specifiedDate, holidays);
+// console.log(hoursInRange);

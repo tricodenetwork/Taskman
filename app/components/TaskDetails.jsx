@@ -26,6 +26,9 @@ export default function TaskDetails({
 }) {
   const [data, setData] = useState(taskdata);
   const [refreshing, setRefreshing] = useState(false);
+  const { search, filter } = useSelector((state) => state.app);
+  const col = filter && filter.toLowerCase();
+
   const realm = useRealm();
   const dispatch = useDispatch();
   const route = useRoute();
@@ -62,7 +65,11 @@ export default function TaskDetails({
       onDragEnd={({ data }) => {
         route.name !== "mytasks" && reArrange(data);
       }}
-      data={data}
+      data={data.filter((item, index) =>
+        item[col]?.name
+          ? item[col].name.toLowerCase().includes(search.toLowerCase())
+          : item[col] && item[col].toLowerCase().includes(search.toLowerCase())
+      )}
       renderItem={({ item, drag, isActive, getIndex }) => {
         const { name, id, job, matno, supervisor, handler, status } = item;
         return (

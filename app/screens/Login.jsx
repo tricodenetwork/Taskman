@@ -70,7 +70,7 @@ const Login = ({ navigation }) => {
     <Background bgColor='bg-primary min-h-[90vh]   items-center justify-center'>
       <View
         style={{ borderRadius: actuatedNormalize(25) }}
-        className='relative w-[80vw] h-[55vh] bg-slate-300 px-[12vw] pt-[4vh] pb-[12vh] border-2 border-Supervisor2'
+        className='relative w-[90vw] h-[55vh] bg-slate-300 px-[12vw] pt-[4vh] pb-[12vh] border-2 border-Supervisor2'
       >
         <View className='w-[50vw] mt-[2vh] self-center'>
           <Text

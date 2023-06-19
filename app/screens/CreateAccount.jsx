@@ -64,7 +64,7 @@ const CreateAccount = ({ navigation }) => {
         account.password = user.password;
         account.role = user.role;
         account.phone = user.phone;
-        account.category = user.category;
+        account.category.name = user.category.name;
       });
 
       alert("Success!!");

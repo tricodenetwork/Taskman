@@ -5,7 +5,6 @@ const currentHour = new Date().getHours();
 
 // Check if it's a weekend (Saturday or Sunday)
 const isWeekend = currentDay === 0 || currentDay === 6;
-console.log(new Date("2023-06-13T10:03:50.301Z").getHours());
 
 // Check if it's within the allowed time range on weekdays (8am to 4pm)
 const isAllowedTime = currentHour >= 8 && currentHour < 16;
