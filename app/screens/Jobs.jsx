@@ -77,10 +77,8 @@ export default function Jobs({ navigation }) {
         alert("Select category and try again");
         return;
       }
-      console.log(edit.name);
       realm.write(() => {
         const val = Cat.filtered(`name ==$0`, item.name)[0];
-        console.log(val);
         realm.delete(
           // realm.objectForPrimaryKey("category", Realm.BSON.ObjectId(edit.id))
           val
@@ -107,7 +105,6 @@ export default function Jobs({ navigation }) {
         onPress={() => {
           setName(item.name);
           setEdit({ name: item.name, id: item._id });
-          console.log(name);
         }}
       >
         <View

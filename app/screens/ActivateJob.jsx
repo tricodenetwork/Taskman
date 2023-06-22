@@ -48,6 +48,7 @@ import {
   sendPushNotification,
 } from "../api/Functions";
 import OdinaryButton from "../components/OdinaryButton";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -57,11 +58,14 @@ const ActivateJob = ({ navigation }) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [visible2, setVisible2] = useState(false);
+  const [error, setError] = useState(null);
+
   const route = useRoute();
   const realm = useRealm();
   const activeJobs = useQuery(activejob);
   const allJobs = useQuery(jobSchema);
   const { visible, visible3 } = useSelector((state) => state.app);
+  const accounts = useQuery(client);
 
   const { ActiveJob } = useSelector((state) => state);
   const { category, role, name } = useSelector((state) => state.user);
@@ -74,9 +78,8 @@ const ActivateJob = ({ navigation }) => {
     useQuery("account").filtered(`name == $0 AND role == "Handler"`, handler)[0]
       ?.pushToken ?? "";
 
-  const { matno, dept, handler, job, email, currenttask, id } = useSelector(
-    (state) => state.ActiveJob
-  );
+  const { matno, dept, handler, job, email, currenttask, password, id } =
+    useSelector((state) => state.ActiveJob);
   const clientExist = useQuery("client").filtered(`clientId == $0`, matno);
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
@@ -176,6 +179,24 @@ const ActivateJob = ({ navigation }) => {
       );
     });
   });
+  const validateEmail = (email) => {
+    // Regular expression to check if email is valid
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+
+  const handleEmailChange = (value) => {
+    if (!validateEmail(value)) {
+      setError("Please enter a valid email");
+    } else {
+      if (accounts.filtered(`email ==$0`, value).length !== 0) {
+        setError("Email already exist");
+      } else {
+        dispatch(setEmail(value));
+        setError(null);
+      }
+    }
+  };
 
   //----------------------------------------------------RENDERED COMPONENT
 
@@ -412,7 +433,7 @@ const ActivateJob = ({ navigation }) => {
                 defaultValue={email}
                 style={styles.averageText}
                 onChangeText={(value) => {
-                  dispatch(setEmail(value));
+                  handleEmailChange(value);
                 }}
                 className='w-[60vw] bg-slate-300  rounded-sm h-10'
               />
@@ -439,11 +460,29 @@ const ActivateJob = ({ navigation }) => {
               />
             </View>
           </View>
+          {error && (
+            <Motion.View
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className='absolute flex-row items-center space-x-1 px-[1vh] self-center top-[1vh] '
+            >
+              <Text style={[styles.text_sm, { color: "red" }]}>{error}</Text>
+              <MaterialIcons
+                name='error'
+                size={actuatedNormalize(18)}
+                color='red'
+              />
+            </Motion.View>
+          )}
           <LowerButton
             disabled={
               route.params
                 ? false
-                : matno === "" || job === "" || email === ""
+                : matno === "" ||
+                  job === "" ||
+                  email === "" ||
+                  password == "" ||
+                  error
                 ? //  || currenttask == ""
                   true
                 : false

@@ -30,6 +30,7 @@ import {
   setCategory,
   setUser,
 } from "../store/slice-reducers/userSlice";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import { Account } from "../models/Account";
@@ -39,6 +40,9 @@ const { useRealm, useQuery } = AccountRealmContext;
 
 const CreateAccount = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [error2, setError2] = useState(null);
+
   const dispatch = useDispatch();
   const { visible, visible2 } = useSelector((state) => state.app);
   const { user } = useSelector((state) => state);
@@ -48,6 +52,25 @@ const CreateAccount = ({ navigation }) => {
   const realm = useRealm();
   const accounts = useQuery(Account);
   const Cat = useQuery("category");
+
+  const validateEmail = (email) => {
+    // Regular expression to check if email is valid
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+
+  const handleEmailChange = (value) => {
+    if (!validateEmail(value)) {
+      setError("Please enter a valid email");
+    } else {
+      if (accounts.filtered(`email ==$0`, value).length !== 0) {
+        setError("Email already exist");
+      } else {
+        dispatch(setEmail(value));
+        setError(null);
+      }
+    }
+  };
 
   const editAccount = useCallback(
     (user) => {
@@ -78,8 +101,10 @@ const CreateAccount = ({ navigation }) => {
       if (!user) {
         return;
       }
+
       realm.write(() => {
         const newAccount = new Account(realm, user);
+        alert("New User Created");
         // Send email to the newly created user
         sendUserDetails(user.email, user); // Assuming `sendUserDetails` is a function that sends the email
         return newAccount;
@@ -114,18 +139,27 @@ const CreateAccount = ({ navigation }) => {
       {isLoading ? (
         <Text>Loading...</Text>
       ) : (
-        <View className='bg-slate-200 h-[80vh] rounded-t-3xl justify-start   w-full absolute bottom-0'>
-          <View className='flex items-center mt-[5vh] justify-between h-[80%]'>
+        <View className='bg-slate-200 h-[82vh] rounded-t-3xl justify-start   w-full absolute bottom-0'>
+          <View className='flex items-center mt-[6.5vh] justify-between h-[80%]'>
             <View className='flex items-center justify-between w-[90%] flex-row'>
               <Text style={styles.text_md2}>Name:</Text>
               <TextInput
-                defaultValue={user.name}
+                defaultValue={user.name.trimStart()}
                 style={[
                   styles.averageText,
                   { height: actuatedNormalizeVertical(50) },
                 ]}
                 onChangeText={(value) => {
-                  dispatch(setName(value));
+                  const newValue = value.replace(/\s+/g, " ").trimEnd();
+                  if (accounts.filtered(`name ==$0`, newValue).length !== 0) {
+                    setError2("User already exist");
+                  } else if (!/^[^\s]+\s[^\s]+$/.test(newValue)) {
+                    // Check if the entered value contains a name, a space, and then a surname
+                    setError2("Name and  Surname required ");
+                  } else {
+                    dispatch(setName(newValue));
+                    setError2(null);
+                  }
                 }}
                 className='w-[65vw] bg-slate-300  rounded-sm'
               />
@@ -199,7 +233,7 @@ const CreateAccount = ({ navigation }) => {
                 className='absolute right-0'
               >
                 <AntDesign
-                  name='select1'
+                  name='caretdown'
                   size={actuatedNormalize(20)}
                   color='black'
                 />
@@ -207,7 +241,7 @@ const CreateAccount = ({ navigation }) => {
             </View>
             <View className='flex items-center justify-between w-[90%] flex-row'>
               <Text style={styles.text_md2}>Category:</Text>
-              <View className='w-[65vw] relative bg-slate-300  rounded-sm h-10'>
+              <View className='w-[65vw] relative bg-slate-300  rounded-sm'>
                 {visible2 && (
                   <Motion.View
                     initial={{ x: 100 }}
@@ -244,7 +278,7 @@ const CreateAccount = ({ navigation }) => {
                     { color: "black", height: actuatedNormalizeVertical(50) },
                   ]}
                   value={user.category?.name}
-                  className='w-[65vw] bg-slate-300  rounded-sm h-10'
+                  className='w-[65vw] bg-slate-300  rounded-sm'
                 />
               </View>
               <View className='absolute right-[1vw]'>
@@ -265,6 +299,7 @@ const CreateAccount = ({ navigation }) => {
               <Text style={styles.text_md2}>Phone:</Text>
               <TextInput
                 defaultValue={user.phone}
+                inputMode='numeric'
                 style={[
                   styles.averageText,
                   { height: actuatedNormalizeVertical(50) },
@@ -289,7 +324,7 @@ const CreateAccount = ({ navigation }) => {
                 className='w-[65vw] bg-slate-300  rounded-sm'
               />
             </View>
-            <View className='flex items-center justify-between w-[90%] flex-row'>
+            <View className='flex relative items-center justify-between w-[90%] flex-row'>
               <Text style={styles.text_md2}>Email:</Text>
               <TextInput
                 defaultValue={user.email}
@@ -298,7 +333,7 @@ const CreateAccount = ({ navigation }) => {
                   { height: actuatedNormalizeVertical(50) },
                 ]}
                 onChangeText={(value) => {
-                  dispatch(setEmail(value.trim()));
+                  handleEmailChange(value);
                 }}
                 className='w-[65vw] bg-slate-300  rounded-sm'
               />
@@ -325,6 +360,22 @@ const CreateAccount = ({ navigation }) => {
               />
             </View>
           </View>
+          {(error || error2) && (
+            <Motion.View
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className='absolute flex-row items-center space-x-1 px-[1vh] self-center top-[1vh] '
+            >
+              <Text style={[styles.text_sm, { color: "red" }]}>
+                {error || error2}
+              </Text>
+              <MaterialIcons
+                name='error'
+                size={actuatedNormalize(18)}
+                color='red'
+              />
+            </Motion.View>
+          )}
           <LowerButton
             style={"w-[90vw]"}
             disabled={
@@ -333,8 +384,11 @@ const CreateAccount = ({ navigation }) => {
                 : user.name === "" ||
                   user.role === "" ||
                   user.dept === "" ||
-                  // user.phone === "" ||
-                  user.password == ""
+                  user.phone === "" ||
+                  user.email == "" ||
+                  user.password == "" ||
+                  error ||
+                  error2
                 ? true
                 : false
             }

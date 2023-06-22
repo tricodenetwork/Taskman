@@ -36,8 +36,6 @@ export default function IndividualTask({ navigation }) {
     (item) => item.name == route.params?.taskName
   )[0].inProgress;
 
-  console.log(handler);
-
   const Activate = useCallback(() => {
     // Perform the necessary actions to activate a certain task and handler by setting it to InProgress
 

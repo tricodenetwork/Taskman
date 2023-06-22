@@ -11,6 +11,7 @@ import { log } from "react-native-reanimated";
 import { render } from "react-dom";
 import { useSelector } from "react-redux";
 import { actuatedNormalize } from "../styles/stylesheet";
+import moment from "moment";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -115,8 +116,72 @@ export default function ChatScreen() {
   }
 
   function renderMessage(props) {
-    return <View style={{ marginVertical: 10 }}>{renderBubble(props)}</View>;
+    return (
+      <View style={{ marginVertical: 10 }}>
+        {renderDay(props)}
+        {renderBubble(props)}
+      </View>
+    );
   }
+
+  function renderDay(props) {
+    if (props.currentMessage.createdAt) {
+      const { currentMessage, previousMessage } = props;
+      const currentCreatedAt = new Date(currentMessage.createdAt);
+      let previousCreatedAt = null;
+      const today = new Date();
+
+      if (previousMessage && previousMessage.createdAt) {
+        previousCreatedAt = new Date(previousMessage.createdAt);
+      }
+
+      let day = null;
+
+      if (
+        !previousCreatedAt ||
+        currentCreatedAt.toDateString() !== previousCreatedAt.toDateString()
+      ) {
+        if (currentCreatedAt.toDateString() === new Date().toDateString()) {
+          day = "Today";
+        } else if (
+          currentCreatedAt.toDateString() ===
+          new Date(new Date().setDate(new Date().getDate() - 1)).toDateString()
+        ) {
+          day = "Yesterday";
+        } else if (
+          props.currentMessage.createdAt >
+          today.setDate(today.getDate() - today.getDay())
+        ) {
+          // day = props.currentMessage.createdAt.toLocaleDateString([], {
+          //   weekday: "long",
+          // });
+          const createdAt = moment(props.currentMessage.createdAt);
+          day = createdAt.format("dddd"); // "dddd, LL" represents the format "Day of the Week, Month Day, Year"
+        } else {
+          // day = props.currentMessage.createdAt.toLocaleDateString([], {
+          //   month: "long",
+          //   day: "numeric",
+          //   year: "numeric",
+          // });
+          // day = "pjsos";
+
+          const createdAt = moment(props.currentMessage.createdAt);
+          day = createdAt.format("LL"); // "LL" represents the format "Month Day, Year"
+        }
+      }
+
+      if (day) {
+        return (
+          <View style={{ alignItems: "center", marginVertical: 5 }}>
+            <Text style={{ fontSize: 12, color: "#999" }}>{day}</Text>
+          </View>
+        );
+      }
+    }
+
+    return null;
+  }
+
   return (
     <Background bgColor='min-h-97vh'>
       <View className='h-[100%]'>
@@ -128,6 +193,7 @@ export default function ChatScreen() {
           onSend={(messages) => onSend(messages)}
           user={{ _id: chatUser._id.toString(), name: chatUser.name }}
           renderMessage={renderMessage}
+          // renderDay={renderDay}
         />
       </View>
     </Background>

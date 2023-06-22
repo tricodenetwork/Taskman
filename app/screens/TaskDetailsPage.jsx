@@ -134,12 +134,14 @@ const TaskDetailsPage = () => {
     if (user.role !== "Handler") {
       alert("Unauthorized Handler!! ❌.");
     }
-    if (!handler) {
-      alert("No handler selected!! ❌.");
-    }
-    if (!currenttask) {
-      alert("No Task assigned ❌.");
-    }
+    // if (!handler) {
+    //   alert("No handler selected!! ❌.");
+    //   return;
+    // }
+    // if (!currenttask) {
+    //   alert("No Task assigned ❌.");
+    //   return;
+    // }
 
     realm.write(() => {
       try {

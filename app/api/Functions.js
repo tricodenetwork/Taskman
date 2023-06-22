@@ -6,7 +6,6 @@ import qs from "qs";
 export const sendUserDetails = async (recipient, userDetails) => {
   const { name, email, dept, phone, password, role } = userDetails;
   let url = `mailto:${recipient}`;
-  console.log(recipient);
 
   const subject = "Welcome to Taskman"; // Specify the email subject
   const body = `
@@ -38,7 +37,6 @@ export const sendUserDetails = async (recipient, userDetails) => {
 
   // check if we can use this link
   const canOpen = await Linking.canOpenURL(url);
-  console.log(canOpen);
 
   // if (!canOpen) {
   //   throw new Error("Provided URL can not be handled");
@@ -83,7 +81,6 @@ export const sendClientDetails = async (recipient, userDetails) => {
 
   // check if we can use this link
   const canOpen = await Linking.canOpenURL(url);
-  // console.log(canOpen);
 
   // if (!canOpen) {
   //   throw new Error("Provided URL can not be handled");

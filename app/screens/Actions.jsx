@@ -4,12 +4,15 @@ import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import OdinaryButton from "../components/OdinaryButton";
-import DatePicker from "react-native-date-picker";
+// import DatePicker from "react-native-date-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { AddHoliday } from "../store/slice-reducers/Formslice";
 import { AccountRealmContext } from "../models";
 import { holiday } from "../models/Account";
 import LowerButton from "../components/LowerButton";
+import DateTimePicker, {
+  DateTimePickerAndroid,
+} from "@react-native-community/datetimepicker";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -44,6 +47,21 @@ export default function Actions() {
     });
   }, [realm]);
 
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setDate(currentDate);
+    addHoliday(selectedDate);
+  };
+
+  const showDatePicker = (currentMode) => {
+    DateTimePickerAndroid.open({
+      value: date,
+      onChange,
+      mode: "date ",
+      is24Hour: true,
+    });
+  };
+
   return (
     <Background>
       <Topscreen>
@@ -67,10 +85,10 @@ export default function Actions() {
         >
           Public Holidays
         </Text>
-        <OdinaryButton navigate={() => setOpen(!open)} text='ADD' />
+        <OdinaryButton navigate={() => showDatePicker()} text='ADD' />
         <OdinaryButton navigate={() => clear()} text='RESET' />
 
-        <Modal visible={open}>
+        {/* <Modal visible={open}>
           <View className='flex items-center justify-center h-full'>
             <DatePicker
               mode='date'
@@ -79,16 +97,25 @@ export default function Actions() {
                 setDate(date);
               }}
             />
-            <OdinaryButton
-              style={"top-[15vh]"}
-              navigate={() => {
-                setOpen(!open);
-                addHoliday(date);
-              }}
-              text={"DONE"}
-            />
+            <View className='flex w-[60vw] flex-row'>
+              <OdinaryButton
+                style={"top-[15vh]"}
+                navigate={() => {
+                  setOpen(!open);
+                  addHoliday(date);
+                }}
+                text={"DONE"}
+              />
+              <OdinaryButton
+                style={"top-[15vh] ml-[2vw]"}
+                navigate={() => {
+                  setOpen(!open);
+                }}
+                text={"CANCEL"}
+              />
+            </View>
           </View>
-        </Modal>
+        </Modal> */}
       </View>
     </Background>
   );

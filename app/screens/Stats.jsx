@@ -158,17 +158,6 @@ export default function Stats() {
         "file:///data/user/0/tasks.uniben.vic/files/stats.pdf";
 
       savePDFToDirectory(sourcePath);
-      // const asset = await MediaLibrary.createAssetAsync(sourcePath);
-
-      // asset && console.log("Asset created:", asset);
-
-      // const album = await MediaLibrary.getAlbumAsync("Taskman");
-      // if (album == null) {
-      //   await MediaLibrary.createAlbumAsync("Taskman", asset, false);
-      // } else {
-      //   await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-      // }
-
       console.log("Pdf Saved Succesfully", pdf.filePath);
       alert("Pdf Saved ", pdf.filePath);
     } catch (error) {

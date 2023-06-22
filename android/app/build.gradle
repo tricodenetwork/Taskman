@@ -197,6 +197,8 @@ dependencies {
 
       implementation 'com.google.firebase:firebase-messaging'
             implementation project(':react-native-html-to-pdf')
+                implementation project(':@react-native-community_datetimepicker')
+
  
 
 

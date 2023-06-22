@@ -43,11 +43,9 @@ export default function HandlerCard({ item }) {
   const { days, hours, minutes } = item.duration;
   const taskDuration =
     days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
-  // console.log(item);
 
   useEffect(() => {
     let interval = null;
-    // let newTargetTime = Date.now(); // Initialize newTargetTime outside the interval
 
     function calculateRemainingTime(duration) {
       // Check if the task is completed

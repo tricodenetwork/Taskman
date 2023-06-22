@@ -85,7 +85,7 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
     >
       {visible ? (
         <TouchableOpacity
-          className='bg-primary_light rounded-2xl self-center absolute top-[5vh] justify-center w-[70%] h-[35%]'
+          className='bg-primary_light rounded-2xl self-center absolute top-[0vh] z-50 justify-center w-[70%] h-[35%]'
           activeOpacity={1}
         >
           <Motion.View
@@ -98,7 +98,7 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
               Press Ok to confirm
             </Text>
             <OdinaryButton
-              style={"rounded-sm mt-4 bg-primary"}
+              style={"rounded-sm mt-2 bg-primary"}
               navigate={() => {
                 route.name == "CreateJob"
                   ? deleteJob() & nav.navigate("jobs")
