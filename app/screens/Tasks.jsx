@@ -47,7 +47,6 @@ export default function Tasks({ navigation }) {
     "job",
     Realm.BSON.ObjectId(route.params.id)
   );
-  // const [task, setTask] = useState(job.tasks);
   const [task, setTask] = useState(job.tasks);
 
   // const value = job.tasks.filtered(`name == $0`, edit.name);
@@ -140,9 +139,12 @@ export default function Tasks({ navigation }) {
     if (!array) {
       return;
     }
-    const tasksArray = JSON.parse(JSON.stringify(array));
+    // console.log(tasksArray);
     realm.write(() => {
+      const tasksArray = JSON.parse(JSON.stringify(array));
+      navigation.goBack();
       job.tasks = tasksArray;
+      navigation.navigate("tasks", { id: route.params.id });
     });
   };
   const render = ({ item }) => {

@@ -42,7 +42,11 @@ const formSlice = createSlice({
       state.clock = action.payload;
     },
     setFilter(state, action) {
-      state.filter = action.payload;
+      action.payload == "Job Name"
+        ? (state.filter = "Job")
+        : action.payload == "Client ID"
+        ? (state.filter = "MatNo")
+        : (state.filter = action.payload);
     },
     setMenu(state, action) {
       state.menu = !state.menu;

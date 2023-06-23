@@ -3,13 +3,21 @@
     "name": "TaskMan",
     "slug": "manager",
     "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
     "assetBundlePatterns": ["**/*"],
     "android": {
       "package": "tasks.uniben.vic",
       "googleServicesFile": "./android/app/google-services.json",
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
+      ],
+      "runtimeVersion": "1.0.0"
     },
-
     "extra": {
       "eas": {
         "projectId": "8e39c5ba-8a9b-44b4-8b67-00fe923da1c6"
@@ -28,6 +36,18 @@
           "isAccessMediaLocationEnabled": true
         }
       ]
-    ]
+    ],
+    "updates": {
+      "url": "https://u.expo.dev/8e39c5ba-8a9b-44b4-8b67-00fe923da1c6"
+    },
+    "ios": {
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos",
+        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos"
+      },
+      "runtimeVersion": {
+        "policy": "sdkVersion"
+      }
+    }
   }
 }

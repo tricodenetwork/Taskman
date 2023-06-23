@@ -85,7 +85,7 @@ export default function SelectComponent({
             >
               <AntDesign
                 name='caretdown'
-                size={actuatedNormalize(15)}
+                size={actuatedNormalize(20)}
                 color='#004343'
               />
             </TouchableOpacity>

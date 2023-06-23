@@ -303,7 +303,7 @@ const TaskDetailsPage = () => {
           {/* Done button */}
           <Button
             disabled={
-              (status == "Completed" || isWeekend || !isAllowedTime) && true
+              (status !== "InProgress" || isWeekend || !isAllowedTime) && true
             }
             color={"#004343"}
             title='Done'

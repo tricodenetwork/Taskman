@@ -289,7 +289,7 @@ const CreateAccount = ({ navigation }) => {
                 >
                   <AntDesign
                     name='caretdown'
-                    size={actuatedNormalize(18)}
+                    size={actuatedNormalize(20)}
                     color='black'
                   />
                 </TouchableOpacity>

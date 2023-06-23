@@ -33,6 +33,7 @@
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.2",
     "expo-updates": "~0.16.4",
+    "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "nativewind": "^2.0.11",
     "qs": "^6.11.2",

@@ -290,7 +290,7 @@ const ActivateJob = ({ navigation }) => {
                 >
                   <AntDesign
                     name='caretdown'
-                    size={actuatedNormalize(18)}
+                    size={actuatedNormalize(20)}
                     color='gray'
                   />
                 </TouchableOpacity>
@@ -356,7 +356,7 @@ const ActivateJob = ({ navigation }) => {
                 >
                   <AntDesign
                     name='caretdown'
-                    size={actuatedNormalize(18)}
+                    size={actuatedNormalize(20)}
                     color='gray'
                   />
                 </TouchableOpacity>
@@ -418,7 +418,7 @@ const ActivateJob = ({ navigation }) => {
                 >
                   <AntDesign
                     name='caretdown'
-                    size={actuatedNormalize(18)}
+                    size={actuatedNormalize(20)}
                     color='gray'
                   />
                 </TouchableOpacity>

@@ -185,7 +185,7 @@ export default function CreateJob({ navigation }) {
                   >
                     <AntDesign
                       name='caretdown'
-                      size={actuatedNormalize(18)}
+                      size={actuatedNormalize(20)}
                       color='rgb(147 51 234)'
                     />
                   </TouchableOpacity>

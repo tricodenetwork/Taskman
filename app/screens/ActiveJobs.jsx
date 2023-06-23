@@ -26,7 +26,7 @@ export default function ActiveJobs({ navigation }) {
         <View className='mb-1'>
           {!user.clientId ? (
             <SearchComponent
-              filterItems={["Job", "MatNo", "Supervisor", "Status"]}
+              filterItems={["Job Name", "Client ID", "Supervisor", "Status"]}
             />
           ) : null}
         </View>
