@@ -20,6 +20,10 @@ export const sendUserDetails = async (recipient, userDetails) => {
     Phone: ${phone}
     Role:${role}
 
+    Kindly download the app from the link below.
+    https://drive.google.com/file/d/1vFOnblLlV1mctaXzQi9esHedyN9nT-FO/view?usp=drivesdk
+    
+    
     Thank you for joining!
 
     Best regards,
@@ -63,6 +67,9 @@ export const sendClientDetails = async (recipient, userDetails) => {
 
     Email: ${email}
     Password: ${password}
+
+    Kindly download the app from the link below.
+    https://drive.google.com/file/d/1vFOnblLlV1mctaXzQi9esHedyN9nT-FO/view?usp=drivesdk
 
     Thank you for joining!
 
