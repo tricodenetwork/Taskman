@@ -172,15 +172,15 @@ const Login = ({ navigation }) => {
           </Text>
         </View>
       </Modal>
-      <View className='flex flex-row items-end absolute bottom-[1.5vh] self-center '>
-        <View className=' left-0 bottom-0'>
+      <View className='flex flex-row items-end absolute top-[4.5vh] self-center '>
+        <View className=' left-0 top-0'>
           <Logo width={actuatedNormalize(35)} height={actuatedNormalize(35)} />
         </View>
         <Text
           style={[styles.averageText, { fontStyle: "normal" }]}
           className='text-cyan-500'
         >
-          {` Powered by Tricode Network`}{" "}
+          {` `}
         </Text>
       </View>
     </Background>

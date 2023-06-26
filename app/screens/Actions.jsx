@@ -1,5 +1,5 @@
 import { View, Text, Button, Modal, ScrollView } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
@@ -21,11 +21,35 @@ export default function Actions() {
   const [date, setDate] = useState(new Date());
 
   const hols = useQuery(holiday);
+  const isTodayHoliday = hols.some((holiday) => {
+    const holidayDate = new Date(holiday.day);
+    const today = new Date();
+
+    return (
+      holidayDate.getFullYear() === today.getFullYear() &&
+      holidayDate.getMonth() === today.getMonth() &&
+      holidayDate.getDate() === today.getDate()
+    );
+  });
   const realm = useRealm();
   const dispatch = useDispatch();
 
   const addHoliday = useCallback(
     (item) => {
+      const isAlreadyAdded = hols.some((holiday) => {
+        const holidayDate = new Date(holiday.day);
+        const today = new Date(item);
+
+        return (
+          holidayDate.getFullYear() === today.getFullYear() &&
+          holidayDate.getMonth() === today.getMonth() &&
+          holidayDate.getDate() === today.getDate()
+        );
+      });
+
+      if (isAlreadyAdded) {
+        // return;
+      }
       realm.write(() => {
         const publicHoliday = { day: item };
         try {
@@ -53,11 +77,11 @@ export default function Actions() {
     addHoliday(selectedDate);
   };
 
-  const showDatePicker = (currentMode) => {
+  const showDatePicker = () => {
     DateTimePickerAndroid.open({
       value: date,
       onChange,
-      mode: "date ",
+      mode: "date",
       is24Hour: true,
     });
   };
@@ -85,7 +109,10 @@ export default function Actions() {
         >
           Public Holidays
         </Text>
-        <OdinaryButton navigate={() => showDatePicker()} text='ADD' />
+        <OdinaryButton
+          navigate={() => console.log("kool") & showDatePicker()}
+          text='ADD'
+        />
         <OdinaryButton navigate={() => clear()} text='RESET' />
 
         {/* <Modal visible={open}>

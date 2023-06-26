@@ -5,7 +5,7 @@ import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { setCurrentTask, setHandler } from "../store/slice-reducers/ActiveJob";
 import SelectComponent from "../components/SelectComponent";
 import { AccountRealmContext } from "../models";
-import { Account } from "../models/Account";
+import { Account, holiday } from "../models/Account";
 import Background from "../components/Background";
 import { useCallback } from "react";
 import { Button } from "react-native";
@@ -35,6 +35,18 @@ export default function IndividualTask({ navigation }) {
   const inProgess = job.tasks.filter(
     (item) => item.name == route.params?.taskName
   )[0].inProgress;
+
+  const holidas = useQuery(holiday);
+  const isTodayHoliday = holidas.some((holiday) => {
+    const holidayDate = new Date(holiday.day);
+    const today = new Date();
+
+    return (
+      holidayDate.getFullYear() === today.getFullYear() &&
+      holidayDate.getMonth() === today.getMonth() &&
+      holidayDate.getDate() === today.getDate()
+    );
+  });
 
   const Activate = useCallback(() => {
     // Perform the necessary actions to activate a certain task and handler by setting it to InProgress
@@ -146,6 +158,7 @@ export default function IndividualTask({ navigation }) {
               inProgess ||
               isWeekend ||
               !isAllowedTime ||
+              isTodayHoliday ||
               !route.params.taskHandler
                 ? true
                 : false
@@ -155,7 +168,9 @@ export default function IndividualTask({ navigation }) {
             color={"#004343"}
           />
           <Button
-            disabled={handler == "" || isWeekend || !isAllowedTime}
+            disabled={
+              handler == "" || isWeekend || isTodayHoliday || !isAllowedTime
+            }
             title='Assign'
             onPress={() => setVisible(!visible)}
           />

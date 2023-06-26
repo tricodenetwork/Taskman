@@ -20,7 +20,7 @@ import { activejob } from "../models/Task";
 import { AccountRealmContext } from "../models";
 import { setCurrentTask, setHandler } from "../store/slice-reducers/ActiveJob";
 import { useDispatch, useSelector } from "react-redux";
-import { Account } from "../models/Account";
+import { Account, holiday } from "../models/Account";
 import ChatScreen from "./ChatScreen";
 import { chats } from "../models/Chat";
 import { sendPushNotification } from "../api/Functions";
@@ -60,6 +60,18 @@ const TaskDetailsPage = () => {
     "senderId == $0 ||  recieverId == $0",
     user._id
   );
+
+  const holidas = useQuery(holiday);
+  const isTodayHoliday = holidas.some((holiday) => {
+    const holidayDate = new Date(holiday.day);
+    const today = new Date();
+
+    return (
+      holidayDate.getFullYear() === today.getFullYear() &&
+      holidayDate.getMonth() === today.getMonth() &&
+      holidayDate.getDate() === today.getDate()
+    );
+  });
 
   // Create a chat room
   const createChatRoom = (recieverId) => {
@@ -290,6 +302,7 @@ const TaskDetailsPage = () => {
               status == "InProgress" ||
               status == "Completed" ||
               isWeekend ||
+              isTodayHoliday ||
               !isAllowedTime
                 ? true
                 : false
@@ -303,7 +316,12 @@ const TaskDetailsPage = () => {
           {/* Done button */}
           <Button
             disabled={
-              (status !== "InProgress" || isWeekend || !isAllowedTime) && true
+              status !== "InProgress" ||
+              isWeekend ||
+              isTodayHoliday ||
+              !isAllowedTime
+                ? true
+                : false
             }
             color={"#004343"}
             title='Done'
@@ -313,7 +331,12 @@ const TaskDetailsPage = () => {
           {/* Error button */}
           <Button
             disabled={
-              (status == "Completed" || isWeekend || !isAllowedTime) && true
+              status == "Completed" ||
+              isWeekend ||
+              isTodayHoliday ||
+              !isAllowedTime
+                ? true
+                : false
             }
             color={"#E59F71"}
             title='Reject'

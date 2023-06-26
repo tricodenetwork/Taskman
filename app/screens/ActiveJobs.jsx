@@ -7,10 +7,31 @@ import JobDetails from "../components/JobDetails";
 import LowerButton from "../components/LowerButton";
 import { setFilter } from "../store/slice-reducers/Formslice";
 import { useDispatch, useSelector } from "react-redux";
+import { holiday } from "../models/Account";
+import Realm from "realm";
+import { AccountRealmContext } from "../models";
+
+const { useRealm, useQuery } = AccountRealmContext;
 export default function ActiveJobs({ navigation }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state);
+  const realm = useRealm();
+
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
+  // const holida = useQuery(holiday).filtered(`day == $0`, new Date());
+  const holidas = useQuery(holiday);
+  const isTodayHoliday = holidas.some((holiday) => {
+    const holidayDate = new Date(holiday.day);
+    const today = new Date();
+
+    return (
+      holidayDate.getFullYear() === today.getFullYear() &&
+      holidayDate.getMonth() === today.getMonth() &&
+      holidayDate.getDate() === today.getDate()
+    );
+  });
+
+  // console.log("Is today a holiday?", isTodayHoliday);
 
   useEffect(() => {
     dispatch(setFilter("Job"));
@@ -37,12 +58,18 @@ export default function ActiveJobs({ navigation }) {
       {user.role !== "Client" && (
         <LowerButton
           style={"w-[90vw]"}
-          disabled={isWeekend || !isAllowedTime ? true : false}
+          disabled={
+            isWeekend || isTodayHoliday || !isAllowedTime ? true : false
+          }
           navigate={() => {
             navigation.navigate("ActivateJob");
           }}
           text={
-            isWeekend || !isAllowedTime ? "Outside working hours" : "Activate"
+            isTodayHoliday
+              ? "Public Holiday"
+              : isWeekend || !isAllowedTime
+              ? "Outside working hours"
+              : "Activate"
           }
           p
         />
