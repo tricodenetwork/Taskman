@@ -7,7 +7,7 @@
       "developmentClient": "true",
       "distribution": "internal",
       "android": {
-        "gradleCommand": ":app:assembleDebug"
+        "gradleCommand": ":app:assembleDevelopmentDebug"
       },
       "ios": {
         "buildConfiguration": "Debug"
@@ -20,7 +20,8 @@
     },
     "production": {
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "gradleCommand": ":app:bundleProductionRelease"
       },
       "channel": "production"
     }

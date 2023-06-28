@@ -138,6 +138,17 @@ android {
             keyPassword 'android'
         }
     }
+      flavorDimensions "env"
+    productFlavors {
+        production {
+            dimension "env"
+            applicationId 'tasks.uniben.vic'
+        }
+        development {
+            dimension "env"
+            applicationId 'com.taskman.dev'
+        }
+    }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug

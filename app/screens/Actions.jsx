@@ -38,17 +38,17 @@ export default function Actions() {
     (item) => {
       const isAlreadyAdded = hols.some((holiday) => {
         const holidayDate = new Date(holiday.day);
-        const today = new Date(item);
+        const chosenDate = new Date(item);
 
         return (
-          holidayDate.getFullYear() === today.getFullYear() &&
-          holidayDate.getMonth() === today.getMonth() &&
-          holidayDate.getDate() === today.getDate()
+          holidayDate.getFullYear() === chosenDate.getFullYear() &&
+          holidayDate.getMonth() === chosenDate.getMonth() &&
+          holidayDate.getDate() === chosenDate.getDate()
         );
       });
 
       if (isAlreadyAdded) {
-        // return;
+        return;
       }
       realm.write(() => {
         const publicHoliday = { day: item };
@@ -91,8 +91,9 @@ export default function Actions() {
       <Topscreen>
         <ScrollView>
           <View className='flex m-[6vw] px-[5vw]  w-[90vw] flex-row flex-wrap'>
-            {hols.map((item) => (
+            {hols.map((item, index) => (
               <Text
+                key={index.toString()}
                 style={[styles.text_md, { fontSize: actuatedNormalize(18) }]}
                 className='mx-[1vw] border-r-[1px] border-r-white pr-[1vh] text-white my-[1vh]'
               >
