@@ -96,7 +96,7 @@ export function millisecondSinceStartDate(startDate, holidays = []) {
           date.getUTCFullYear(),
           date.getUTCMonth(),
           date.getUTCDate(),
-          16,
+          23,
           0,
           0
         );

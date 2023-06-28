@@ -44,6 +44,16 @@ export default function HandlerCard({ item }) {
   const taskDuration =
     days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
 
+  const isTodayHoliday = hols.some((holiday) => {
+    const holidayDate = new Date(holiday.day);
+    const today = new Date();
+
+    return (
+      holidayDate.getFullYear() === today.getFullYear() &&
+      holidayDate.getMonth() === today.getMonth() &&
+      holidayDate.getDate() === today.getDate()
+    );
+  });
   useEffect(() => {
     let interval = null;
 
@@ -100,7 +110,7 @@ export default function HandlerCard({ item }) {
     }
 
     // Call calculateInterval when the component mounts during working hours
-    !isWeekend & isAllowedTime &&
+    !isWeekend & isAllowedTime & !isTodayHoliday &&
       calculateInterval(item.duration, item.inProgress, item.completedIn);
 
     calculateRemainingTime(taskDuration);

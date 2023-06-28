@@ -63,6 +63,17 @@ export default function DetailsCard({ item, id, index }) {
     ? calculateTime(item.completedIn.getTime())
     : null;
 
+  const isTodayHoliday = hols.some((holiday) => {
+    const holidayDate = new Date(holiday.day);
+    const today = new Date();
+
+    return (
+      holidayDate.getFullYear() === today.getFullYear() &&
+      holidayDate.getMonth() === today.getMonth() &&
+      holidayDate.getDate() === today.getDate()
+    );
+  });
+
   const { days, hours, minutes } = item.duration;
   const taskDuration =
     days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
@@ -124,7 +135,7 @@ export default function DetailsCard({ item, id, index }) {
     }
 
     // Call calculateInterval when the component mounts during working hours
-    !isWeekend & isAllowedTime &&
+    !isWeekend & isAllowedTime & !isTodayHoliday &&
       calculateInterval(item.duration, item.inProgress, item.completedIn);
 
     calculateRemainingTime(taskDuration);
@@ -134,7 +145,6 @@ export default function DetailsCard({ item, id, index }) {
       clearInterval(interval);
     };
   }, [item.inProgress]);
-
   return (
     <View
       style={styles.Pcard}
