@@ -189,12 +189,8 @@ const ActivateJob = ({ navigation }) => {
     if (!validateEmail(value)) {
       setError("Please enter a valid email");
     } else {
-      if (accounts.filtered(`email ==$0`, value).length !== 0) {
-        setError("Email already exist");
-      } else {
-        dispatch(setEmail(value));
-        setError(null);
-      }
+      dispatch(setEmail(value));
+      setError(null);
     }
   };
 
