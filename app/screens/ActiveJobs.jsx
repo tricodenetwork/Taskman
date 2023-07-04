@@ -5,17 +5,19 @@ import Topscreen from "../components/Topscreen";
 import SearchComponent from "../components/SearchComponent";
 import JobDetails from "../components/JobDetails";
 import LowerButton from "../components/LowerButton";
-import { setFilter } from "../store/slice-reducers/Formslice";
+import { setFilter, setSearch } from "../store/slice-reducers/Formslice";
 import { useDispatch, useSelector } from "react-redux";
 import { holiday } from "../models/Account";
 import Realm from "realm";
 import { AccountRealmContext } from "../models";
+import { useIsFocused } from "@react-navigation/native";
 
 const { useRealm, useQuery } = AccountRealmContext;
 export default function ActiveJobs({ navigation }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state);
   const realm = useRealm();
+  const Focus = useIsFocused();
 
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
   // const holida = useQuery(holiday).filtered(`day == $0`, new Date());
@@ -35,7 +37,8 @@ export default function ActiveJobs({ navigation }) {
 
   useEffect(() => {
     dispatch(setFilter("Job"));
-  }, []);
+    dispatch(setSearch(""));
+  }, [Focus]);
 
   return (
     <Background bgColor='min-h-[98vh]'>

@@ -104,6 +104,7 @@ const Login = ({ navigation }) => {
               secureTextEntry={show}
               className='w-full h-[5vh] bg-slate-400 rounded-sm self-center'
             />
+
             <View className={"absolute right-[1vw]"}>
               <Pressable
                 onPress={() => {

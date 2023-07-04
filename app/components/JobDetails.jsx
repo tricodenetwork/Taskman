@@ -85,6 +85,8 @@ export default function JobDetails({ onPress }) {
       showsVerticalScrollIndicator
       keyExtractor={(item) => item._id}
       style={{ height: "83%" }}
+      initialNumToRender={35}
+      maxToRenderPerBatch={60}
     />
   );
 }

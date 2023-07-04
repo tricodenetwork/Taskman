@@ -225,7 +225,7 @@ const ActivateJob = ({ navigation }) => {
               <TextInput
                 defaultValue={matno}
                 style={styles.averageText}
-                maxLength={10}
+                maxLength={20}
                 onChangeText={(value) => {
                   dispatch(setMatNo(value));
                 }}
@@ -249,13 +249,6 @@ const ActivateJob = ({ navigation }) => {
                       renderItem={({ item }) => (
                         <TouchableOpacity
                           onPress={() => {
-                            const jobObject = {
-                              _id: new Realm.BSON.ObjectId(),
-                              name: item.name,
-                              category: item.category,
-                              tasks: item.tasks,
-                            };
-
                             dispatch(setJob(item));
                             dispatch(setTasks(item.tasks));
 

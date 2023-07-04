@@ -68,7 +68,9 @@ export default function TaskDetails({
       data={data.filter((item, index) =>
         item[col]?.name
           ? item[col].name.toLowerCase().includes(search.toLowerCase())
-          : item[col] && item[col].toLowerCase().includes(search.toLowerCase())
+          : (item[col] &&
+              item[col].toLowerCase().includes(search.toLowerCase())) ||
+            item[col] == ""
       )}
       renderItem={({ item, drag, isActive, getIndex }) => {
         const { name, id, job, matno, supervisor, handler, status } = item;
