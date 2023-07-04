@@ -13,21 +13,20 @@ export const sendUserDetails = async (recipient, userDetails) => {
 
     Welcome! Your account details are as follows:
 
-    Name:${name}
-    Password: ${password}
-    Email: ${email}
-    Department: ${dept}
-    Phone: ${phone}
-    Role:${role}
+    **Name:** ${name}
+    **Password:** ${password}
+    **Email:** ${email}
+    **Department:** ${dept}
+    **Phone:** ${phone}
+    **Role:** ${role}
 
-    Kindly download the app from the link below.
-    https://drive.google.com/file/d/1vFOnblLlV1mctaXzQi9esHedyN9nT-FO/view?usp=drivesdk
-    
+    Kindly download the app from the link below:
+    [Download Taskman](https://drive.google.com/file/d/1cc6dEUyppHAASVgc0E5NSsSAdccz8Yug/view?usp=sharing)
     
     Thank you for joining!
 
     Best regards,
-    The Team
+    The Taskman Team
   `;
   // Create email link query
   const query = qs.stringify({
@@ -42,39 +41,29 @@ export const sendUserDetails = async (recipient, userDetails) => {
   // check if we can use this link
   const canOpen = await Linking.canOpenURL(url);
 
-  // if (!canOpen) {
-  //   throw new Error("Provided URL can not be handled");
-  // }
-
   return Linking.openURL(url);
-
-  // Compose the email
-  // MailComposer.composeAsync({
-  //   recipients: [recipient],
-  //   subject,
-  //   body,
-  // });
 };
+
 export const sendClientDetails = async (recipient, userDetails) => {
   const { matno, email, password } = userDetails;
   let url = `mailto:${recipient}`;
 
   const subject = "Welcome to Taskman"; // Specify the email subject
   const body = `
-    Hello, ${matno}
+    Hello ${matno},
 
     Welcome to Taskman! Your account details are as follows:
 
-    Email: ${email}
-    Password: ${password}
-
-    Kindly download the app from the link below.
-    https://drive.google.com/file/d/1vFOnblLlV1mctaXzQi9esHedyN9nT-FO/view?usp=drivesdk
+    **Email:** ${email}
+    **Password:** ${password}
+  
+    Kindly download the app from the link below:
+    [Download Taskman](https://drive.google.com/file/d/1cc6dEUyppHAASVgc0E5NSsSAdccz8Yug/view?usp=sharing)
 
     Thank you for joining!
 
     Best regards,
-    The Team
+    The Taskman Team
   `;
   // Create email link query
   const query = qs.stringify({
@@ -89,18 +78,7 @@ export const sendClientDetails = async (recipient, userDetails) => {
   // check if we can use this link
   const canOpen = await Linking.canOpenURL(url);
 
-  // if (!canOpen) {
-  //   throw new Error("Provided URL can not be handled");
-  // }
-
   return Linking.openURL(url);
-
-  // Compose the email
-  // MailComposer.composeAsync({
-  //   recipients: [recipient],
-  //   subject,
-  //   body,
-  // });
 };
 
 export function generatePassword(length) {

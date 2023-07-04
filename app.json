@@ -38,7 +38,8 @@
       ]
     ],
     "updates": {
-      "url": "https://u.expo.dev/8e39c5ba-8a9b-44b4-8b67-00fe923da1c6"
+      "url": "https://u.expo.dev/8e39c5ba-8a9b-44b4-8b67-00fe923da1c6",
+      "platforms": ["android"]
     },
     "ios": {
       "infoPlist": {
