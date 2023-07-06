@@ -109,6 +109,10 @@ export default function ChatScreen() {
         textStyle={{
           right: {
             color: "#fff",
+            fontSize: actuatedNormalize(13),
+          },
+          left: {
+            fontSize: actuatedNormalize(13),
           },
         }}
       />

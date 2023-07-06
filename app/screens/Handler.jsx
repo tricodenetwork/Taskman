@@ -38,7 +38,7 @@ export default function Handler({ navigation }) {
             completedCount++;
           } else if (task.status === "InProgress") {
             inProgressCount++;
-          } else if (task.status === "Pending") {
+          } else if (task.status === "Pending" || task.status === "") {
             pendingCount++;
           }
         }

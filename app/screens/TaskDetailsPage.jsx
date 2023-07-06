@@ -132,6 +132,8 @@ const TaskDetailsPage = () => {
   }, [realm, currenttask, handler]);
 
   const handleDoneButton = () => {
+    dispatch(setCurrentTask(""));
+    dispatch(setHandler(""));
     setIsNextTaskModalOpen(true);
   };
 
@@ -360,7 +362,9 @@ const TaskDetailsPage = () => {
                   title={"Tasks:"}
                   placeholder={"Assign Next Task"}
                   data={activeJob.tasks.filter(
-                    (obj) => obj.status == "Pending" || obj.status == ""
+                    (obj) =>
+                      (obj.status == "Pending" || obj.status == "") &
+                      (obj.handler == "" || obj.handler == null)
                   )}
                   setData={(params) => {
                     dispatch(setCurrentTask(params));
