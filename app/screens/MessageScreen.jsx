@@ -25,15 +25,19 @@ export default function MessageScreen({ navigation }) {
   const ActiveJob = useQuery(activejob).filtered(`matno == $0`, user.clientId);
   const contacts =
     user.role == "Handler" || user.role == "Supervisor"
-      ? useQuery(Account).filtered(
-          `(role == "Handler" || role =="Supervisor") AND category.name ==$0 AND name !=$1`,
-          user.category.name,
-          user.name
-        )
-      : useQuery(Account).filtered(
-          `role == "Supervisor" AND name == $0`,
-          ActiveJob[0]?.supervisor
-        );
+      ? useQuery(Account)
+          .filtered(
+            `(role == "Handler" || role =="Supervisor") AND category.name ==$0 AND name !=$1`,
+            user.category.name,
+            user.name
+          )
+          .sorted("name")
+      : useQuery(Account)
+          .filtered(
+            `role == "Supervisor" AND name == $0`,
+            ActiveJob[0]?.supervisor
+          )
+          .sorted("name");
   const allChats = useQuery(chats);
   const chatrooms = useQuery("chatroom").filtered(
     "senderId == $0 ||  recieverId == $0",
