@@ -10,7 +10,6 @@ import Background from "../components/Background";
 import { useCallback } from "react";
 import { Button } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { log } from "react-native-reanimated";
 import OdinaryButton from "../components/OdinaryButton";
 import { Motion } from "@legendapp/motion";
 import { TouchableOpacity } from "react-native";
@@ -53,7 +52,7 @@ export default function IndividualTask({ navigation }) {
 
     realm.write(() => {
       try {
-        job.tasks.map((task) => {
+        job?.tasks.map((task) => {
           const { name } = task;
           if (name == route.params.taskName) {
             // task.handler = handler;
@@ -63,7 +62,6 @@ export default function IndividualTask({ navigation }) {
 
             return;
           } else {
-            console.log("Not Active Job.");
             return;
           }
         });
@@ -72,7 +70,7 @@ export default function IndividualTask({ navigation }) {
       }
     });
 
-    navigation.navigate("activetasks", { id: route.params });
+    navigation.navigate("activetasks", { id: route.params.id });
   }, [realm, currenttask, handler]);
   const assignNextTask = useCallback(() => {
     realm.write(() => {
