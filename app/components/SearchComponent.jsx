@@ -33,7 +33,7 @@ export default function SearchComponent({ filterItems = [] }) {
           dispatch(setSearch(value));
         }}
         style={[styles.averageText, { color: "#004343" }]}
-        placeholder={filter || "Name"}
+        placeholder={filter === "MatNo" ? "Client ID" : filter || "Name"}
         placeholderTextColor={"rgba(0, 67,67,0.6)"}
         className='w-[80%] h-[5vh] bg-slate-400 rounded-sm self-center'
       />

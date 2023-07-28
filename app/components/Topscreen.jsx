@@ -188,10 +188,12 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
                 </TouchableOpacity>
               ) : (route.name == "CreateJob" && route.params) ||
                 (route.name == "CreateAccount" && route.params) ||
-                (route.name == "ActivateJob" && route.params) ? (
+                route.name == "ActivateJob" ? (
                 <TouchableOpacity
                   onPress={() => {
-                    setVisible(!visible);
+                    route.name == "ActivateJob" && !route.params
+                      ? nav.navigate("DeleteJobs")
+                      : setVisible(!visible);
                   }}
                 >
                   <AntDesign

@@ -5,7 +5,7 @@ import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { setCurrentTask, setHandler } from "../store/slice-reducers/ActiveJob";
 import SelectComponent from "../components/SelectComponent";
 import { AccountRealmContext } from "../models";
-import { Account, holiday } from "../models/Account";
+import { Account, client, holiday } from "../models/Account";
 import Background from "../components/Background";
 import { useCallback } from "react";
 import { Button } from "react-native";
@@ -13,6 +13,8 @@ import { useRoute } from "@react-navigation/native";
 import OdinaryButton from "../components/OdinaryButton";
 import { Motion } from "@legendapp/motion";
 import { TouchableOpacity } from "react-native";
+import MultiSelect from "../components/MultiSelect";
+import { activejob } from "../models/Task";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -23,6 +25,7 @@ export default function IndividualTask({ navigation }) {
 
   const dispatch = useDispatch();
   const Accounts = useQuery(Account);
+  const clients = useQuery(activejob);
   const { user } = useSelector((state) => state);
   const realm = useRealm();
   const route = useRoute();
@@ -30,6 +33,17 @@ export default function IndividualTask({ navigation }) {
     "activejob",
     Realm.BSON.ObjectId(route.params.id)
   );
+  let multiplejobs = [];
+
+  const addJobs = (param) => {
+    const index = multiplejobs.indexOf(param);
+    if (index !== -1) {
+      multiplejobs.splice(index, 1);
+    } else {
+      multiplejobs.push(param);
+    }
+    console.log(multiplejobs);
+  };
 
   const inProgess = job.tasks.filter(
     (item) => item.name == route.params?.taskName
@@ -52,19 +66,37 @@ export default function IndividualTask({ navigation }) {
 
     realm.write(() => {
       try {
-        job?.tasks.map((task) => {
-          const { name } = task;
-          if (name == route.params.taskName) {
-            // task.handler = handler;
-            task.status = "InProgress";
-            task.inProgress = new Date();
-            alert("Task Activated! ✔");
+        if (multiplejobs.length !== 0) {
+          multiplejobs.forEach((params) => {
+            clients.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
+              const { name } = task;
+              if (name == route.params.taskName) {
+                // task.handler = handler;
+                task.status = "InProgress";
+                task.inProgress = new Date();
 
-            return;
-          } else {
-            return;
-          }
-        });
+                return;
+              } else {
+                return;
+              }
+            });
+          });
+          alert("Tasks Activated! ✔");
+        } else {
+          job?.tasks.map((task) => {
+            const { name } = task;
+            if (name == route.params.taskName) {
+              // task.handler = handler;
+              task.status = "InProgress";
+              task.inProgress = new Date();
+              alert("Task Activated! ✔");
+
+              return;
+            } else {
+              return;
+            }
+          });
+        }
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
       }
@@ -75,16 +107,30 @@ export default function IndividualTask({ navigation }) {
   const assignNextTask = useCallback(() => {
     realm.write(() => {
       try {
-        job.tasks.map((task) => {
-          const { name } = task;
-          if (name == route.params.taskName) {
-            task.handler = handler;
-            task.status = "Pending";
-            task.inProgress = null;
-            alert(`${route.params.taskName} 📃 assigned to ${handler} 👤 `);
-            return;
-          }
-        });
+        if (multiplejobs.length !== 0) {
+          multiplejobs.forEach((params) => {
+            clients.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
+              if (task.name == route.params.taskName) {
+                task.handler = handler;
+                task.status = "Awaiting";
+                task.inProgress = null;
+                return;
+              }
+            });
+          });
+          alert(`${route.params.taskName} 📃 assigned to ${handler} 👤 `);
+        } else {
+          job.tasks.map((task) => {
+            const { name } = task;
+            if (name == route.params.taskName) {
+              task.handler = handler;
+              task.status = "Awaiting";
+              task.inProgress = null;
+              alert(`${route.params.taskName} 📃 assigned to ${handler} 👤 `);
+              return;
+            }
+          });
+        }
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
       }
@@ -93,8 +139,8 @@ export default function IndividualTask({ navigation }) {
   }, [realm, currenttask, handler]);
 
   return (
-    <Background bgColor='min-h-screen'>
-      <View className=' h-[70%] pt-[5vh] self-center flex justify-between items-center'>
+    <Background bgColor=''>
+      <View className=' h-[90%] pt-[5vh] self-center flex justify-between items-center'>
         <Text
           className='self-center text-center w-[50vw]'
           style={[styles.text_sm2, { fontSize: actuatedNormalize(20) }]}
@@ -102,7 +148,7 @@ export default function IndividualTask({ navigation }) {
           Assign Task
         </Text>
 
-        <View className='h-[30vh] self-start px-[5vw] flex justify-around'>
+        <View className='h-[50vh]   px-[5vw] flex justify-around'>
           <SelectComponent
             value={route.params.taskName}
             title={"Tasks:"}
@@ -120,6 +166,14 @@ export default function IndividualTask({ navigation }) {
             setData={(params) => {
               dispatch(setHandler(params));
             }}
+          />
+          <MultiSelect
+            title={"ClientJobs"}
+            setData={(params) => {
+              addJobs(params);
+            }}
+            data={clients}
+            placeholder={"Multiple"}
           />
         </View>
         {visible ? (
@@ -166,9 +220,7 @@ export default function IndividualTask({ navigation }) {
             color={"#004343"}
           />
           <Button
-            disabled={
-              handler == "" || isWeekend || isTodayHoliday || !isAllowedTime
-            }
+            disabled={handler == ""}
             title='Assign'
             onPress={() => setVisible(!visible)}
           />

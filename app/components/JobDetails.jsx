@@ -5,7 +5,7 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import JobCard from "./JobCard";
 import { styles } from "../styles/stylesheet";
 import {
@@ -34,6 +34,35 @@ export default function JobDetails({ onPress }) {
   const isFocused = useIsFocused();
   const client = activeJobs.filtered(`matno ==$0`, user.clientId) ?? [];
 
+  function updateJobStatus(supervisorName) {
+    console.log("updating job status");
+    realm.write(() => {
+      activeJobs.forEach((activejob) => {
+        let jobstatus = "Pending";
+        // let allTasksCompleted = true;
+
+        for (const task of activejob.tasks) {
+          if (task.handler != null && task.status == "Pending") {
+            jobstatus = "Awaiting";
+            break;
+          } else if (
+            task.status == "InProgress" ||
+            task.status == "Completed"
+          ) {
+            jobstatus = "InProgress";
+            break;
+          } else if (
+            task.status !== "InProgress" &&
+            task.status !== "Pending"
+          ) {
+            jobstatus = "Completed";
+          }
+        }
+
+        activejob.status = jobstatus;
+      });
+    });
+  }
   useEffect(() => {
     if (!user.clientId) {
       if (route.name == "activeJobs") {
@@ -47,26 +76,38 @@ export default function JobDetails({ onPress }) {
     return () => {
       setRefreshing(false);
     };
-  }, [isFocused, refreshing, activeJobs]);
+  }, [isFocused, refreshing]);
+
+  useEffect(() => {
+    updateJobStatus();
+
+    return () => {
+      setRefreshing(false);
+    };
+  }, [refreshing]);
   return (
     <FlatList
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
           onRefresh={() => {
+            // updateJobStatus();
             setRefreshing(true);
           }}
         />
       }
-      data={data.filter((item, index) =>
-        item[col]?.name
-          ? item[col].name.toLowerCase().includes(search.toLowerCase())
-          : item[col] && item[col].toLowerCase().includes(search.toLowerCase())
-      )}
+      data={data
+        .filter((item, index) =>
+          item[col]?.name
+            ? item[col].name.toLowerCase().includes(search.toLowerCase())
+            : item[col] &&
+              item[col].toLowerCase().includes(search.toLowerCase())
+        )
+        .sort((a, b) => b._id.getTimestamp() - a._id.getTimestamp())}
       renderItem={({ item }) => {
         return (
           <TouchableOpacity
-            activeOpacity={0.9}
+            activeOpacity={0.7}
             onPress={() => {
               const screenName =
                 route.name === "jobs" ? "tasks" : "activetasks";
@@ -85,8 +126,8 @@ export default function JobDetails({ onPress }) {
       showsVerticalScrollIndicator
       keyExtractor={(item) => item._id}
       style={{ height: "83%" }}
-      initialNumToRender={35}
-      maxToRenderPerBatch={60}
+      initialNumToRender={60}
+      maxToRenderPerBatch={120}
     />
   );
 }

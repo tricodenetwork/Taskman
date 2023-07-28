@@ -39,6 +39,8 @@ export default function HandlerCard({ item }) {
       ? "#ff4747"
       : item.status === "Completed"
       ? "#006400"
+      : item.status === "Awaiting"
+      ? "#FF925C"
       : null;
   const { days, hours, minutes } = item.duration;
   const taskDuration =
@@ -199,7 +201,11 @@ export default function HandlerCard({ item }) {
             item.role ? dynamicColor().textColor : status
           } text-center`}
         >
-          {item.status ? item.status : item.status == "" && "PENDING"}
+          {time.includes("-")
+            ? "Overdue"
+            : item.status
+            ? item.status
+            : item.status == "" && "PENDING"}
         </Text>
       </View>
     </View>

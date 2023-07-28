@@ -36,7 +36,7 @@ export default function ActiveJobs({ navigation }) {
   // console.log("Is today a holiday?", isTodayHoliday);
 
   useEffect(() => {
-    dispatch(setFilter("Job"));
+    dispatch(setFilter("MatNo"));
     dispatch(setSearch(""));
   }, [Focus]);
 
@@ -61,18 +61,19 @@ export default function ActiveJobs({ navigation }) {
       {user.role !== "Client" && (
         <LowerButton
           style={"w-[90vw]"}
-          disabled={
-            isWeekend || isTodayHoliday || !isAllowedTime ? true : false
-          }
+          // disabled={
+          //   isWeekend || isTodayHoliday || !isAllowedTime ? true : false
+          // }
           navigate={() => {
             navigation.navigate("ActivateJob");
           }}
           text={
-            isTodayHoliday
-              ? "Public Holiday"
-              : isWeekend || !isAllowedTime
-              ? "Outside working hours"
-              : "Activate"
+            // isTodayHoliday
+            //   ? "Public Holiday"
+            //   : isWeekend || !isAllowedTime
+            //   ? "Outside working hours"
+            //   :
+            "Activate"
           }
           p
         />

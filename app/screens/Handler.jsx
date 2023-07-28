@@ -15,13 +15,16 @@ import { AccountRealmContext } from "../models";
 import LowerButton from "../components/LowerButton";
 import { useUser } from "@realm/react/";
 import { useSelector } from "react-redux";
+import { chatroom, chats as chat } from "../models/Chat";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
 export default function Handler({ navigation }) {
   const activeJobs = useQuery(activejob);
   const user = useUser();
-  const { name } = useSelector((state) => state.user);
+  const { name, _id } = useSelector((state) => state.user);
+  const chats = useQuery(chat);
+
   const handleLogout = useCallback(() => {
     user?.logOut();
   }, [user]);
@@ -57,6 +60,18 @@ export default function Handler({ navigation }) {
   }
 
   const handlerStats = countTasksByStatus(activeJobs, name);
+
+  const userRooms = useQuery(chatroom)
+    .filtered(`recieverId == $0 || senderId == $0`, _id)
+    .map((params) => params._id)
+    .filter(
+      (roomId) =>
+        chats.filtered(
+          `status != "read" AND user._id != $0 AND roomId == $1`,
+          _id,
+          roomId
+        ).length > 0
+    );
   return (
     <Background bgColor='-z-40'>
       <HandlerTopscreen text3={formattedDate} text={`Hello, ${name}`}>
@@ -182,6 +197,7 @@ export default function Handler({ navigation }) {
         </View>
         <View>
           <TouchableOpacity
+            className='relative max-h-max'
             onPress={() => {
               navigation.navigate("messages");
             }}
@@ -197,6 +213,28 @@ export default function Handler({ navigation }) {
               }
               text={"Messages"}
             />
+            {userRooms.length !== 0 ? (
+              <View
+                style={{
+                  width: actuatedNormalize(25),
+                  height: actuatedNormalize(25),
+                }}
+                className='rounded-full absolute left-[15vw] top-[26%]   flex items-center justify-center bg-purple-500'
+              >
+                <Text
+                  className='text-red-100'
+                  style={[
+                    styles.text_sm,
+                    {
+                      fontSize: actuatedNormalize(12),
+                      lineHeight: actuatedNormalizeVertical(12 * 1.5),
+                    },
+                  ]}
+                >
+                  {userRooms.length}
+                </Text>
+              </View>
+            ) : null}
           </TouchableOpacity>
         </View>
       </View>

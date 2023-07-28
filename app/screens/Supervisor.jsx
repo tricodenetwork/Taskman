@@ -16,6 +16,8 @@ import { useSelector } from "react-redux";
 import { formattedDate } from "../api/Functions";
 import { activejob } from "../models/Task";
 import { useUser } from "@realm/react";
+import { chats as chat, chatroom } from "../models/Chat";
+import { useIsFocused } from "@react-navigation/native";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -26,40 +28,15 @@ export default function Supervisor() {
   const user = useUser();
   const navigation = useNavigation();
   const realm = useRealm();
-  const { id, name } = useSelector((state) => state.user);
+  const { _id, name } = useSelector((state) => state.user);
   // const account = useObject("account", Realm.BSON.ObjectId(id));
   const activeJobs = useQuery(activejob);
+  const chats = useQuery(chat);
+  const focus = useIsFocused();
+
   const handleLogout = useCallback(() => {
     user?.logOut();
   }, [user]);
-
-  function updateJobStatus(supervisorName) {
-    realm.write(() => {
-      activeJobs.forEach((activejob) => {
-        // if (activejob.supervisor !== supervisorName) {
-        //   return;
-        // }
-        let jobstatus = "Pending";
-        let allTasksCompleted = true;
-
-        activejob.tasks.forEach((task) => {
-          if (task.status == "InProgress" || task.status == "Completed") {
-            jobstatus = "InProgress";
-            // InProgress = true;
-            return;
-          } else if (task.status !== "InProgress" || task.status == "Pending") {
-            allTasksCompleted = false;
-            // InProgress = true;
-          }
-        });
-        if (allTasksCompleted) {
-          jobstatus = "Completed";
-        }
-
-        activejob.status = jobstatus;
-      });
-    });
-  }
 
   function countStatusBySupervisor(dataArray, supervisorName) {
     let completedCount = 0;
@@ -91,10 +68,21 @@ export default function Supervisor() {
   }
 
   const supervisorStats = countStatusBySupervisor(activeJobs, name);
+  // console.log(_id);
+  // Create rooms where user is present and filter for incoming messages that hasnt been read
+  const userRooms = useQuery(chatroom)
+    .filtered(`recieverId == $0 || senderId == $0`, _id)
+    .map((params) => params._id)
+    .filter(
+      (roomId) =>
+        chats.filtered(
+          `status != "read" AND user._id != $0 AND roomId == $1`,
+          _id,
+          roomId
+        ).length > 0
+    );
 
-  useEffect(() => {
-    updateJobStatus(name);
-  }, []);
+  console.log(userRooms);
 
   return (
     <Background bgColor='min-h-[96vh]'>
@@ -217,6 +205,7 @@ export default function Supervisor() {
           />
         </TouchableOpacity>
         <TouchableOpacity
+          className='relative max-h-max'
           onPress={() => {
             navigation.navigate("messages");
           }}
@@ -232,6 +221,28 @@ export default function Supervisor() {
             }
             text={"Messages"}
           />
+          {userRooms.length !== 0 ? (
+            <View
+              style={{
+                width: actuatedNormalize(25),
+                height: actuatedNormalize(25),
+              }}
+              className='rounded-full absolute left-[15vw] top-[26%]   flex items-center justify-center bg-purple-500'
+            >
+              <Text
+                className='text-red-100'
+                style={[
+                  styles.text_sm,
+                  {
+                    fontSize: actuatedNormalize(12),
+                    lineHeight: actuatedNormalizeVertical(12 * 1.5),
+                  },
+                ]}
+              >
+                {userRooms.length}
+              </Text>
+            </View>
+          ) : null}
         </TouchableOpacity>
       </View>
       <LowerButton

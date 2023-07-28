@@ -27,6 +27,7 @@ import { sendPushNotification } from "../api/Functions";
 import { millisecondSinceStartDate } from "../api/test";
 import { Motion } from "@legendapp/motion";
 import OdinaryButton from "../components/OdinaryButton";
+import MultiSelect from "../components/MultiSelect";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -44,6 +45,8 @@ const TaskDetailsPage = () => {
   const { id, name, job, matno, supervisor, status } = route.params; // current handler for particular task
   const activeJob = useObject(activejob, Realm.BSON.ObjectId(id));
   const Accounts = useQuery(Account);
+  const clients = useQuery(activejob);
+
   const handlers = Accounts.filter(
     (obj) =>
       (obj.role == "Handler") & (obj.category?.name == user.category.name)
@@ -60,6 +63,18 @@ const TaskDetailsPage = () => {
     "senderId == $0 ||  recieverId == $0",
     user._id
   );
+
+  let multiplejobs = [];
+
+  const addJobs = (param) => {
+    const index = multiplejobs.indexOf(param);
+    if (index !== -1) {
+      multiplejobs.splice(index, 1);
+    } else {
+      multiplejobs.push(param);
+    }
+    console.log(multiplejobs);
+  };
 
   const holidas = useQuery(holiday);
   const isTodayHoliday = holidas.some((holiday) => {
@@ -115,13 +130,28 @@ const TaskDetailsPage = () => {
 
     realm.write(() => {
       try {
-        activeJob.tasks.map((task) => {
-          // Set task to inProgress and begin counting
-          if ((task.name == name) & (task.handler == route.params.handler)) {
-            task.status = "InProgress";
-            task.inProgress = new Date();
-          }
-        });
+        if (multiplejobs.length !== 0) {
+          multiplejobs.forEach((params) => {
+            clients.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
+              // Set task to inProgress and begin counting
+              if (
+                (task.name == name) &
+                (task.handler == route.params.handler)
+              ) {
+                task.status = "InProgress";
+                task.inProgress = new Date();
+              }
+            });
+          });
+        } else {
+          activeJob.tasks.map((task) => {
+            // Set task to inProgress and begin counting
+            if ((task.name == name) & (task.handler == route.params.handler)) {
+              task.status = "InProgress";
+              task.inProgress = new Date();
+            }
+          });
+        }
         alert("Task Accepted! ✔");
       } catch (error) {
         console.log({ error, msg: "Error Accepting Task" });
@@ -159,29 +189,58 @@ const TaskDetailsPage = () => {
 
     realm.write(() => {
       try {
-        activeJob.tasks.map((task) => {
-          // on handling next task, first of all set your current task to completed
-          if ((task.name == name) & (task.handler == route.params.handler)) {
-            const timeCompleted = millisecondSinceStartDate(task.inProgress);
+        if (multiplejobs.length !== 0) {
+          multiplejobs.forEach((params) => {
+            clients.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
+              // on handling next task, first of all set your current task to completed
+              if (
+                (task.name == name) &
+                (task.handler == route.params.handler)
+              ) {
+                const timeCompleted = millisecondSinceStartDate(
+                  task.inProgress
+                );
 
-            task.status = "Completed";
-            task.completedIn = task.completedIn
-              ? new Date(timeCompleted + task.completedIn)
-              : new Date(timeCompleted);
-          }
+                task.status = "Completed";
+                task.completedIn = task.completedIn
+                  ? new Date(timeCompleted + task.completedIn)
+                  : new Date(timeCompleted);
+              }
 
-          // then set next handler...
-          if (task.name == currenttask) {
-            task.handler = handler;
-          }
-        });
-        alert("Task Completed! ✔");
+              // then set next handler...
+              if (task.name == currenttask) {
+                task.handler = handler;
+                task.status = "Awaiting";
+                sendPushNotification(pushToken, task.name);
+              }
+            });
+          });
+          alert("Task Completed! ✔");
+        } else {
+          activeJob.tasks.map((task) => {
+            // on handling next task, first of all set your current task to completed
+            if ((task.name == name) & (task.handler == route.params.handler)) {
+              const timeCompleted = millisecondSinceStartDate(task.inProgress);
+
+              task.status = "Completed";
+              task.completedIn = task.completedIn
+                ? new Date(timeCompleted + task.completedIn)
+                : new Date(timeCompleted);
+            }
+
+            // then set next handler...
+            if (task.name == currenttask) {
+              task.handler = handler;
+              task.status = "Awaiting";
+              sendPushNotification(pushToken, task.name);
+            }
+          });
+          alert("Task Completed! ✔");
+        }
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
       }
     });
-
-    sendPushNotification(pushToken);
 
     navigation.navigate("mytasks");
     // setIsNextTaskModalOpen(false);
@@ -260,10 +319,18 @@ const TaskDetailsPage = () => {
   };
 
   return (
-    <Background>
+    <Background bgColor='min-h-screen'>
       <Topscreen text={job} />
       <View className='h-[75vh] absolute bottom-0 bg-white w-full flex items-start pb-[3vh] pt-[5vh] px-[3vw] justify-between'>
         {/* Display the task details */}
+        <MultiSelect
+          title={"ClientJobs"}
+          setData={(params) => {
+            addJobs(params);
+          }}
+          data={clients}
+          placeholder={"Multiple"}
+        />
         <Text style={[styles.text_md]}>ClientId: {matno}</Text>
         <Text style={[styles.text_md]}>Supervisor: {supervisor}</Text>
         <Text style={[styles.text_md]}>Task: {name}</Text>
@@ -300,15 +367,7 @@ const TaskDetailsPage = () => {
         >
           {/* Accept button */}
           <Button
-            disabled={
-              status == "InProgress" ||
-              status == "Completed" ||
-              isWeekend ||
-              isTodayHoliday ||
-              !isAllowedTime
-                ? true
-                : false
-            }
+            disabled={status == "InProgress" || status == "Completed"}
             color={"#00a3a3"}
             title='Accept'
             onPress={() => {
@@ -317,14 +376,7 @@ const TaskDetailsPage = () => {
           />
           {/* Done button */}
           <Button
-            disabled={
-              status !== "InProgress" ||
-              isWeekend ||
-              isTodayHoliday ||
-              !isAllowedTime
-                ? true
-                : false
-            }
+            disabled={status !== "InProgress"}
             color={"#004343"}
             title='Done'
             onPress={handleDoneButton}
@@ -332,14 +384,7 @@ const TaskDetailsPage = () => {
 
           {/* Error button */}
           <Button
-            disabled={
-              status == "Completed" ||
-              isWeekend ||
-              isTodayHoliday ||
-              !isAllowedTime
-                ? true
-                : false
-            }
+            disabled={status == "Completed"}
             color={"#E59F71"}
             title='Reject'
             onPress={handleErrorButton}
@@ -349,7 +394,7 @@ const TaskDetailsPage = () => {
         {/* Next task modal */}
         <Modal visible={isNextTaskModalOpen}>
           <Background>
-            <View className=' h-[70%] pt-[5vh] flex justify-between items-center'>
+            <View className=' h-[90%] pt-[5vh] flex justify-between items-center'>
               <Text
                 className=' w-[50vw]'
                 style={[styles.text_sm2, { fontSize: actuatedNormalize(20) }]}
@@ -357,7 +402,7 @@ const TaskDetailsPage = () => {
                 Assign Next Task
               </Text>
 
-              <View className='h-[30vh] self-start px-[5vw] flex justify-around'>
+              <View className='h-[50vh] self-start px-[5vw] flex justify-around'>
                 <SelectComponent
                   title={"Tasks:"}
                   placeholder={"Assign Next Task"}

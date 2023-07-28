@@ -12,6 +12,9 @@ import { render } from "react-dom";
 import { useSelector } from "react-redux";
 import { actuatedNormalize } from "../styles/stylesheet";
 import moment from "moment";
+import { Ionicons } from "@expo/vector-icons";
+import { sendPushNotification } from "../api/Functions";
+import { Account } from "../models/Account";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -21,11 +24,22 @@ export default function ChatScreen() {
   const realm = useRealm();
   const { roomId, name } = route.params;
   const allChats = useQuery(Chats);
+  const pushToken = useQuery(Account).filtered(`name ==$0`, name)[0].pushToken;
   const { user } = useSelector((state) => state);
   const chatUser =
     user.role !== "Client"
       ? realm.objectForPrimaryKey("account", Realm.BSON.ObjectId(user._id))
       : useQuery("client").filtered(`clientId == $0`, user.clientId)[0];
+
+  // Update the message status to "read" when the recipient reads the message
+  const updateMessageStatusRead = () => {
+    const messages = allChats.filtered("roomId = $0", roomId);
+    realm.write(() => {
+      messages.forEach((message) => {
+        message.user._id !== user._id ? (message.status = "read") : null;
+      });
+    });
+  };
 
   useEffect(() => {
     // Fetch existing messages from the Realm DB
@@ -35,12 +49,14 @@ export default function ChatScreen() {
       .sorted("createdAt", true);
     const parsedMessage = JSON.parse(JSON.stringify(fetchedMessages));
     setMessage(parsedMessage);
+    // console.log(Array.isArray(parsedMessage));
 
     // Configure the Realm DB listener for new messages
     const messageListener = realm
       .objects("chats")
       .filtered("roomId = $0", roomId)
       .addListener(handleNewMessages);
+    updateMessageStatusRead();
 
     return () => {
       // Remove the Realm DB listener when the component unmounts
@@ -88,14 +104,20 @@ export default function ChatScreen() {
       createdAt: new Date(),
       user: mess[0].user,
       roomId: roomId,
+      status: "sent", // Set the initial status as "sent"
     };
 
     realm.write(() => {
       return new Chats(realm, messageObject);
     });
+
+    sendPushNotification(pushToken, "New Message", messageObject.text);
   }, []);
 
   function renderBubble(props) {
+    const isMessageSent = props.currentMessage.status === "sent";
+    const isMessageRead = props.currentMessage.status === null;
+
     return (
       <Bubble
         {...props}
@@ -104,6 +126,13 @@ export default function ChatScreen() {
             backgroundColor: "#000",
             marginRight: actuatedNormalize(10),
             marginLeft: actuatedNormalize(10),
+            paddingHorizontal: actuatedNormalize(10),
+          },
+          left: {
+            backgroundColor: "#EBEBEB",
+            marginRight: actuatedNormalize(10),
+            marginLeft: actuatedNormalize(10),
+            paddingHorizontal: actuatedNormalize(10),
           },
         }}
         textStyle={{
@@ -112,10 +141,15 @@ export default function ChatScreen() {
             fontSize: actuatedNormalize(13),
           },
           left: {
+            color: "black",
             fontSize: actuatedNormalize(13),
           },
         }}
-      />
+      >
+        {/* Add checkmark icons based on the message status
+        {isMessageSent && <Text>Single Checkmark Icon</Text>}
+      {isMessageRead && <Text>Read Icon</Text>} */}
+      </Bubble>
     );
   }
 
@@ -197,6 +231,29 @@ export default function ChatScreen() {
           onSend={(messages) => onSend(messages)}
           user={{ _id: chatUser._id.toString(), name: chatUser.name }}
           renderMessage={renderMessage}
+          renderTicks={(currentMessage) => {
+            // Check the status of the current message
+            if (currentMessage.user._id == user._id) {
+              if (currentMessage.status != "read") {
+                // Return a React element to indicate that the message has been sent
+                return (
+                  <Ionicons name='checkmark-done' size={24} color='gray' />
+                );
+              } else if (currentMessage.status === "read") {
+                // Return a React element to indicate that the message has been read
+                return (
+                  <Ionicons
+                    name='checkmark-done'
+                    size={24}
+                    color='rgb(168 85 247)"'
+                  />
+                );
+              } else {
+                // Return null if no status indicator is needed
+                return null;
+              }
+            } else return null;
+          }}
           // renderDay={renderDay}
         />
       </View>

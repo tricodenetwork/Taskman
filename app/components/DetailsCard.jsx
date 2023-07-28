@@ -32,6 +32,8 @@ export default function DetailsCard({ item, id, index }) {
       ? "#ff4747"
       : item.status === "Completed"
       ? "green"
+      : item.status === "Awaiting"
+      ? "#FF925C"
       : null;
   const dynamicColor = () => {
     const textColor =
@@ -228,7 +230,9 @@ export default function DetailsCard({ item, id, index }) {
         >
           {item.role ? item.role.toUpperCase() : null}
 
-          {item.status
+          {time.includes("-")
+            ? "OVERDUE"
+            : item.status
             ? item.status.toUpperCase()
             : item.status == "" && "PENDING"}
         </Text>

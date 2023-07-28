@@ -15,6 +15,7 @@ export class chats extends Realm.Object {
       createdAt: { type: "date?", default: new Date() },
       user: "user?",
       roomId: "string?",
+      status: "string?",
     },
   };
 }

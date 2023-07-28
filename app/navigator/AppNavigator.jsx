@@ -36,6 +36,7 @@ import ClientScreen from "../screens/ClientScreen";
 import { AccountRealmContext } from "../models";
 import IndividualTask from "../screens/IndividualTask";
 import Actions from "../screens/Actions";
+import DeleteJobs from "../screens/DeleteJobs";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -92,6 +93,7 @@ export const MainStack = () => {
         {/* //Supervisor */}
         <Stack.Screen name='supervisor' component={Supervisor} />
         <Stack.Screen name='ActivateJob' component={ActivateJob} />
+        <Stack.Screen name='DeleteJobs' component={DeleteJobs} />
         <Stack.Screen name='activeJobs' component={ActiveJobs} />
         <Stack.Screen name='activetasks' component={ActiveTasks} />
         <Stack.Screen name='stats' component={Stats} />

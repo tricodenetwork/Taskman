@@ -10,7 +10,7 @@ import { sumField, formatDuration, convertToMinutes } from "../api/Functions";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
-export default function JobCard({ isActive, id, name, item }) {
+const JobCard = ({ isActive, id, name, item }) => {
   const [visible, setVisible] = useState(false);
   const route = useRoute();
   const realm = useRealm();
@@ -19,8 +19,8 @@ export default function JobCard({ isActive, id, name, item }) {
       ? "gray"
       : item.status === "InProgress"
       ? "#FFD700"
-      : item.status === "InProgress"
-      ? "#ff4747"
+      : item.status === "Awaiting"
+      ? "#FF925C"
       : item.status === "Completed"
       ? "green"
       : null;
@@ -102,4 +102,6 @@ export default function JobCard({ isActive, id, name, item }) {
       )}
     </View>
   );
-}
+};
+
+export default React.memo(JobCard);

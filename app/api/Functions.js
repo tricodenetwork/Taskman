@@ -184,12 +184,16 @@ export function convertToMinutes(duration) {
   return totalMinutes;
 }
 
-export async function sendPushNotification(expoPushToken, title = "New Task") {
+export async function sendPushNotification(
+  expoPushToken,
+  title = "New Task",
+  body = "You have just been assigned a new task!"
+) {
   const message = {
     to: expoPushToken,
     sound: "default",
     title: title,
-    body: "You have just been assigned a new task!",
+    body: body,
     data: { someData: "goes here" },
   };
 
