@@ -23,6 +23,8 @@ const JobCard = ({ isActive, id, name, item }) => {
       ? "#FF925C"
       : item.status === "Completed"
       ? "green"
+      : item.status === "Overdue"
+      ? "#ff4747"
       : null;
 
   // useEffect(() => {

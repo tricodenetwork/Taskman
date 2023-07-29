@@ -25,7 +25,7 @@ export default function HandlerCard({ item }) {
   const route = useRoute();
   const realm = useRealm();
   const hols = useQuery(holiday);
-  // const Time = Completed(item.completedIn, item.inProgress);
+  const Focus = useIsFocused();
   const Time = item.completedIn
     ? calculateTime(item.completedIn.getTime())
     : null;
@@ -35,7 +35,7 @@ export default function HandlerCard({ item }) {
       ? "gray"
       : item.status === "InProgress" && !time.includes("-")
       ? "#FFD700"
-      : item.status === "InProgress" && time.includes("-")
+      : item.status === "Overdue"
       ? "#ff4747"
       : item.status === "Completed"
       ? "#006400"
@@ -45,6 +45,16 @@ export default function HandlerCard({ item }) {
   const { days, hours, minutes } = item.duration;
   const taskDuration =
     days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
+
+  const overdue = time.includes("-");
+
+  const setStatusOverdue = () => {
+    realm.write(() => {
+      // item.name == "Posting" ? (item.handler = null) : null;
+      overdue && item.status == "InProgress" ? (item.status = "Overdue") : null;
+    }),
+      [];
+  };
 
   const isTodayHoliday = hols.some((holiday) => {
     const holidayDate = new Date(holiday.day);
@@ -56,6 +66,7 @@ export default function HandlerCard({ item }) {
       holidayDate.getDate() === today.getDate()
     );
   });
+
   useEffect(() => {
     let interval = null;
 
@@ -122,6 +133,10 @@ export default function HandlerCard({ item }) {
       clearInterval(interval);
     };
   }, [item.inProgress]);
+
+  useEffect(() => {
+    setStatusOverdue();
+  }, [Focus]);
   return (
     // <ActivityIndicator />
     <View
@@ -201,11 +216,7 @@ export default function HandlerCard({ item }) {
             item.role ? dynamicColor().textColor : status
           } text-center`}
         >
-          {time.includes("-")
-            ? "Overdue"
-            : item.status
-            ? item.status
-            : item.status == "" && "PENDING"}
+          {item.status ? item.status : item.status == "" && "PENDING"}
         </Text>
       </View>
     </View>

@@ -193,6 +193,10 @@ const ActivateJob = ({ navigation }) => {
       setError(null);
     }
   };
+  useEffect(() => {
+    dispatch(setJob(allJobs[0]));
+    dispatch(setTasks(allJobs[0].tasks));
+  }, []);
 
   //----------------------------------------------------RENDERED COMPONENT
 
@@ -263,10 +267,9 @@ const ActivateJob = ({ navigation }) => {
                   </View>
                 ) : null}
                 <TextInput
-                  defaultValue={ActiveJob.job ?? ""}
-                  editable={false}
+                  defaultValue={ActiveJob.job}
                   style={[styles.averageText, { color: "black" }]}
-                  value={job ?? ""}
+                  value={job}
                   className='w-[60vw] bg-slate-300  rounded-sm h-10'
                 />
               </View>
@@ -286,71 +289,6 @@ const ActivateJob = ({ navigation }) => {
               )}
             </View>
 
-            {/* <View
-              id='TASK'
-              className='flex items-center justify-between w-[90%] flex-row'
-            >
-              <Text style={[styles.Pcard]}>Task:</Text>
-              <View className='w-[60vw] relative bg-slate-300  rounded-sm h-10'>
-                {visible3 && (
-                  <Motion.View
-                    initial={{ x: 100 }}
-                    animate={{ x: 0 }}
-                    transition={{ duration: 0.2 }}
-                    style={styles.box}
-                    className='bg-white absolute bottom-0 right-0  space-y-1  border-2 border-black w-[60vw] flex justify-around rounded-md'
-                  >
-                    <FlatList
-                      style={{ height: 200 }}
-                      data={ActiveJob.job?.tasks ?? []}
-                      // data={[]}
-                      renderItem={({ item }) => (
-                        <TouchableOpacity
-                          onPress={() => {
-                            dispatch(setCurrentTask(item.name));
-                            dispatch(setVisible3());
-                          }}
-                        >
-                          <Text
-                            style={styles.averageText}
-                            className='border-b-[1px] my-[1vh] border-b-slate-700'
-                          >
-                            {item.name}
-                          </Text>
-                        </TouchableOpacity>
-                      )}
-                    />
-                  </Motion.View>
-                )}
-                <TextInput
-                  // defaultValue={ActiveJob.job.tasks[0]?.name ?? ""}
-                  defaultValue={
-                    ActiveJob.job?.tasks && ActiveJob.job?.tasks.length > 0
-                      ? ActiveJob.job?.tasks[0].name
-                      : ""
-                  }
-                  editable={false}
-                  multiline={true}
-                  style={[styles.averageText, { color: "black" }]}
-                  value={ActiveJob.currenttask}
-                  className='w-[56vw] bg-slate-300  rounded-sm h-10'
-                />
-              </View>
-              {route.params?.id ? null : (
-                <TouchableOpacity
-                  onPress={() => {
-                    dispatch(setVisible3());
-                  }}
-                  className='absolute right-[1vw]'
-                >
-                  <AntDesign
-                    name='caretdown'
-                    size={actuatedNormalize(20)}
-                    color='gray'
-                  />
-                </TouchableOpacity>
-              )}
-            </View> */}
             {route.params?.id ? (
               <View
                 id='SUPERVISOR'

@@ -35,27 +35,34 @@ export default function JobDetails({ onPress }) {
   const client = activeJobs.filtered(`matno ==$0`, user.clientId) ?? [];
 
   function updateJobStatus(supervisorName) {
-    console.log("updating job status");
     realm.write(() => {
       activeJobs.forEach((activejob) => {
         let jobstatus = "Pending";
         // let allTasksCompleted = true;
 
         for (const task of activejob.tasks) {
-          if (task.handler != null && task.status == "Pending") {
-            jobstatus = "Awaiting";
+          if (task.status == "Overdue") {
+            jobstatus = "Overdue";
             break;
           } else if (
             task.status == "InProgress" ||
             task.status == "Completed"
           ) {
             jobstatus = "InProgress";
-            break;
           } else if (
             task.status !== "InProgress" &&
-            task.status !== "Pending"
+            task.status !== "Pending" &&
+            task.status !== "Overdue" &&
+            task.status !== "Awaiting" &&
+            task.status !== ""
           ) {
             jobstatus = "Completed";
+          }
+        }
+        for (const task of activejob.tasks) {
+          if (task.status == "Awaiting") {
+            jobstatus = "Awaiting";
+            break;
           }
         }
 
@@ -63,6 +70,25 @@ export default function JobDetails({ onPress }) {
       });
     });
   }
+
+  const renderItem = ({ item }) => {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => {
+          const screenName = route.name === "jobs" ? "tasks" : "activetasks";
+          navigation.navigate(screenName, { id: item._id.toString() });
+        }}
+      >
+        <JobCard
+          // name={item.name}
+          // tasks={item.tasks.length}
+          // duration={item.duration}
+          item={item}
+        />
+      </TouchableOpacity>
+    );
+  };
   useEffect(() => {
     if (!user.clientId) {
       if (route.name == "activeJobs") {
@@ -91,7 +117,7 @@ export default function JobDetails({ onPress }) {
         <RefreshControl
           refreshing={refreshing}
           onRefresh={() => {
-            // updateJobStatus();
+            updateJobStatus();
             setRefreshing(true);
           }}
         />
@@ -104,25 +130,7 @@ export default function JobDetails({ onPress }) {
               item[col].toLowerCase().includes(search.toLowerCase())
         )
         .sort((a, b) => b._id.getTimestamp() - a._id.getTimestamp())}
-      renderItem={({ item }) => {
-        return (
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => {
-              const screenName =
-                route.name === "jobs" ? "tasks" : "activetasks";
-              navigation.navigate(screenName, { id: item._id.toString() });
-            }}
-          >
-            <JobCard
-              // name={item.name}
-              // tasks={item.tasks.length}
-              // duration={item.duration}
-              item={item}
-            />
-          </TouchableOpacity>
-        );
-      }}
+      renderItem={renderItem}
       showsVerticalScrollIndicator
       keyExtractor={(item) => item._id}
       style={{ height: "83%" }}

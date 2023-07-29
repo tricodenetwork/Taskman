@@ -168,7 +168,7 @@ export default function IndividualTask({ navigation }) {
             }}
           />
           <MultiSelect
-            title={"ClientJobs"}
+            title={"ClientJobs:"}
             setData={(params) => {
               addJobs(params);
             }}

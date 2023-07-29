@@ -16,15 +16,49 @@ import LowerButton from "../components/LowerButton";
 import { useUser } from "@realm/react/";
 import { useSelector } from "react-redux";
 import { chatroom, chats as chat } from "../models/Chat";
+import { useIsFocused } from "@react-navigation/native";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
 export default function Handler({ navigation }) {
   const activeJobs = useQuery(activejob);
   const user = useUser();
+  const [data, setData] = useState();
+  const focus = useIsFocused();
   const { name, _id } = useSelector((state) => state.user);
   const chats = useQuery(chat);
+  const chatrooms = useQuery("chatroom").filtered(
+    "senderId == $0 ||  recieverId == $0",
+    _id
+  );
+  useEffect(() => {
+    // convert Realm collection to JavaScript array
+    const chatroomsArray = Array.from(chatrooms);
 
+    // create a map with the most recent createdAt dates for each room
+    const lastDatesMap = new Map();
+    chatroomsArray.forEach((room) => {
+      const chatsForRoom = chats.filtered(`roomId == $0`, room._id);
+      const lastMessage = chatsForRoom.sorted("createdAt", true)[0];
+      lastDatesMap.set(room._id, lastMessage?.createdAt);
+    });
+
+    // sort chatrooms by most recent message's createdAt date
+    const sortedChatrooms = chatroomsArray.sort((a, b) => {
+      const lastDateA = lastDatesMap.get(a._id);
+      const lastDateB = lastDatesMap.get(b._id);
+
+      if (lastDateA > lastDateB) {
+        return -1;
+      } else if (lastDateA < lastDateB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    setData(sortedChatrooms);
+  }, [focus]);
   const handleLogout = useCallback(() => {
     user?.logOut();
   }, [user]);
@@ -33,6 +67,8 @@ export default function Handler({ navigation }) {
     let completedCount = 0;
     let inProgressCount = 0;
     let pendingCount = 0;
+    let overdueCount = 0;
+    let awaitingCount = 0;
 
     tasksArray.forEach((taskObj) => {
       taskObj.tasks.forEach((task) => {
@@ -43,6 +79,10 @@ export default function Handler({ navigation }) {
             inProgressCount++;
           } else if (task.status === "Pending" || task.status === "") {
             pendingCount++;
+          } else if (task.status === "Awaiting") {
+            awaitingCount++;
+          } else if (task.status === "Overdue") {
+            overdueCount++;
           }
         }
       });
@@ -56,6 +96,8 @@ export default function Handler({ navigation }) {
       completed: addLeadingZero(completedCount),
       inProgress: addLeadingZero(inProgressCount),
       pending: addLeadingZero(pendingCount),
+      awaiting: addLeadingZero(awaitingCount),
+      overdue: addLeadingZero(overdueCount),
     };
   }
 
@@ -75,83 +117,113 @@ export default function Handler({ navigation }) {
   return (
     <Background bgColor='-z-40'>
       <HandlerTopscreen text3={formattedDate} text={`Hello, ${name}`}>
-        <View className=' absolute bottom-[12vh] w-full  flex flex-row justify-between px-[5vw]'>
-          <View className='relative'>
-            <Text
-              style={[
-                styles.text,
-                {
-                  fontSize: actuatedNormalize(48),
-                  lineHeight: actuatedNormalizeVertical(78),
-                },
-              ]}
-              className='text-primary_light'
-            >
-              {handlerStats.pending}
-            </Text>
-            <View>
-              <Text style={styles.text_md} className='flex text-white'>
-                Tasks
-              </Text>
-              <Text style={styles.text_md} className='text-white'>
-                Pending
-              </Text>
-            </View>
-            <View
-              style={{}}
-              className={`bg-primary_light absolute w-[.5px] opacity-40 rounded-full left-[25vw] top-[2.5vh] h-[90%]`}
-            ></View>
-          </View>
-          <View className='relative'>
-            <Text
-              style={[
-                styles.text,
-                {
-                  fontSize: actuatedNormalize(48),
-                  lineHeight: actuatedNormalizeVertical(78),
-                },
-              ]}
-              className='text-primary_light'
-            >
-              {handlerStats.inProgress}
-            </Text>
-            <View>
-              <Text style={styles.text_md} className='flex text-white'>
-                Tasks
-              </Text>
-              <Text style={styles.text_md} className='text-white'>
-                In Progress
-              </Text>
-            </View>
-            <View
-              className={
-                "bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[2.5vh] h-[90%]"
-              }
-            ></View>
-          </View>
-          <View className='relative'>
-            <Text
-              style={[
-                styles.text,
-                {
-                  fontSize: actuatedNormalize(48),
-                  lineHeight: actuatedNormalizeVertical(78),
-                },
-              ]}
-              className='text-primary_light'
-            >
-              {handlerStats.completed}
-            </Text>
-            <View>
+        <View className=' absolute bottom-[3vh] w-full  flex px-[5vw]'>
+          <View className='w-full  flex flex-row justify-between'>
+            <View className='relative'>
               <Text
-                style={styles.text_md}
-                className='text-[14px] flex text-white'
+                style={[
+                  styles.text,
+                  {
+                    fontSize: actuatedNormalize(48),
+                    lineHeight: actuatedNormalizeVertical(78),
+                  },
+                ]}
+                className='text-primary_light'
               >
-                Tasks
+                {handlerStats.awaiting}
               </Text>
-              <Text style={styles.text_md} className='text-[14px] text-white'>
-                Completed
+              <View>
+                <Text style={styles.text_md} className='flex text-white'>
+                  Tasks
+                </Text>
+                <Text style={styles.text_md} className='text-white'>
+                  Awaiting
+                </Text>
+              </View>
+              <View
+                style={{}}
+                className={`bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[2.5vh] h-[90%]`}
+              ></View>
+            </View>
+            <View className='relative'>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    fontSize: actuatedNormalize(48),
+                    lineHeight: actuatedNormalizeVertical(78),
+                  },
+                ]}
+                className='text-primary_light'
+              >
+                {handlerStats.inProgress}
               </Text>
+              <View>
+                <Text style={styles.text_md} className='flex text-white'>
+                  Tasks
+                </Text>
+                <Text style={styles.text_md} className='text-white'>
+                  In Progress
+                </Text>
+              </View>
+              <View
+                className={
+                  "bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[2.5vh] h-[90%]"
+                }
+              ></View>
+            </View>
+            <View className='relative'>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    fontSize: actuatedNormalize(48),
+                    lineHeight: actuatedNormalizeVertical(78),
+                  },
+                ]}
+                className='text-primary_light'
+              >
+                {handlerStats.completed}
+              </Text>
+              <View>
+                <Text
+                  style={styles.text_md}
+                  className='text-[14px] flex text-white'
+                >
+                  Tasks
+                </Text>
+                <Text style={styles.text_md} className='text-[14px] text-white'>
+                  Completed
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View className='w-full  flex flex-row justify-between'>
+            <View className='relative'>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    fontSize: actuatedNormalize(48),
+                    lineHeight: actuatedNormalizeVertical(78),
+                  },
+                ]}
+                className='text-primary_light'
+              >
+                {handlerStats.overdue}
+              </Text>
+              <View>
+                <Text style={styles.text_md} className='flex text-white'>
+                  Tasks
+                </Text>
+                <Text style={styles.text_md} className='text-white'>
+                  Overdue
+                </Text>
+              </View>
+              {/* <View
+                style={{}}
+                className={`bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[2.5vh] h-[90%]`}
+              ></View> */}
             </View>
           </View>
         </View>
@@ -199,7 +271,7 @@ export default function Handler({ navigation }) {
           <TouchableOpacity
             className='relative max-h-max'
             onPress={() => {
-              navigation.navigate("messages");
+              navigation.navigate("messages", { data: data });
             }}
             activeOpacity={0.5}
           >

@@ -19,22 +19,6 @@ export default function ActiveJobs({ navigation }) {
   const realm = useRealm();
   const Focus = useIsFocused();
 
-  const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
-  // const holida = useQuery(holiday).filtered(`day == $0`, new Date());
-  const holidas = useQuery(holiday);
-  const isTodayHoliday = holidas.some((holiday) => {
-    const holidayDate = new Date(holiday.day);
-    const today = new Date();
-
-    return (
-      holidayDate.getFullYear() === today.getFullYear() &&
-      holidayDate.getMonth() === today.getMonth() &&
-      holidayDate.getDate() === today.getDate()
-    );
-  });
-
-  // console.log("Is today a holiday?", isTodayHoliday);
-
   useEffect(() => {
     dispatch(setFilter("MatNo"));
     dispatch(setSearch(""));

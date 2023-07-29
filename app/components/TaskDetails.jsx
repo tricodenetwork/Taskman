@@ -14,6 +14,7 @@ import DraggableFlatList, {
 import DetailsCard from "./DetailsCard";
 import { AccountRealmContext } from "../models";
 import HandlerCard from "./HandlerCard";
+import { RefreshControl } from "react-native-gesture-handler";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -59,6 +60,14 @@ export default function TaskDetails({
 
   return (
     <DraggableFlatList
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => {
+            setRefreshing(true);
+          }}
+        />
+      }
       containerStyle={{
         height: route.name == "tasks" || user.role == "Client" ? "95%" : "95%",
       }}

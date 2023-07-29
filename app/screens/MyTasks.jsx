@@ -7,7 +7,7 @@ import {
   TextInput,
   Button,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import { actuatedNormalizeVertical, styles } from "../styles/stylesheet";
@@ -42,20 +42,41 @@ export default function MyTasks({ navigation }) {
   const ActiveJobs = useQuery(activejob);
   const { user } = useSelector((state) => state);
 
-  const myTasks = ActiveJobs.map((job) => {
-    const assigned =
-      job?.tasks.filter((obj) => obj.handler === user.name) ?? [];
-    assigned.map((obj) => {
-      obj.id = job._id.toString();
-      obj.job = job.job;
-      obj.supervisor = job.supervisor;
-      obj.matno = job.matno;
-    });
-    // const useThis = assigned.unshift(job._id);
-    // console.log(assigned);
-    return assigned;
-  });
-  const mergedTasks = myTasks.reduce((acc, obj) => acc.concat(obj), []);
+  // const myTasks = ActiveJobs.map((job) => {
+  //   const assigned =
+  //     job?.tasks.filter((obj) => obj.handler === user.name) ?? [];
+  //   assigned.map((obj) => {
+  //     obj.id = job._id.toString();
+  //     obj.job = job.job;
+  //     obj.supervisor = job.supervisor;
+  //     obj.matno = job.matno;
+  //   });
+  //   // const useThis = assigned.unshift(job._id);
+  //   // console.log(assigned);
+  //   return assigned;
+  // });
+  // const mergedTasks = myTasks.reduce((acc, obj) => acc.concat(obj), []);
+  const once = 1;
+  const myTasks = useMemo(
+    () =>
+      ActiveJobs.map((job) => {
+        const assigned =
+          job?.tasks.filter((obj) => obj.handler === user.name) ?? [];
+        assigned.forEach((obj) => {
+          obj.id = job._id.toString();
+          obj.job = job.job;
+          obj.supervisor = job.supervisor;
+          obj.matno = job.matno;
+        });
+        return assigned;
+      }),
+    [once]
+  );
+
+  const mergedTasks = useMemo(
+    () => myTasks.reduce((acc, obj) => acc.concat(obj), []),
+    [myTasks]
+  );
 
   //   console.log(myTasks);
   //   const myTask = myTasks.filter((obj) => obj.handler == "Justina Emelife");

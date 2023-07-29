@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Background from "../components/Background";
 import HandlerTopscreen from "../components/HandlerTopScreen";
 import {
@@ -28,20 +28,56 @@ export default function Supervisor() {
   const user = useUser();
   const navigation = useNavigation();
   const realm = useRealm();
+  const [data, setData] = useState();
+
   const { _id, name } = useSelector((state) => state.user);
   // const account = useObject("account", Realm.BSON.ObjectId(id));
   const activeJobs = useQuery(activejob);
   const chats = useQuery(chat);
   const focus = useIsFocused();
+  const chatrooms = useQuery("chatroom").filtered(
+    "senderId == $0 ||  recieverId == $0",
+    _id
+  );
+  // const allChats = useQuery(chats);
 
   const handleLogout = useCallback(() => {
     user?.logOut();
   }, [user]);
+  useEffect(() => {
+    // convert Realm collection to JavaScript array
+    const chatroomsArray = Array.from(chatrooms);
 
+    // create a map with the most recent createdAt dates for each room
+    const lastDatesMap = new Map();
+    chatroomsArray.forEach((room) => {
+      const chatsForRoom = chats.filtered(`roomId == $0`, room._id);
+      const lastMessage = chatsForRoom.sorted("createdAt", true)[0];
+      lastDatesMap.set(room._id, lastMessage?.createdAt);
+    });
+
+    // sort chatrooms by most recent message's createdAt date
+    const sortedChatrooms = chatroomsArray.sort((a, b) => {
+      const lastDateA = lastDatesMap.get(a._id);
+      const lastDateB = lastDatesMap.get(b._id);
+
+      if (lastDateA > lastDateB) {
+        return -1;
+      } else if (lastDateA < lastDateB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    setData(sortedChatrooms);
+  }, [focus]);
   function countStatusBySupervisor(dataArray, supervisorName) {
     let completedCount = 0;
     let inProgressCount = 0;
     let pendingCount = 0;
+    let overdueCount = 0;
+    let awaitingCount = 0;
 
     dataArray.forEach((dataObj) => {
       if (dataObj.supervisor === supervisorName) {
@@ -51,6 +87,10 @@ export default function Supervisor() {
           inProgressCount++;
         } else if (dataObj.status === "Pending") {
           pendingCount++;
+        } else if (dataObj.status === "Awaiting") {
+          awaitingCount++;
+        } else if (dataObj.status === "Overdue") {
+          overdueCount++;
         }
       }
     });
@@ -64,6 +104,8 @@ export default function Supervisor() {
       completed: addLeadingZero(completedCount),
       inProgress: addLeadingZero(inProgressCount),
       pending: addLeadingZero(pendingCount),
+      awaiting: addLeadingZero(awaitingCount),
+      overdue: addLeadingZero(overdueCount),
     };
   }
 
@@ -82,87 +124,174 @@ export default function Supervisor() {
         ).length > 0
     );
 
-  console.log(userRooms);
-
   return (
     <Background bgColor='min-h-[96vh]'>
       <HandlerTopscreen text3={formattedDate} text={`Hello, ${name}`}>
-        <View className=' absolute bottom-[12vh]  w-full  flex flex-row justify-between px-[5vw]'>
-          <View className='relative'>
-            <Text
-              style={[
-                styles.text,
-                {
-                  fontSize: actuatedNormalize(44),
-                  lineHeight: actuatedNormalizeVertical(78),
-                },
-              ]}
-              className='text-primary_light'
-            >
-              {supervisorStats.pending}
-            </Text>
-            <View>
-              <Text style={styles.text_md} className='flex text-white'>
-                {route.name === "supervisor" ? "Jobs" : "Tasks"}
-              </Text>
-              <Text style={styles.text_md} className='text-white'>
-                Pending
-              </Text>
-            </View>
-            <View
-              className={`bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]`}
-            ></View>
-          </View>
-          <View className='relative'>
-            <Text
-              style={[
-                styles.text,
-                {
-                  fontSize: actuatedNormalize(44),
-                  lineHeight: actuatedNormalizeVertical(78),
-                },
-              ]}
-              className='text-primary_light'
-            >
-              {supervisorStats.inProgress}
-            </Text>
-            <View>
-              <Text style={styles.text_md} className='flex text-white'>
-                {route.name === "supervisor" ? "Jobs" : "Tasks"}
-              </Text>
-              <Text style={styles.text_md} className='text-white'>
-                In Progress
-              </Text>
-            </View>
-            <View
-              className={
-                "bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]"
-              }
-            ></View>
-          </View>
-          <View className='relative'>
-            <Text
-              style={[
-                styles.text,
-                {
-                  fontSize: actuatedNormalize(44),
-                  lineHeight: actuatedNormalizeVertical(78),
-                },
-              ]}
-              className='text-primary_light'
-            >
-              {supervisorStats.completed}
-            </Text>
-            <View>
+        <View className=' absolute bottom-[3vh]  w-full self-center  flex  px-[5vw]'>
+          <View className='w-full  flex flex-row justify-between'>
+            <View className='relative '>
               <Text
-                style={styles.text_md}
-                className='text-[14px] flex text-white'
+                style={[
+                  styles.text,
+                  {
+                    fontSize: actuatedNormalize(44),
+                    lineHeight: actuatedNormalizeVertical(78),
+                  },
+                ]}
+                className='text-primary_light'
               >
-                {route.name === "supervisor" ? "Jobs" : "Tasks"}
+                {supervisorStats.pending}
               </Text>
-              <Text style={styles.text_md} className='text-[14px] text-white'>
-                Completed
+              <View>
+                <Text style={styles.text_md} className='flex text-white'>
+                  Jobs
+                </Text>
+                <Text style={styles.text_md} className='text-white'>
+                  Pending
+                </Text>
+              </View>
+              <View
+                className={`bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]`}
+              ></View>
+            </View>
+            <View className='relative '>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    fontSize: actuatedNormalize(44),
+                    lineHeight: actuatedNormalizeVertical(78),
+                  },
+                ]}
+                className='text-primary_light'
+              >
+                {supervisorStats.inProgress}
               </Text>
+              <View>
+                <Text style={styles.text_md} className='flex text-white'>
+                  Jobs
+                </Text>
+                <Text style={styles.text_md} className='text-white'>
+                  In Progress
+                </Text>
+              </View>
+              <View
+                className={
+                  "bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]"
+                }
+              ></View>
+            </View>
+            <View className='relative '>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    fontSize: actuatedNormalize(44),
+                    lineHeight: actuatedNormalizeVertical(78),
+                  },
+                ]}
+                className='text-primary_light'
+              >
+                {supervisorStats.completed}
+              </Text>
+              <View>
+                <Text
+                  style={styles.text_md}
+                  className='text-[14px] flex text-white'
+                >
+                  Jobs
+                </Text>
+                <Text style={styles.text_md} className='text-[14px] text-white'>
+                  Completed
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View className='w-full flex  flex-row justify-between'>
+            <View className='relative '>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    fontSize: actuatedNormalize(44),
+                    lineHeight: actuatedNormalizeVertical(78),
+                  },
+                ]}
+                className='text-primary_light'
+              >
+                {supervisorStats.awaiting}
+              </Text>
+              <View>
+                <Text
+                  style={styles.text_md}
+                  className='text-[14px] flex text-white'
+                >
+                  Jobs
+                </Text>
+                <Text style={styles.text_md} className='text-[14px] text-white'>
+                  Awaiting
+                </Text>
+              </View>
+              <View
+                className={
+                  "bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]"
+                }
+              ></View>
+            </View>
+            <View className='relative '>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    fontSize: actuatedNormalize(44),
+                    lineHeight: actuatedNormalizeVertical(78),
+                  },
+                ]}
+                className='text-primary_light'
+              >
+                {supervisorStats.overdue}
+              </Text>
+              <View>
+                <Text
+                  style={styles.text_md}
+                  className='text-[14px] flex text-white'
+                >
+                  Jobs
+                </Text>
+                <Text style={styles.text_md} className='text-[14px] text-white'>
+                  Overdue
+                </Text>
+              </View>
+              <View
+                className={
+                  "bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]"
+                }
+              ></View>
+            </View>
+            <View className='relative opacity-0'>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    fontSize: actuatedNormalize(44),
+                    lineHeight: actuatedNormalizeVertical(78),
+                  },
+                ]}
+                className='text-primary_light'
+              >
+                {supervisorStats.completed}
+              </Text>
+              <View>
+                <Text
+                  style={styles.text_md}
+                  className='text-[14px] flex text-white'
+                >
+                  Jobs
+                </Text>
+                <Text style={styles.text_md} className='text-[14px] text-white'>
+                  Completed inj
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -207,7 +336,7 @@ export default function Supervisor() {
         <TouchableOpacity
           className='relative max-h-max'
           onPress={() => {
-            navigation.navigate("messages");
+            navigation.navigate("messages", { data: data });
           }}
           activeOpacity={0.5}
         >

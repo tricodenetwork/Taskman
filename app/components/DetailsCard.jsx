@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import Svg, { Circle, Rect } from "react-native-svg";
 import { useIsFocused, useRoute } from "@react-navigation/native";
@@ -17,6 +17,7 @@ export default function DetailsCard({ item, id, index }) {
   const route = useRoute();
   const realm = useRealm();
   const hols = useQuery(holiday);
+  const Focus = useIsFocused();
 
   const job = useObject(activejob, Realm.BSON.ObjectId(route.params.id));
   const task = job.tasks.filter((obj) => obj.name === item.name)[0];
@@ -28,7 +29,7 @@ export default function DetailsCard({ item, id, index }) {
       ? "gray"
       : item.status === "InProgress" && !time.includes("-")
       ? "#FFD700"
-      : item.status === "InProgress" && time.includes("-")
+      : item.status === "Overdue" && time.includes("-")
       ? "#ff4747"
       : item.status === "Completed"
       ? "green"
@@ -79,11 +80,20 @@ export default function DetailsCard({ item, id, index }) {
   const { days, hours, minutes } = item.duration;
   const taskDuration =
     days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
+  const overdue = time.includes("-");
+
+  const setStatusOverdue = () => {
+    realm.write(() => {
+      // item.name == "Posting" ? (item.handler = null) : null;
+      overdue && item.status == "InProgress" ? (item.status = "Overdue") : null;
+    }),
+      [];
+  };
 
   useEffect(() => {
     let interval = null;
     // let newTargetTime = Date.now(); // Initialize newTargetTime outside the interval
-
+    // setStatusOverdue();
     function calculateRemainingTime(duration) {
       // Check if the task is completed
       if (item.status == "Completed") {
@@ -147,6 +157,10 @@ export default function DetailsCard({ item, id, index }) {
       clearInterval(interval);
     };
   }, [item.inProgress]);
+
+  useEffect(() => {
+    setStatusOverdue();
+  }, [Focus]);
   return (
     <View
       style={styles.Pcard}
@@ -220,7 +234,7 @@ export default function DetailsCard({ item, id, index }) {
           borderColor: item.role ? dynamicColor().statusColor : status,
           borderWidth: 1,
         }}
-        className={` rounded-md  py-2 w-[21vw]`}
+        className={` rounded-md relative py-2 w-[21vw]`}
       >
         <Text
           style={[styles.text_md, { fontSize: actuatedNormalize(10) }]}
@@ -230,19 +244,24 @@ export default function DetailsCard({ item, id, index }) {
         >
           {item.role ? item.role.toUpperCase() : null}
 
-          {time.includes("-")
-            ? "OVERDUE"
-            : item.status
-            ? item.status.toUpperCase()
-            : item.status == "" && "PENDING"}
+          {
+            // time.includes("-")
+            //   ? "OVERDUE"
+            //   :
+            item.status
+            // ? item.status.toUpperCase()
+            // : item.status == "" && "PENDING"
+          }
         </Text>
+        <View
+          style={{
+            backgroundColor: item.role ? dynamicColor().statusColor : status,
+          }}
+          className={`bg-${
+            item.role ? dynamicColor().textColor : null
+          } absolute w-[80%]  rounded-full self-center bottom-[-7px] h-[2.5px]`}
+        ></View>
       </View>
-      {/* <Text
-        style={[{ fontSize: actuatedNormalize(12) }]}
-        className='absolute text-Handler3 bottom-1 left-[25%]'
-      >
-        Handler:{item.handler || "Not Assigned"}
-      </Text> */}
     </View>
   );
 }

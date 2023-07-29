@@ -8,6 +8,7 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { Motion } from "@legendapp/motion";
 import {
+  setFilter,
   setVisible,
   setVisible2,
   setVisible3,
@@ -28,6 +29,7 @@ export default function SelectComponent({
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [placehold, setPlacehold] = useState("");
+  const [filter, setFilter] = useState("");
 
   return (
     <View id='TASK' className='flex items-center  justify-between  flex-row'>
@@ -45,7 +47,7 @@ export default function SelectComponent({
           >
             <FlatList
               style={{ height: actuatedNormalize(150) }}
-              data={data}
+              data={data.filter((params) => params.name.includes(filter))}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => {
@@ -67,13 +69,12 @@ export default function SelectComponent({
           </Motion.View>
         )}
         <TextInput
-          keyboardType='numeric'
+          keyboardType='default'
           defaultValue={placehold}
           value={value}
-          editable={false}
+          onChangeText={setFilter}
           placeholder={placeholder}
           style={[styles.averageText, { color: "black" }]}
-          //   value={ActiveJob.currenttask}
           className={`${inputStyles} bg-slate-300  rounded-sm h-10`}
         />
         <View className='absolute  z-[100] right-[1vw]'>
