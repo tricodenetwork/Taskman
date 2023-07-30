@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Background from "../components/Background";
 import HandlerTopscreen from "../components/HandlerTopScreen";
 import {
