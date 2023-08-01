@@ -123,6 +123,7 @@ const ActivateJob = ({ navigation }) => {
           console.log({ error, msg: "Error writing to realm" });
         }
       });
+      sendClientDetails(item.email, item);
     },
     [realm]
   );
@@ -169,7 +170,7 @@ const ActivateJob = ({ navigation }) => {
       });
 
       sendClientDetails(item.email, item);
-      sendPushNotification(pushToken);
+      // sendPushNotification(pushToken);
     },
     [realm]
   );
