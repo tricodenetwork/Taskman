@@ -21,6 +21,7 @@ import { useIsFocused } from "@react-navigation/native";
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
 export default function Handler({ navigation }) {
+  const [isLoading, setIsLoading] = useState(true);
   const activeJobs = useQuery(activejob);
   const user = useUser();
   const [data, setData] = useState();
@@ -31,34 +32,34 @@ export default function Handler({ navigation }) {
     "senderId == $0 ||  recieverId == $0",
     _id
   );
+  // convert Realm collection to JavaScript array
+  const chatroomsArray = Array.from(chatrooms);
+
+  // create a map with the most recent createdAt dates for each room
+  const lastDatesMap = new Map();
+  chatroomsArray.forEach((room) => {
+    const chatsForRoom = chats.filtered(`roomId == $0`, room._id);
+    const lastMessage = chatsForRoom.sorted("createdAt", true)[0];
+    lastDatesMap.set(room._id, lastMessage?.createdAt);
+  });
+
+  // sort chatrooms by most recent message's createdAt date
+  const sortedChatrooms = chatroomsArray.sort((a, b) => {
+    const lastDateA = lastDatesMap.get(a._id);
+    const lastDateB = lastDatesMap.get(b._id);
+
+    if (lastDateA > lastDateB) {
+      return -1;
+    } else if (lastDateA < lastDateB) {
+      return 1;
+    } else {
+      return 0;
+    }
+  });
   useEffect(() => {
-    // convert Realm collection to JavaScript array
-    const chatroomsArray = Array.from(chatrooms);
-
-    // create a map with the most recent createdAt dates for each room
-    const lastDatesMap = new Map();
-    chatroomsArray.forEach((room) => {
-      const chatsForRoom = chats.filtered(`roomId == $0`, room._id);
-      const lastMessage = chatsForRoom.sorted("createdAt", true)[0];
-      lastDatesMap.set(room._id, lastMessage?.createdAt);
-    });
-
-    // sort chatrooms by most recent message's createdAt date
-    const sortedChatrooms = chatroomsArray.sort((a, b) => {
-      const lastDateA = lastDatesMap.get(a._id);
-      const lastDateB = lastDatesMap.get(b._id);
-
-      if (lastDateA > lastDateB) {
-        return -1;
-      } else if (lastDateA < lastDateB) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-
     setData(sortedChatrooms);
-  }, [focus]);
+    setIsLoading(false);
+  }, [focus, isLoading]);
   const handleLogout = useCallback(() => {
     user?.logOut();
   }, [user]);

@@ -1,4 +1,10 @@
-import { View, Text, TouchableOpacity, TouchableHighlight } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TouchableHighlight,
+  ActivityIndicator,
+} from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import Background from "../components/Background";
 import SelectComponent from "../components/SelectComponent";
@@ -136,7 +142,8 @@ const renderItem = ({ item }, navigation, user, allChats, realm) => {
 export default function MessageScreen({ navigation }) {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
-  const [data, setData] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+
   const realm = useRealm();
   const route = useRoute();
 
@@ -217,31 +224,41 @@ export default function MessageScreen({ navigation }) {
       </TouchableOpacity>
     );
   };
-
+  useEffect(() => {
+    if (route.params.data.length !== 0) {
+      setIsLoading(false);
+    }
+  }, [route.params.data]);
   return (
     <Background>
       <SafeAreaView className='relative bg-red-100 w-full h-full'>
-        <FlatList
-          initialNumToRender={13}
-          removeClippedSubviews={true} // Add this line.
-          className='-mt-2'
-          keyExtractor={(item) => item._id}
-          ListHeaderComponent={
-            <View className='relative w-[20%]'>
-              <Text
-                style={[styles.text, { fontSize: actuatedNormalize(17) }]}
-                className='px-[2vw] text-primary'
-              >
-                Chats
-              </Text>
-              <View
-                className={`bg-primary absolute w-[80%]  rounded-full self-center bottom-[-2px] h-[2.5px]`}
-              ></View>
-            </View>
-          }
-          data={route.params.data}
-          renderItem={renderItemProps}
-        />
+        {isLoading ? (
+          <View className='flex-1 items-center justify-center'>
+            <ActivityIndicator size='large' color='#0000ff' />
+          </View>
+        ) : (
+          <FlatList
+            initialNumToRender={20}
+            removeClippedSubviews={true} // Add this line.
+            className='-mt-2'
+            keyExtractor={(item) => item._id}
+            ListHeaderComponent={
+              <View className='relative w-[20%]'>
+                <Text
+                  style={[styles.text, { fontSize: actuatedNormalize(17) }]}
+                  className='px-[2vw] text-primary'
+                >
+                  Chats
+                </Text>
+                <View
+                  className={`bg-primary absolute w-[80%]  rounded-full self-center bottom-[-2px] h-[2.5px]`}
+                ></View>
+              </View>
+            }
+            data={route.params.data}
+            renderItem={renderItemProps}
+          />
+        )}
         <View
           className={`absolute z-50 bottom-[5vh] right-[5vw] ${
             !visible ? "bg-purple-500" : "bg-white"
