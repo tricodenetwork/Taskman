@@ -127,15 +127,15 @@ export default function Supervisor() {
   return (
     <Background bgColor='min-h-[96vh]'>
       <HandlerTopscreen text3={formattedDate} text={`Hello, ${name}`}>
-        <View className=' absolute bottom-[3vh]  w-full self-center  flex  px-[5vw]'>
+        <View className=' absolute bottom-[3vh] space-y-3  w-full self-center  flex  px-[5vw]'>
           <View className='w-full  flex flex-row justify-between'>
             <View className='relative '>
               <Text
                 style={[
                   styles.text,
                   {
-                    fontSize: actuatedNormalize(44),
-                    lineHeight: actuatedNormalizeVertical(78),
+                    fontSize: actuatedNormalize(36),
+                    lineHeight: actuatedNormalizeVertical(36 * 1.5),
                   },
                 ]}
                 className='text-primary_light'
@@ -159,8 +159,8 @@ export default function Supervisor() {
                 style={[
                   styles.text,
                   {
-                    fontSize: actuatedNormalize(44),
-                    lineHeight: actuatedNormalizeVertical(78),
+                    fontSize: actuatedNormalize(36),
+                    lineHeight: actuatedNormalizeVertical(36 * 1.5),
                   },
                 ]}
                 className='text-primary_light'
@@ -186,8 +186,8 @@ export default function Supervisor() {
                 style={[
                   styles.text,
                   {
-                    fontSize: actuatedNormalize(44),
-                    lineHeight: actuatedNormalizeVertical(78),
+                    fontSize: actuatedNormalize(36),
+                    lineHeight: actuatedNormalizeVertical(36 * 1.5),
                   },
                 ]}
                 className='text-primary_light'
@@ -213,8 +213,8 @@ export default function Supervisor() {
                 style={[
                   styles.text,
                   {
-                    fontSize: actuatedNormalize(44),
-                    lineHeight: actuatedNormalizeVertical(78),
+                    fontSize: actuatedNormalize(36),
+                    lineHeight: actuatedNormalizeVertical(36 * 1.5),
                   },
                 ]}
                 className='text-primary_light'
@@ -243,8 +243,8 @@ export default function Supervisor() {
                 style={[
                   styles.text,
                   {
-                    fontSize: actuatedNormalize(44),
-                    lineHeight: actuatedNormalizeVertical(78),
+                    fontSize: actuatedNormalize(36),
+                    lineHeight: actuatedNormalizeVertical(36 * 1.5),
                   },
                 ]}
                 className='text-primary_light'
@@ -273,8 +273,8 @@ export default function Supervisor() {
                 style={[
                   styles.text,
                   {
-                    fontSize: actuatedNormalize(44),
-                    lineHeight: actuatedNormalizeVertical(78),
+                    fontSize: actuatedNormalize(36),
+                    lineHeight: actuatedNormalizeVertical(36 * 1.5),
                   },
                 ]}
                 className='text-primary_light'

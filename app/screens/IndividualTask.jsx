@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { setCurrentTask, setHandler } from "../store/slice-reducers/ActiveJob";
@@ -15,6 +15,7 @@ import { Motion } from "@legendapp/motion";
 import { TouchableOpacity } from "react-native";
 import MultiSelect from "../components/MultiSelect";
 import { activejob } from "../models/Task";
+import { resetMulti, setMulti } from "../store/slice-reducers/App";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -22,28 +23,20 @@ export default function IndividualTask({ navigation }) {
   const { currenttask, handler } = useSelector((state) => state.ActiveJob);
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
   const [visible, setVisible] = useState(false);
+  const [data, setData] = useState([]);
 
   const dispatch = useDispatch();
   const Accounts = useQuery(Account);
-  const clients = useQuery(activejob);
+  const clientsJob = useQuery(activejob);
+  const datas = Array.from(clientsJob);
   const { user } = useSelector((state) => state);
+  const { multipleJobs } = useSelector((state) => state.App);
   const realm = useRealm();
   const route = useRoute();
   const job = realm.objectForPrimaryKey(
     "activejob",
     Realm.BSON.ObjectId(route.params.id)
   );
-  let multiplejobs = [];
-
-  const addJobs = (param) => {
-    const index = multiplejobs.indexOf(param);
-    if (index !== -1) {
-      multiplejobs.splice(index, 1);
-    } else {
-      multiplejobs.push(param);
-    }
-    console.log(multiplejobs);
-  };
 
   const inProgess = job.tasks.filter(
     (item) => item.name == route.params?.taskName
@@ -66,20 +59,17 @@ export default function IndividualTask({ navigation }) {
 
     realm.write(() => {
       try {
-        if (multiplejobs.length !== 0) {
-          multiplejobs.forEach((params) => {
-            clients.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
+        if (multipleJobs.length !== 0) {
+          multipleJobs.forEach((params) => {
+            let tasks = clientsJob.filtered(`matno ==$0`, params)[0].tasks;
+            for (let task of tasks) {
               const { name } = task;
               if (name == route.params.taskName) {
-                // task.handler = handler;
                 task.status = "InProgress";
                 task.inProgress = new Date();
-
-                return;
-              } else {
-                return;
+                break; // Breaks out of the loop
               }
-            });
+            }
           });
           alert("Tasks Activated! ✔");
         } else {
@@ -103,30 +93,49 @@ export default function IndividualTask({ navigation }) {
     });
 
     navigation.navigate("activetasks", { id: route.params.id });
-  }, [realm, currenttask, handler]);
+  }, [
+    realm,
+    currenttask,
+    handler,
+    multipleJobs,
+    clientsJob,
+    route.params.taskName,
+  ]);
   const assignNextTask = useCallback(() => {
     realm.write(() => {
       try {
-        if (multiplejobs.length !== 0) {
-          multiplejobs.forEach((params) => {
-            clients.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
+        if (multipleJobs.length != 0) {
+          multipleJobs.forEach((params) => {
+            let tasks = clientsJob.filtered(`matno ==$0`, params)[0].tasks;
+            for (let task of tasks) {
               if (task.name == route.params.taskName) {
                 task.handler = handler;
-                task.status = "Awaiting";
+                handler == ""
+                  ? (task.status = "Pending")
+                  : (task.status = "Awaiting");
                 task.inProgress = null;
-                return;
+                break; // Breaks out of the loop
               }
-            });
+            }
           });
-          alert(`${route.params.taskName} 📃 assigned to ${handler} 👤 `);
+          handler == ""
+            ? alert(`${route.params.taskName} 📃 Unassigned `)
+            : alert(`${route.params.taskName} 📃 assign to ${handler} 👤 `);
+          return;
         } else {
           job.tasks.map((task) => {
             const { name } = task;
             if (name == route.params.taskName) {
               task.handler = handler;
-              task.status = "Awaiting";
+              handler == ""
+                ? (task.status = "Pending")
+                : (task.status = "Awaiting");
               task.inProgress = null;
-              alert(`${route.params.taskName} 📃 assigned to ${handler} 👤 `);
+              handler == ""
+                ? alert(`${route.params.taskName} 📃 Unassigned Single`)
+                : alert(
+                    `${route.params.taskName} 📃 assign to ${handler} single👤 `
+                  );
               return;
             }
           });
@@ -135,8 +144,21 @@ export default function IndividualTask({ navigation }) {
         console.log({ error, msg: "Error Assigning next task" });
       }
     });
-    navigation.navigate("activetasks", { id: route.params.id });
-  }, [realm, currenttask, handler]);
+    // navigation.navigate("activetasks", { id: route.params.id });
+  }, [
+    realm,
+    currenttask,
+    handler,
+    multipleJobs,
+    clientsJob,
+    route.params.taskName,
+  ]);
+
+  useEffect(() => {
+    setData(clientsJob);
+    dispatch(setHandler(""));
+    // return () => {};
+  }, []);
 
   return (
     <Background bgColor=''>
@@ -155,7 +177,6 @@ export default function IndividualTask({ navigation }) {
             placeholder={"Assign Next Task"}
           />
           <SelectComponent
-            value={handler}
             title={"Handler:"}
             placeholder={"Assign Next Handler"}
             data={Accounts.filter(
@@ -170,9 +191,11 @@ export default function IndividualTask({ navigation }) {
           <MultiSelect
             title={"ClientJobs:"}
             setData={(params) => {
-              addJobs(params);
+              dispatch(setMulti(params));
             }}
-            data={clients}
+            data={datas.sort(
+              (a, b) => b._id.getTimestamp() - a._id.getTimestamp()
+            )}
             placeholder={"Multiple"}
           />
         </View>
@@ -220,8 +243,8 @@ export default function IndividualTask({ navigation }) {
             color={"#004343"}
           />
           <Button
-            disabled={handler == ""}
-            title='Assign'
+            // disabled={handler == ""}
+            title={handler == "" ? "Unassign" : "Assign"}
             onPress={() => setVisible(!visible)}
           />
           <Button

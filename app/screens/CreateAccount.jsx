@@ -89,6 +89,7 @@ const CreateAccount = ({ navigation }) => {
         account.phone = user.phone;
         account.category.name = user.category.name;
       });
+      sendUserDetails(user.email, user); // Assuming `sendUserDetails` is a function that sends the email
 
       alert("Success!!");
       navigation.navigate("accounts");

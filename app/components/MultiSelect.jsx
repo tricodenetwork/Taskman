@@ -32,11 +32,13 @@ export default function MultiSelect({
   const [placehold, setPlacehold] = useState("");
   const [filter, setFilter] = useState("");
   const [selected, setSelected] = useState(Array(data.length).fill(false));
+  const { multipleJobs } = useSelector((state) => state.App);
 
   const handlePress = (index) => {
-    const newSelected = [...selected];
-    newSelected[index] = !newSelected[index];
-    setSelected(newSelected);
+    // const newSelected = [...selected];
+    // newSelected[index] = !newSelected[index];
+    // setSelected(newSelected);
+    multipleJobs.includes(index);
   };
 
   return (
@@ -63,20 +65,19 @@ export default function MultiSelect({
               renderItem={({ item, index }) => (
                 <TouchableOpacity
                   onPress={() => {
-                    // dispatch(setData(item.name));
                     handlePress(index);
-                    // setPlacehold(item.matno);
                     setData(item.matno);
-                    // setVisible(!visible);
                   }}
                   className={`${
-                    selected[index] ? "bg-slate-300" : "bg-transparent"
+                    multipleJobs.includes(item.matno)
+                      ? "bg-slate-300"
+                      : "bg-transparent"
                   } flex flex-row items-center justify-between border-b-[1px] border-b-slate-700`}
                 >
                   <Text style={styles.averageText} className=''>
                     {item.matno}
                   </Text>
-                  {selected[index] ? (
+                  {multipleJobs.includes(item.matno) ? (
                     <MaterialCommunityIcons
                       color={"green"}
                       name='check-bold'

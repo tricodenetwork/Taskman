@@ -56,7 +56,6 @@ export default function MyTasks({ navigation }) {
   //   return assigned;
   // });
   // const mergedTasks = myTasks.reduce((acc, obj) => acc.concat(obj), []);
-  const once = 1;
   const myTasks = useMemo(
     () =>
       ActiveJobs.map((job) => {
@@ -70,7 +69,7 @@ export default function MyTasks({ navigation }) {
         });
         return assigned;
       }),
-    [once]
+    [ActiveJobs]
   );
 
   const mergedTasks = useMemo(

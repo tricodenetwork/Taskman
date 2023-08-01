@@ -27,13 +27,14 @@ import { setDuration } from "../store/slice-reducers/JobSlice";
 import OdinaryButton from "../components/OdinaryButton";
 import { updateAddress } from "../store/slice-reducers/Database";
 import { getJobDetails, addTask } from "../api/Functions";
-import { useRoute } from "@react-navigation/native";
+import { useIsFocused, useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import SelectComponent from "../components/SelectComponent";
 import { Account } from "../models/Account";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentTask, setHandler } from "../store/slice-reducers/ActiveJob";
 import { setFilter } from "../store/slice-reducers/Formslice";
+import { resetMulti } from "../store/slice-reducers/App";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -44,7 +45,7 @@ export default function ActiveTasks({ navigation }) {
   const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
   const [isNextTaskModalOpen, setIsNextTaskModalOpen] = useState(false);
-
+  const focus = useIsFocused();
   const [name, setName] = useState("");
   const [edit, setEdit] = useState({ name: "", duration: "" });
   const [durations, setDurations] = useState("");
@@ -63,6 +64,9 @@ export default function ActiveTasks({ navigation }) {
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
 
+  useEffect(() => {
+    dispatch(resetMulti());
+  }, [focus]);
   useEffect(() => {
     dispatch(setFilter("Status"));
   });

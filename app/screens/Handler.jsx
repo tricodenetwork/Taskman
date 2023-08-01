@@ -117,15 +117,15 @@ export default function Handler({ navigation }) {
   return (
     <Background bgColor='-z-40'>
       <HandlerTopscreen text3={formattedDate} text={`Hello, ${name}`}>
-        <View className=' absolute bottom-[3vh] w-full  flex px-[5vw]'>
+        <View className=' absolute bottom-[3vh] space-y-3 w-full  flex px-[5vw]'>
           <View className='w-full  flex flex-row justify-between'>
             <View className='relative'>
               <Text
                 style={[
                   styles.text,
                   {
-                    fontSize: actuatedNormalize(48),
-                    lineHeight: actuatedNormalizeVertical(78),
+                    fontSize: actuatedNormalize(36),
+                    lineHeight: actuatedNormalizeVertical(36 * 1.5),
                   },
                 ]}
                 className='text-primary_light'
@@ -150,8 +150,8 @@ export default function Handler({ navigation }) {
                 style={[
                   styles.text,
                   {
-                    fontSize: actuatedNormalize(48),
-                    lineHeight: actuatedNormalizeVertical(78),
+                    fontSize: actuatedNormalize(36),
+                    lineHeight: actuatedNormalizeVertical(36 * 1.5),
                   },
                 ]}
                 className='text-primary_light'
@@ -177,8 +177,8 @@ export default function Handler({ navigation }) {
                 style={[
                   styles.text,
                   {
-                    fontSize: actuatedNormalize(48),
-                    lineHeight: actuatedNormalizeVertical(78),
+                    fontSize: actuatedNormalize(36),
+                    lineHeight: actuatedNormalizeVertical(36 * 1.5),
                   },
                 ]}
                 className='text-primary_light'
@@ -204,8 +204,8 @@ export default function Handler({ navigation }) {
                 style={[
                   styles.text,
                   {
-                    fontSize: actuatedNormalize(48),
-                    lineHeight: actuatedNormalizeVertical(78),
+                    fontSize: actuatedNormalize(36),
+                    lineHeight: actuatedNormalizeVertical(36 * 1.5),
                   },
                 ]}
                 className='text-primary_light'

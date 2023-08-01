@@ -110,7 +110,7 @@ export default function JobDetails({ onPress }) {
     return () => {
       setRefreshing(false);
     };
-  }, [refreshing]);
+  }, [refreshing, isFocused]);
   return (
     <FlatList
       refreshControl={

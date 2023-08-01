@@ -80,7 +80,11 @@ const ActivateJob = ({ navigation }) => {
 
   const { matno, dept, handler, job, email, currenttask, password, id } =
     useSelector((state) => state.ActiveJob);
-  const clientExist = useQuery("client").filtered(`clientId == $0`, matno);
+  const clientExist = activeJobs.filtered(
+    `matno == $0 AND category == $1`,
+    matno,
+    ActiveJob.category
+  );
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
 
@@ -129,11 +133,11 @@ const ActivateJob = ({ navigation }) => {
         return;
       }
 
-      // console.log(clientExist);
-      // if (clientExist.length !== 0) {
-      //   alert("Client Exists already");
-      //   return;
-      // }
+      console.log(clientExist);
+      if (clientExist.length !== 0) {
+        alert("Client exists for this category");
+        return;
+      }
       realm.write(() => {
         const user = {
           email: item.email,

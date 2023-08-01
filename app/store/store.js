@@ -6,6 +6,7 @@ import userSlice from "./slice-reducers/userSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ActiveJob from "./slice-reducers/ActiveJob";
 import ChatReducer from "./slice-reducers/ChatSlice";
+import AppReducer from "./slice-reducers/App";
 
 // import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
@@ -17,7 +18,7 @@ import jobreducer from "./slice-reducers/JobSlice";
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["ActiveJob"],
+  whitelist: ["App"],
 };
 const middlewares = [
   /* other middlewares */
@@ -36,16 +37,17 @@ const allReducers = combineReducers({
   user: userSlice,
   ActiveJob: ActiveJob,
   Chat: ChatReducer,
+  App: AppReducer,
 });
 
-// const persistedReducer = persistReducer(persistConfig, allReducers);
+const persistedReducer = persistReducer(persistConfig, allReducers);
 
 export const store = configureStore({
   reducer: allReducers,
   // reducer: persistedReducer,
   middleware: [...middlewares],
 });
-// export const persistor = persistStore(store);
+export const persistor = persistStore(store);
 
 // console.log(store.getState());
 // console.log(names)

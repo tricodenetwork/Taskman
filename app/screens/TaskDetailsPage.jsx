@@ -367,7 +367,11 @@ const TaskDetailsPage = () => {
         >
           {/* Accept button */}
           <Button
-            disabled={status == "InProgress" || status == "Completed"}
+            disabled={
+              status == "InProgress" ||
+              status == "Completed" ||
+              status == "Overdue"
+            }
             color={"#00a3a3"}
             title='Accept'
             onPress={() => {
@@ -376,7 +380,11 @@ const TaskDetailsPage = () => {
           />
           {/* Done button */}
           <Button
-            disabled={status !== "InProgress"}
+            disabled={
+              status == "Completed" ||
+              status == "Awaiting" ||
+              status == "Pending"
+            }
             color={"#004343"}
             title='Done'
             onPress={handleDoneButton}

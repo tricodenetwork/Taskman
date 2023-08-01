@@ -52,7 +52,8 @@ export default function SelectComponent({
                 <TouchableOpacity
                   onPress={() => {
                     // dispatch(setData(item.name));
-                    setPlacehold(item.name.toString());
+                    setFilter(item.name);
+                    // setPlacehold(item.name.toString());
                     setData(item.name);
                     setVisible(!visible);
                   }}
@@ -71,7 +72,8 @@ export default function SelectComponent({
         <TextInput
           keyboardType='default'
           defaultValue={placehold}
-          value={value}
+          editable={value ? false : true}
+          value={value ? value : filter}
           onChangeText={setFilter}
           placeholder={placeholder}
           style={[styles.averageText, { color: "black" }]}
