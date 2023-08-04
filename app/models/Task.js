@@ -121,6 +121,7 @@ export class activejob extends Realm.Object {
       // time: { type: "string?", default: "0d 0h 0m" },
       completedIn: { type: "date?" },
       inProgress: { type: "date?" },
+      password: "string?",
     },
   };
 }

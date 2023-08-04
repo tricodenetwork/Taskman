@@ -82,13 +82,15 @@ export default function DetailsCard({ item, id, index }) {
     days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
   const overdue = time.includes("-");
 
-  const setStatusOverdue = () => {
-    realm.write(() => {
-      // item.name == "Posting" ? (item.handler = null) : null;
-      overdue && item.status == "InProgress" ? (item.status = "Overdue") : null;
-    }),
-      [];
-  };
+
+const setStatusOverdue = () => {
+  
+  realm.write(() => {
+    if (overdue && item.status == "InProgress") {
+        item.status = "Overdue";
+      }
+    });  
+}
 
   useEffect(() => {
     let interval = null;
@@ -156,11 +158,11 @@ export default function DetailsCard({ item, id, index }) {
     return () => {
       clearInterval(interval);
     };
-  }, [item.inProgress]);
+  }, [item.inProgress,isWeekend,isAllowedTime,isTodayHoliday]);
 
   useEffect(() => {
-    setStatusOverdue();
-  }, [Focus]);
+     setStatusOverdue();
+  }, [Focus,overdue]);
   return (
     <View
       style={styles.Pcard}

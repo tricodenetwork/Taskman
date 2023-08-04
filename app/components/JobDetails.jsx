@@ -15,8 +15,9 @@ import {
 } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import { activejob, job } from "../models/Task";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { Realm } from "@realm/react";
+import {setRefresh} from "../store/slice-reducers/App"
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -27,6 +28,7 @@ export default function JobDetails({ onPress }) {
   const route = useRoute();
   const realm = useRealm();
   const jobs = useQuery(job);
+  const dispatch= useDispatch()
   const activeJobs = useQuery(activejob);
   const [data, setData] = useState([]);
   const navigation = useNavigation();
@@ -35,6 +37,7 @@ export default function JobDetails({ onPress }) {
   const client = activeJobs.filtered(`matno ==$0`, user.clientId) ?? [];
 
   function updateJobStatus(supervisorName) {
+    dispatch(setRefresh())
     realm.write(() => {
       activeJobs.forEach((activejob) => {
         let jobstatus = "Pending";
@@ -77,7 +80,7 @@ export default function JobDetails({ onPress }) {
         activeOpacity={0.7}
         onPress={() => {
           const screenName = route.name === "jobs" ? "tasks" : "activetasks";
-          navigation.navigate(screenName, { id: item._id.toString() });
+          navigation.navigate(screenName, { id: item._id.toString()});
         }}
       >
         <JobCard
@@ -89,6 +92,11 @@ export default function JobDetails({ onPress }) {
       </TouchableOpacity>
     );
   };
+
+  
+
+
+
   useEffect(() => {
     if (!user.clientId) {
       if (route.name == "activeJobs") {
@@ -105,8 +113,9 @@ export default function JobDetails({ onPress }) {
   }, [isFocused, refreshing]);
 
   useEffect(() => {
-    updateJobStatus();
 
+    
+    updateJobStatus();
     return () => {
       setRefreshing(false);
     };
@@ -117,7 +126,6 @@ export default function JobDetails({ onPress }) {
         <RefreshControl
           refreshing={refreshing}
           onRefresh={() => {
-            updateJobStatus();
             setRefreshing(true);
           }}
         />

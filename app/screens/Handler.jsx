@@ -118,7 +118,7 @@ export default function Handler({ navigation }) {
   return (
     <Background bgColor='-z-40'>
       <HandlerTopscreen text3={formattedDate} text={`Hello, ${name}`}>
-        <View className=' absolute bottom-[3vh] space-y-3 w-full  flex px-[5vw]'>
+        <View className='space-y-3 w-full  flex px-[5vw]'>
           <View className='w-full  flex flex-row justify-between'>
             <View className='relative'>
               <Text
@@ -272,7 +272,7 @@ export default function Handler({ navigation }) {
           <TouchableOpacity
             className='relative max-h-max'
             onPress={() => {
-              navigation.navigate("messages", { data: data });
+              navigation.navigate("messages");
             }}
             activeOpacity={0.5}
           >

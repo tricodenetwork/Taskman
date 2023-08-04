@@ -1,7 +1,7 @@
 import { View, Text, KeyboardAvoidingView } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import Background from "../components/Background";
-import { Bubble, GiftedChat } from "react-native-gifted-chat";
+import { Bubble, GiftedChat, Actions } from "react-native-gifted-chat";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
@@ -85,7 +85,7 @@ export default function ChatScreen() {
 
   const renderMessageActions = (props, message) => {
     return (
-      <MessageActions
+      <Actions
         {...props}
         options={{
           delete: {
@@ -111,7 +111,7 @@ export default function ChatScreen() {
       return new Chats(realm, messageObject);
     });
 
-    sendPushNotification(pushToken, "New Message", messageObject.text);
+    sendPushNotification(pushToken, name, messageObject.text);
   }, []);
 
   function renderBubble(props) {
@@ -254,6 +254,7 @@ export default function ChatScreen() {
               }
             } else return null;
           }}
+          // renderActions={renderMessageActions}
           // renderDay={renderDay}
         />
       </View>

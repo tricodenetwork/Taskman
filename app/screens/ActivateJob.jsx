@@ -73,7 +73,7 @@ const ActivateJob = ({ navigation }) => {
     `role == "Supervisor" AND category.name ==$0`,
     category.name
   );
-
+  console.log(ActiveJob);
   const pushToken =
     useQuery("account").filtered(`name == $0 AND role == "Handler"`, handler)[0]
       ?.pushToken ?? "";
@@ -134,7 +134,6 @@ const ActivateJob = ({ navigation }) => {
         return;
       }
 
-      console.log(clientExist);
       if (clientExist.length !== 0) {
         alert("Client exists for this category");
         return;
@@ -172,7 +171,7 @@ const ActivateJob = ({ navigation }) => {
       sendClientDetails(item.email, item);
       // sendPushNotification(pushToken);
     },
-    [realm]
+    [realm, clientExist]
   );
   const deleteActiveJob = useCallback(() => {
     realm.write(() => {

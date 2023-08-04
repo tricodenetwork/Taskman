@@ -5,14 +5,13 @@ import {
   TouchableHighlight,
   ActivityIndicator,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Background from "../components/Background";
 import SelectComponent from "../components/SelectComponent";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
 import { AccountRealmContext } from "../models";
 import { Account } from "../models/Account";
-import { addChat, deleteChat } from "../store/slice-reducers/ChatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   actuatedNormalize,
@@ -27,122 +26,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
-const renderItem = ({ item }, navigation, user, allChats, realm) => {
-  const name =
-    realm.objectForPrimaryKey(
-      "account",
-      user._id == item.senderId
-        ? Realm.BSON.ObjectId(item.recieverId)
-        : Realm.BSON.ObjectId(item.senderId)
-    ) ??
-    realm.objectForPrimaryKey(
-      "client",
-      user._id == item.senderId
-        ? Realm.BSON.ObjectId(item.recieverId)
-        : Realm.BSON.ObjectId(item.senderId)
-    );
-
-  const chats = allChats.filtered(`roomId == $0`, item._id);
-  const unread = chats.filtered(`status !="read"`).filtered(
-    `user._id != 
-            $0`,
-    user._id
-  );
-  const lastMessage = chats[chats.length - 1];
-  // console.log(unread);
-
-  return (
-    <View id='SINGLE_CONTACT_MESSSAGE_BOX'>
-      {lastMessage?.text ?? "" !== "" ? (
-        <TouchableHighlight
-          className='rounded-md'
-          underlayColor={"rgba(0,0,200,.2)"}
-          onPress={() => {
-            navigation.navigate("chats", {
-              roomId: item._id,
-              name: name.name,
-            });
-          }}
-        >
-          <View className='h-[8vh]   px-[2vw]  items-center flex flex-row justify-between pt-[1vh]'>
-            <View className=''>
-              <Text
-                className=' my-auto'
-                style={{
-                  fontSize: actuatedNormalize(14),
-                  lineHeight: actuatedNormalizeVertical(14 * 1.5),
-                }}
-              >
-                {name?.name ? name.name : null}
-                {name?.clientId ? name.clientId : null}
-                {/* {name == ""
-                            ? realm.objectForPrimaryKey(
-                                "client",
-                                Realm.BSON.ObjectId(lastMessage.user._id)
-                              )?.clientId
-                            : null} */}
-              </Text>
-              <View className='flex relative w-[87vw] items-center space-x-1 mt-1 max-w-max flex-row'>
-                {lastMessage.user._id == user._id ? (
-                  <Ionicons
-                    name='checkmark-done'
-                    size={actuatedNormalize(16)}
-                    color={
-                      lastMessage.status == "read" ? "rgb(168 85 247)" : "gray"
-                    }
-                  />
-                ) : (
-                  <Ionicons
-                    name='checkmark-done'
-                    size={actuatedNormalize(16)}
-                    color={"transparent"}
-                  />
-                )}
-
-                <Text
-                  className='font-light'
-                  style={{
-                    fontSize: actuatedNormalize(12),
-                    lineHeight: actuatedNormalizeVertical(12 * 1.5),
-                  }}
-                >
-                  {lastMessage.text}
-                </Text>
-                {unread.length !== 0 ? (
-                  <View
-                    style={{
-                      width: actuatedNormalize(15),
-                      height: actuatedNormalize(15),
-                    }}
-                    className='rounded-full  absolute right-2 flex items-center justify-center bg-purple-500'
-                  >
-                    <Text
-                      className='text-red-100'
-                      style={[
-                        styles.text_sm,
-                        {
-                          fontSize: actuatedNormalize(8),
-                          lineHeight: actuatedNormalizeVertical(8 * 1.5),
-                        },
-                      ]}
-                    >
-                      {unread.length}
-                    </Text>
-                  </View>
-                ) : null}
-              </View>
-            </View>
-          </View>
-        </TouchableHighlight>
-      ) : null}
-    </View>
-  );
-};
 
 export default function MessageScreen({ navigation }) {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [chatroom, setChatroom] = useState([]);
+  const [showdelete, setShowdelete] = useState(false);
+  const [id, setId] = useState("");
 
   const realm = useRealm();
   const route = useRoute();
@@ -184,7 +75,7 @@ export default function MessageScreen({ navigation }) {
     };
 
     const roomId = chatrooms.filtered(
-      `senderId == $0 AND recieverId ==$1`,
+      `(senderId == $0 AND recieverId ==$1) OR (senderId == $1 AND recieverId ==$0)`,
       user._id,
       recieverId
     );
@@ -200,6 +91,127 @@ export default function MessageScreen({ navigation }) {
     } else {
       return roomId[0]._id;
     }
+  };
+  const renderItem = ({ item }, navigation, user, allChats, realm) => {
+    const name =
+      realm.objectForPrimaryKey(
+        "account",
+        user._id == item.senderId
+          ? Realm.BSON.ObjectId(item.recieverId)
+          : Realm.BSON.ObjectId(item.senderId)
+      ) ??
+      realm.objectForPrimaryKey(
+        "client",
+        user._id == item.senderId
+          ? Realm.BSON.ObjectId(item.recieverId)
+          : Realm.BSON.ObjectId(item.senderId)
+      );
+
+    const chats = allChats.filtered(`roomId == $0`, item._id);
+    const unread = chats.filtered(`status !="read"`).filtered(
+      `user._id != 
+            $0`,
+      user._id
+    );
+    const lastMessage = chats[chats.length - 1];
+    // console.log(unread);
+
+    return (
+      <View id='SINGLE_CONTACT_MESSSAGE_BOX'>
+        {lastMessage?.text ?? "" !== "" ? (
+          <TouchableHighlight
+            className='rounded-md'
+            underlayColor={"rgba(0,0,200,.2)"}
+            onPress={() => {
+              // Only navigate if showdelete is false
+              navigation.navigate("chats", {
+                roomId: item._id,
+                name: name.name,
+              });
+            }}
+            onLongPress={() => {
+              setShowdelete(!showdelete);
+              setId(item._id);
+            }}
+          >
+            <View className='h-[8vh]   px-[2vw]  items-center flex flex-row justify-between pt-[1vh]'>
+              <View className=''>
+                <View className='flex justify-between flex-row'>
+                  <Text
+                    className=' my-auto'
+                    style={{
+                      fontSize: actuatedNormalize(14),
+                      lineHeight: actuatedNormalizeVertical(14 * 1.5),
+                    }}
+                  >
+                    {name?.name ? name.name : null}
+                    {name?.clientId ? name.clientId : null}
+                    {/* {name == ""
+                            ? realm.objectForPrimaryKey(
+                                "client",
+                                Realm.BSON.ObjectId(lastMessage.user._id)
+                              )?.clientId
+                            : null} */}
+                  </Text>
+                </View>
+                <View className='flex relative w-[87vw] items-center space-x-1 mt-1 max-w-max flex-row'>
+                  {lastMessage.user._id == user._id ? (
+                    <Ionicons
+                      name='checkmark-done'
+                      size={actuatedNormalize(16)}
+                      color={
+                        lastMessage.status == "read"
+                          ? "rgb(168 85 247)"
+                          : "gray"
+                      }
+                    />
+                  ) : (
+                    <Ionicons
+                      name='checkmark-done'
+                      size={actuatedNormalize(16)}
+                      color={"transparent"}
+                    />
+                  )}
+
+                  <Text
+                    className='font-light'
+                    style={{
+                      fontSize: actuatedNormalize(12),
+                      lineHeight: actuatedNormalizeVertical(12 * 1.5),
+                    }}
+                  >
+                    {lastMessage.text}
+                  </Text>
+
+                  {unread.length !== 0 ? (
+                    <View
+                      style={{
+                        width: actuatedNormalize(15),
+                        height: actuatedNormalize(15),
+                      }}
+                      className='rounded-full  absolute right-2 flex items-center justify-center bg-purple-500'
+                    >
+                      <Text
+                        className='text-red-100'
+                        style={[
+                          styles.text_sm,
+                          {
+                            fontSize: actuatedNormalize(8),
+                            lineHeight: actuatedNormalizeVertical(8 * 1.5),
+                          },
+                        ]}
+                      >
+                        {unread.length}
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+              </View>
+            </View>
+          </TouchableHighlight>
+        ) : null}
+      </View>
+    );
   };
   const renderItemProps = ({ item }) =>
     renderItem({ item }, navigation, user, allChats, realm);
@@ -224,40 +236,107 @@ export default function MessageScreen({ navigation }) {
       </TouchableOpacity>
     );
   };
+
+  const deleteChat = useCallback(() => {
+    const room = realm.objectForPrimaryKey("chatroom", id);
+    realm.write(() => {
+      realm.delete(room);
+    });
+  });
+
   useEffect(() => {
-    if (route.params.data.length !== 0) {
-      setIsLoading(false);
-    }
-  }, [route.params.data]);
+    // convert Realm collection to JavaScript array
+    const chatroomsArray = Array.from(chatrooms);
+
+    // create a map with the most recent createdAt dates for each room
+    const lastDatesMap = new Map();
+    chatroomsArray.forEach((room) => {
+      const chatsForRoom = allChats.filtered(`roomId == $0`, room._id);
+      const lastMessage = chatsForRoom.sorted("createdAt", true)[0];
+      lastDatesMap.set(room._id, lastMessage?.createdAt);
+    });
+
+    // sort chatrooms by most recent message's createdAt date
+    const sortedChatrooms = chatroomsArray.sort((a, b) => {
+      const lastDateA = lastDatesMap.get(a._id);
+      const lastDateB = lastDatesMap.get(b._id);
+
+      if (lastDateA > lastDateB) {
+        return -1;
+      } else if (lastDateA < lastDateB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    setChatroom(sortedChatrooms);
+  }, [showdelete]);
   return (
     <Background>
       <SafeAreaView className='relative bg-red-100 w-full h-full'>
-        {isLoading ? (
+        {!isLoading ? (
           <View className='flex-1 items-center justify-center'>
             <ActivityIndicator size='large' color='#0000ff' />
           </View>
         ) : (
-          <FlatList
-            initialNumToRender={20}
-            removeClippedSubviews={true} // Add this line.
-            className='-mt-2'
-            keyExtractor={(item) => item._id}
-            ListHeaderComponent={
-              <View className='relative w-[20%]'>
-                <Text
-                  style={[styles.text, { fontSize: actuatedNormalize(17) }]}
-                  className='px-[2vw] text-primary'
+          <>
+            <View className='absolute top-0 w-[100vw]'>
+              {!showdelete ? (
+                <View className='relative  w-[20%]'>
+                  <Text
+                    style={[styles.text, { fontSize: actuatedNormalize(17) }]}
+                    className='px-[2vw] text-primary'
+                  >
+                    Chats
+                  </Text>
+                  <View
+                    className={`bg-primary absolute w-[80%]  rounded-full self-center bottom-[-2px] h-[2.5px]`}
+                  ></View>
+                </View>
+              ) : (
+                <Motion.View
+                  initial={{ y: -20 }}
+                  animate={{ y: 0 }}
+                  transition={{ type: "spring", stiffness: 20, duration: 1 }}
+                  className='w-full h-[5vh] bg-primary '
                 >
-                  Chats
-                </Text>
-                <View
-                  className={`bg-primary absolute w-[80%]  rounded-full self-center bottom-[-2px] h-[2.5px]`}
-                ></View>
-              </View>
-            }
-            data={route.params.data}
-            renderItem={renderItemProps}
-          />
+                  {showdelete ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setShowdelete(!showdelete);
+                        deleteChat();
+                      }}
+                    >
+                      <View className='flex flex-row justify-center items-center'>
+                        <Text
+                          style={[
+                            styles.text,
+                            { fontSize: actuatedNormalize(17) },
+                          ]}
+                          className='px-[2vw] text-Secondary'
+                        >
+                          Delete
+                        </Text>
+                        <Ionicons
+                          name='close'
+                          size={actuatedNormalize(16)}
+                          color={"green"}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  ) : null}
+                </Motion.View>
+              )}
+            </View>
+            <FlatList
+              initialNumToRender={20}
+              removeClippedSubviews={true} // Add this line.
+              className='mt-2'
+              keyExtractor={(item) => item._id}
+              data={chatroom}
+              renderItem={renderItemProps}
+            />
+          </>
         )}
         <View
           className={`absolute z-50 bottom-[5vh] right-[5vw] ${

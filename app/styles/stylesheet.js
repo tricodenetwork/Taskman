@@ -74,6 +74,7 @@ export const styles = StyleSheet.create({
     // letterSpacing: 1.25,
     fontFamily: "AxiformaBold",
     fontSize: actuatedNormalize(17),
+    // lineHeight: actuatedNormalizeVertical(17 * ),
   },
   text_md: {
     fontFamily: "AxiformaMedium",

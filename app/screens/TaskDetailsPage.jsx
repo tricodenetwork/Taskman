@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -28,6 +28,7 @@ import { millisecondSinceStartDate } from "../api/test";
 import { Motion } from "@legendapp/motion";
 import OdinaryButton from "../components/OdinaryButton";
 import MultiSelect from "../components/MultiSelect";
+import { setMulti } from "../store/slice-reducers/App";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -56,6 +57,7 @@ const TaskDetailsPage = () => {
     handler
   )[0];
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
+  const { multipleJobs } = useSelector((state) => state.App);
 
   const pushToken = account?.pushToken || "";
 
@@ -63,18 +65,6 @@ const TaskDetailsPage = () => {
     "senderId == $0 ||  recieverId == $0",
     user._id
   );
-
-  let multiplejobs = [];
-
-  const addJobs = (param) => {
-    const index = multiplejobs.indexOf(param);
-    if (index !== -1) {
-      multiplejobs.splice(index, 1);
-    } else {
-      multiplejobs.push(param);
-    }
-    console.log(multiplejobs);
-  };
 
   const holidas = useQuery(holiday);
   const isTodayHoliday = holidas.some((holiday) => {
@@ -130,8 +120,8 @@ const TaskDetailsPage = () => {
 
     realm.write(() => {
       try {
-        if (multiplejobs.length !== 0) {
-          multiplejobs.forEach((params) => {
+        if (multipleJobs.length !== 0) {
+          multipleJobs.forEach((params) => {
             clients.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
               // Set task to inProgress and begin counting
               if (
@@ -159,7 +149,14 @@ const TaskDetailsPage = () => {
       }
     });
     navigation.navigate("mytasks");
-  }, [realm, currenttask, handler]);
+  }, [
+    realm,
+    currenttask,
+    route.params.handler,
+    multipleJobs,
+    clients,
+    handler,
+  ]);
 
   const handleDoneButton = () => {
     dispatch(setCurrentTask(""));
@@ -189,14 +186,11 @@ const TaskDetailsPage = () => {
 
     realm.write(() => {
       try {
-        if (multiplejobs.length !== 0) {
-          multiplejobs.forEach((params) => {
+        if (multipleJobs.length !== 0) {
+          multipleJobs.forEach((params) => {
             clients.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
               // on handling next task, first of all set your current task to completed
-              if (
-                (task.name == name) &
-                (task.handler == route.params.handler)
-              ) {
+              if (task.name === name && task.handler === route.params.handler) {
                 const timeCompleted = millisecondSinceStartDate(
                   task.inProgress
                 );
@@ -215,11 +209,11 @@ const TaskDetailsPage = () => {
               }
             });
           });
-          alert("Task Completed! ✔");
+          alert("Task Completed! ✔ multi");
         } else {
           activeJob.tasks.map((task) => {
             // on handling next task, first of all set your current task to completed
-            if ((task.name == name) & (task.handler == route.params.handler)) {
+            if (task.name === name && task.handler === route.params.handler) {
               const timeCompleted = millisecondSinceStartDate(task.inProgress);
 
               task.status = "Completed";
@@ -235,7 +229,7 @@ const TaskDetailsPage = () => {
               sendPushNotification(pushToken, task.name);
             }
           });
-          alert("Task Completed! ✔");
+          alert("Task Completed! ✔ single");
         }
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
@@ -244,7 +238,15 @@ const TaskDetailsPage = () => {
 
     navigation.navigate("mytasks");
     // setIsNextTaskModalOpen(false);
-  }, [realm, currenttask, handler]);
+  }, [
+    realm,
+    currenttask,
+    multipleJobs,
+    clients,
+    route.params.handler,
+    handler,
+    name,
+  ]);
   const handleErrorSubmit = () => {
     // Perform the necessary actions to send the task back to the previous handler
     // and send the error message to the supervisor
@@ -324,11 +326,13 @@ const TaskDetailsPage = () => {
       <View className='h-[75vh] absolute bottom-0 bg-white w-full flex items-start pb-[3vh] pt-[5vh] px-[3vw] justify-between'>
         {/* Display the task details */}
         <MultiSelect
-          title={"ClientJobs"}
+          title={"ClientJobs:"}
           setData={(params) => {
-            addJobs(params);
+            dispatch(setMulti(params));
           }}
-          data={clients}
+          data={Array.from(clients).sort(
+            (a, b) => b._id.getTimestamp() - a._id.getTimestamp()
+          )}
           placeholder={"Multiple"}
         />
         <Text style={[styles.text_md]}>ClientId: {matno}</Text>
@@ -372,7 +376,7 @@ const TaskDetailsPage = () => {
               status == "Completed" ||
               status == "Overdue"
             }
-            color={"#00a3a3"}
+            color={"#FF925C"}
             title='Accept'
             onPress={() => {
               setVisible(!visible);
@@ -385,7 +389,7 @@ const TaskDetailsPage = () => {
               status == "Awaiting" ||
               status == "Pending"
             }
-            color={"#004343"}
+            color={"#006400"}
             title='Done'
             onPress={handleDoneButton}
           />
@@ -393,7 +397,7 @@ const TaskDetailsPage = () => {
           {/* Error button */}
           <Button
             disabled={status == "Completed"}
-            color={"#E59F71"}
+            color={"#ff4747"}
             title='Reject'
             onPress={handleErrorButton}
           />
@@ -461,8 +465,13 @@ const TaskDetailsPage = () => {
                 id='BUTTONS'
                 className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
               >
-                <Button title='Submit' onPress={() => setVisible(!visible)} />
                 <Button
+                  disabled={handler == ""}
+                  title='Submit'
+                  onPress={() => setVisible(!visible)}
+                />
+                <Button
+                  color={"#ff4747"}
                   title='Cancel'
                   onPress={() => {
                     setIsNextTaskModalOpen(false);

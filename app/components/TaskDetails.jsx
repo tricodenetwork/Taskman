@@ -36,19 +36,7 @@ export default function TaskDetails({
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { user } = useSelector((state) => state);
-  // const job = realm.objectForPrimaryKey(
-  //   "activejob",
-  //   Realm.BSON.ObjectId(route.params.id)
-  // );
-  // const foreignSupervisor = job.supervisor !== user.name ?? true;
-
-  // useEffect(() => {
-  //   setData(taskdata);
-
-  //   return () => {
-  //     setRefreshing(false);
-  //   };
-  // }, [isFocused, refreshing, taskdata]);
+  const { refresh } = useSelector((state) => state.App);
 
   useEffect(() => {
     setData(taskdata);
@@ -64,6 +52,8 @@ export default function TaskDetails({
         <RefreshControl
           refreshing={refreshing}
           onRefresh={() => {
+            route.name == "mytasks" && setData(taskdata);
+
             setRefreshing(true);
           }}
         />
@@ -74,7 +64,7 @@ export default function TaskDetails({
       onDragEnd={({ data }) => {
         route.name !== "mytasks" && reArrange(data);
       }}
-      data={data.filter((item, index) =>
+      data={Array.from(data).filter((item, index) =>
         item[col]?.name
           ? item[col].name.toLowerCase().includes(search.toLowerCase())
           : (item[col] &&
@@ -124,6 +114,7 @@ export default function TaskDetails({
                 <View>
                   {route.name == "activetasks" ? (
                     <DetailsCard
+                    key={refresh}
                       isActive={isActive}
                       id={jobId}
                       index={getIndex()}

@@ -60,7 +60,7 @@ export default function MultiSelect({
               maxToRenderPerBatch={120}
               style={{ height: actuatedNormalize(150), paddingBottom: 20 }}
               data={data.filter((item) =>
-                item.matno.includes(filter.toUpperCase())
+                item.matno.includes(filter)
               )}
               renderItem={({ item, index }) => (
                 <TouchableOpacity

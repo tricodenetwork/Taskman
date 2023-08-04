@@ -23,7 +23,6 @@ export default function IndividualTask({ navigation }) {
   const { currenttask, handler } = useSelector((state) => state.ActiveJob);
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
   const [visible, setVisible] = useState(false);
-  const [data, setData] = useState([]);
 
   const dispatch = useDispatch();
   const Accounts = useQuery(Account);
@@ -155,7 +154,6 @@ export default function IndividualTask({ navigation }) {
   ]);
 
   useEffect(() => {
-    setData(clientsJob);
     dispatch(setHandler(""));
     // return () => {};
   }, []);

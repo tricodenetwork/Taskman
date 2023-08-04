@@ -339,8 +339,7 @@ export default function Supervisor() {
         <TouchableOpacity
           className='relative max-h-max'
           onPress={() => {
-            navigation.navigate("messages", { data: data });
-            console.log(data.length);
+            navigation.navigate("messages");
           }}
           activeOpacity={0.5}
         >

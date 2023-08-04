@@ -70,7 +70,7 @@ const HandlerTopscreen = ({ text, text2, text3, children, Edit }) => {
     >
       <View
         id='headerNav'
-        className='px-[5vw]  justify-between flex-row items-center h-[20%]  border- border-white mt-[5vh]  relative flex'
+        className='px-[5vw]   justify-between flex-row items-center h-[20%]  border- border-white mt-[5vh]  relative flex'
       >
         <View>
           <Text style={styles.headingText} className='text-white  text-left '>
@@ -91,8 +91,7 @@ const HandlerTopscreen = ({ text, text2, text3, children, Edit }) => {
           {clock}
         </Text>
       </View>
-
-      {children}
+      <View className='flex-1 justify-center items-center'>{children}</View>
     </LinearGradient>
   );
 };
