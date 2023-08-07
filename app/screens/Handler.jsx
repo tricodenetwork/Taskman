@@ -70,10 +70,12 @@ export default function Handler({ navigation }) {
     let pendingCount = 0;
     let overdueCount = 0;
     let awaitingCount = 0;
+    let totalCount = 0;
 
     tasksArray.forEach((taskObj) => {
       taskObj.tasks.forEach((task) => {
         if (task.handler === handlerName) {
+          totalCount++;
           if (task.status === "Completed") {
             completedCount++;
           } else if (task.status === "InProgress") {
@@ -99,6 +101,7 @@ export default function Handler({ navigation }) {
       pending: addLeadingZero(pendingCount),
       awaiting: addLeadingZero(awaitingCount),
       overdue: addLeadingZero(overdueCount),
+      total: addLeadingZero(totalCount),
     };
   }
 
@@ -119,8 +122,8 @@ export default function Handler({ navigation }) {
     <Background bgColor='-z-40'>
       <HandlerTopscreen text3={formattedDate} text={`Hello, ${name}`}>
         <View className='space-y-3 w-full  flex px-[5vw]'>
-          <View className='w-full  flex flex-row justify-between'>
-            <View className='relative'>
+          <View className='w-full space-x-[25vw]  flex flex-row justify-between'>
+            <View className='relative flex-1'>
               <Text
                 style={[
                   styles.text,
@@ -146,7 +149,7 @@ export default function Handler({ navigation }) {
                 className={`bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[2.5vh] h-[90%]`}
               ></View>
             </View>
-            <View className='relative'>
+            <View className='relative flex-1'>
               <Text
                 style={[
                   styles.text,
@@ -173,7 +176,7 @@ export default function Handler({ navigation }) {
                 }
               ></View>
             </View>
-            <View className='relative'>
+            <View className='relative flex-1'>
               <Text
                 style={[
                   styles.text,
@@ -199,8 +202,8 @@ export default function Handler({ navigation }) {
               </View>
             </View>
           </View>
-          <View className='w-full  flex flex-row justify-between'>
-            <View className='relative'>
+          <View className='w-full space-x-[25vw]  flex flex-row justify-between'>
+            <View className='relative flex-1'>
               <Text
                 style={[
                   styles.text,
@@ -219,6 +222,58 @@ export default function Handler({ navigation }) {
                 </Text>
                 <Text style={styles.text_md} className='text-white'>
                   Overdue
+                </Text>
+              </View>
+              <View
+                style={{}}
+                className={`bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[2.5vh] h-[90%]`}
+              ></View>
+            </View>
+            <View className='relative flex-1'>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    fontSize: actuatedNormalize(36),
+                    lineHeight: actuatedNormalizeVertical(36 * 1.5),
+                  },
+                ]}
+                className='text-primary_light'
+              >
+                {handlerStats.total}
+              </Text>
+              <View>
+                <Text style={styles.text_md} className='flex text-white'>
+                  Total
+                </Text>
+                <Text style={styles.text_md} className='text-white'>
+                  Tasks
+                </Text>
+              </View>
+              {/* <View
+                style={{}}
+                className={`bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[2.5vh] h-[90%]`}
+              ></View> */}
+            </View>
+            <View className='relative flex-1 opacity-0'>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    fontSize: actuatedNormalize(36),
+                    lineHeight: actuatedNormalizeVertical(36 * 1.5),
+                  },
+                ]}
+                className='text-primary_light'
+              >
+                {handlerStats.total}
+              </Text>
+              <View>
+                <Text style={styles.text_md} className='flex text-white'>
+                  Total
+                </Text>
+                <Text style={styles.text_md} className='text-white'>
+                  Tasks
                 </Text>
               </View>
               {/* <View
@@ -270,7 +325,7 @@ export default function Handler({ navigation }) {
         </View>
         <View>
           <TouchableOpacity
-            className='relative max-h-max'
+            className='relative flex-1 max-h-max'
             onPress={() => {
               navigation.navigate("messages");
             }}

@@ -14,7 +14,7 @@ import OdinaryButton from "../components/OdinaryButton";
 import { Motion } from "@legendapp/motion";
 import { TouchableOpacity } from "react-native";
 import MultiSelect from "../components/MultiSelect";
-import { activejob } from "../models/Task";
+import { activejob, job as jobs } from "../models/Task";
 import { resetMulti, setMulti } from "../store/slice-reducers/App";
 
 const { useRealm, useQuery } = AccountRealmContext;
@@ -34,10 +34,11 @@ export default function IndividualTask({ navigation }) {
   const route = useRoute();
   const job = realm.objectForPrimaryKey(
     "activejob",
-    Realm.BSON.ObjectId(route.params.id)
+    Realm.BSON.ObjectId(route.params?.id)
   );
+  const tasks = useQuery(jobs).filtered(`name == "Transcript"`)[0].tasks;
 
-  const inProgess = job.tasks.filter(
+  const inProgress = job?.tasks.filter(
     (item) => item.name == route.params?.taskName
   )[0].inProgress;
 
@@ -62,8 +63,10 @@ export default function IndividualTask({ navigation }) {
           multipleJobs.forEach((params) => {
             let tasks = clientsJob.filtered(`matno ==$0`, params)[0].tasks;
             for (let task of tasks) {
-              const { name } = task;
-              if (name == route.params.taskName) {
+              if (
+                task.name == route.params?.taskName ||
+                task.name == currenttask
+              ) {
                 task.status = "InProgress";
                 task.inProgress = new Date();
                 break; // Breaks out of the loop
@@ -78,36 +81,44 @@ export default function IndividualTask({ navigation }) {
               // task.handler = handler;
               task.status = "InProgress";
               task.inProgress = new Date();
-              alert("Task Activated! ✔");
 
               return;
             } else {
               return;
             }
           });
+          alert("Task Activated! ✔");
         }
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
       }
     });
 
-    navigation.navigate("activetasks", { id: route.params.id });
+    // navigation.navigate("activetasks", { id: route.params?.id });
   }, [
     realm,
     currenttask,
     handler,
     multipleJobs,
     clientsJob,
-    route.params.taskName,
+    route.params?.taskName,
   ]);
   const assignNextTask = useCallback(() => {
+    if (currenttask == "" && !route.params?.taskName) {
+      alert("No task to assign");
+      return;
+    }
+
     realm.write(() => {
       try {
         if (multipleJobs.length != 0) {
           multipleJobs.forEach((params) => {
             let tasks = clientsJob.filtered(`matno ==$0`, params)[0].tasks;
             for (let task of tasks) {
-              if (task.name == route.params.taskName) {
+              if (
+                task.name == route.params?.taskName ||
+                task.name == currenttask
+              ) {
                 task.handler = handler;
                 handler == ""
                   ? (task.status = "Pending")
@@ -122,18 +133,18 @@ export default function IndividualTask({ navigation }) {
             : alert(`${route.params.taskName} 📃 assign to ${handler} 👤 `);
           return;
         } else {
-          job.tasks.map((task) => {
+          job?.tasks.map((task) => {
             const { name } = task;
-            if (name == route.params.taskName) {
+            if (name == route.params?.taskName) {
               task.handler = handler;
               handler == ""
                 ? (task.status = "Pending")
                 : (task.status = "Awaiting");
               task.inProgress = null;
               handler == ""
-                ? alert(`${route.params.taskName} 📃 Unassigned Single`)
+                ? alert(`${route.params?.taskName} 📃 Unassigned Single`)
                 : alert(
-                    `${route.params.taskName} 📃 assign to ${handler} single👤 `
+                    `${route.params?.taskName} 📃 assign to ${handler} single👤 `
                   );
               return;
             }
@@ -150,7 +161,7 @@ export default function IndividualTask({ navigation }) {
     handler,
     multipleJobs,
     clientsJob,
-    route.params.taskName,
+    route.params?.taskName,
   ]);
 
   useEffect(() => {
@@ -170,8 +181,12 @@ export default function IndividualTask({ navigation }) {
 
         <View className='h-[50vh]   px-[5vw] flex justify-around'>
           <SelectComponent
-            value={route.params.taskName}
+            value={route.params?.taskName}
             title={"Tasks:"}
+            setData={(params) => {
+              dispatch(setCurrentTask(params));
+            }}
+            data={route.params ? null : tasks}
             placeholder={"Assign Next Task"}
           />
           <SelectComponent
@@ -186,16 +201,18 @@ export default function IndividualTask({ navigation }) {
               dispatch(setHandler(params));
             }}
           />
-          <MultiSelect
-            title={"ClientJobs:"}
-            setData={(params) => {
-              dispatch(setMulti(params));
-            }}
-            data={datas.sort(
-              (a, b) => b._id.getTimestamp() - a._id.getTimestamp()
-            )}
-            placeholder={"Multiple"}
-          />
+          {route.params?.taskName ? null : (
+            <MultiSelect
+              title={"ClientJobs:"}
+              setData={(params) => {
+                dispatch(setMulti(params));
+              }}
+              data={datas.sort(
+                (a, b) => b._id.getTimestamp() - a._id.getTimestamp()
+              )}
+              placeholder={"Multiple"}
+            />
+          )}
         </View>
         {visible ? (
           <TouchableOpacity
@@ -228,11 +245,11 @@ export default function IndividualTask({ navigation }) {
         >
           <Button
             disabled={
-              inProgess ||
+              inProgress ||
               isWeekend ||
               !isAllowedTime ||
               isTodayHoliday ||
-              !route.params.taskHandler
+              handler == ""
                 ? true
                 : false
             }
@@ -248,9 +265,11 @@ export default function IndividualTask({ navigation }) {
           <Button
             title='Back'
             onPress={() => {
-              navigation.navigate("activetasks", {
-                id: route.params.id,
-              });
+              route.params
+                ? navigation.navigate("activetasks", {
+                    id: route.params?.id,
+                  })
+                : navigation.goBack();
             }}
           />
         </View>

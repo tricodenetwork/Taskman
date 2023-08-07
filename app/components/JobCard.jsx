@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { AntDesign } from "@expo/vector-icons";
 import OdinaryButton from "./OdinaryButton";
@@ -10,10 +10,13 @@ import { sumField, formatDuration, convertToMinutes } from "../api/Functions";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
-const JobCard = ({ isActive, id, name, item }) => {
-  const [visible, setVisible] = useState(false);
+const JobCard = ({ isActive, id, name }) => {
   const route = useRoute();
   const realm = useRealm();
+  const item =
+    route.name == "activeJobs"
+      ? realm.objectForPrimaryKey("activejob", Realm.BSON.ObjectId(id))
+      : realm.objectForPrimaryKey("job", Realm.BSON.ObjectId(id));
   const status =
     item.status === "Pending"
       ? "gray"
@@ -26,22 +29,20 @@ const JobCard = ({ isActive, id, name, item }) => {
       : item.status === "Overdue"
       ? "#ff4747"
       : null;
+  const sumAll = useMemo(() => {
+    return sumField(
+      item.tasks ? item.tasks : item.job && item.tasks ? item.tasks : [],
+      "duration"
+    );
+  }, [item.tasks, item.job]);
 
-  // useEffect(() => {
-  //   // realm.write(() => {
-  //   //   realm.delete(realm.objects("activejob"));
-  //   // });
-  //   // realm.refresh();
-  // });
+  const convert = useMemo(() => {
+    return convertToMinutes(sumAll);
+  }, [sumAll]);
 
-  const sumAll = sumField(
-    item.tasks ? item.tasks : item.job && item.tasks ? item.tasks : [],
-    "duration"
-  );
-
-  const convert = convertToMinutes(sumAll);
-  const sum = formatDuration(convert);
-  // const sum = { days: 0, hours: 5, minutes: 20 };
+  const sum = useMemo(() => {
+    return formatDuration(convert);
+  }, [convert]);
 
   return (
     <View

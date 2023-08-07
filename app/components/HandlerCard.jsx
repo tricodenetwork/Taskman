@@ -48,14 +48,13 @@ export default function HandlerCard({ item }) {
 
   const overdue = time.includes("-");
 
- const setStatusOverdue = () => {
-  console.log("status overdue");
+  const setStatusOverdue = () => {
     realm.write(() => {
       if (overdue && item.status == "InProgress") {
         item.status = "Overdue";
       }
-    });  
-}
+    });
+  };
 
   const isTodayHoliday = hols.some((holiday) => {
     const holidayDate = new Date(holiday.day);
@@ -133,11 +132,11 @@ export default function HandlerCard({ item }) {
     return () => {
       clearInterval(interval);
     };
-  }, [item.inProgress,overdue,isWeekend,isAllowedTime,isTodayHoliday]);
+  }, [item.inProgress, overdue, isWeekend, isAllowedTime, isTodayHoliday]);
 
   useEffect(() => {
     setStatusOverdue();
-  }, [Focus,]);
+  }, [Focus]);
   return (
     // <ActivityIndicator />
     <View

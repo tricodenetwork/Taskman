@@ -67,10 +67,18 @@ export default function MyTasks({ navigation }) {
   //----------------------------------------------------RENDERED COMPONENT
   return (
     <Background bgColor='min-h-[98vh]'>
-      <Topscreen text={"My Tasks"} />
+      <Topscreen text={"My Tasks"}>
+        <OdinaryButton
+          navigate={() => {
+            navigation.navigate("taskdetailsscreen");
+          }}
+          text='Multiple'
+          style={"absolute top-[10vh] left-[6vw] bg-white"}
+        />
+      </Topscreen>
 
       <View
-        className='bg-slate-200 h-[80vh] rounded-t-3xl  p-2 w-full absolute bottom-0
+        className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
       >
         <View className='mb-1'>

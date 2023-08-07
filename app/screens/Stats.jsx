@@ -138,9 +138,9 @@ export default function Stats() {
         "<h1>Transcript Tracking And Performance Evaluation (TTAPE)</h1>";
       data.forEach((item) => {
         htmlContent += `<p>Handler: ${item.handler}</p>`;
-        htmlContent += `<p>Assigned: ${item.Assigned}</p>`;
+        // htmlContent += `<p>Assigned: ${item.Assigned}</p>`;
         htmlContent += `<p>Prompt Completed: ${item.promptCompleted}</p>`;
-        htmlContent += `<p>Prompt Completion Percentage: ${item.promptInPercentage}%</p>`;
+        htmlContent += `<p>Tasks Completed Promptly(%): ${item.promptInPercentage}%</p>`;
         htmlContent += "<hr/>";
       });
 
@@ -168,18 +168,21 @@ export default function Stats() {
   useEffect(() => {});
   const handlerTaskStats = calculateTaskStats(activeJobs);
 
-  const render = ({ item }) => {
+  const render = ({ item, index }) => {
     return (
       <View className='flex px-[1vw] border-b-[1px] py-[1vh] flex-row justify-center items-center'>
-        <Text style={[styles.text_sm]} className='w-[40%] text-left'>
+        <Text style={[styles.text_sm]} className='w-[10%] text-left'>
+          {index + 1}
+        </Text>
+        <Text style={[styles.text_sm]} className='w-[70%] text-left px-2'>
           {item.handler}
         </Text>
-        <Text style={[styles.text_sm]} className='w-[20%] text-center'>
+        {/* <Text style={[styles.text_sm]} className='w-[20%] text-center'>
           {item.Assigned}
-        </Text>
-        <Text style={[styles.text_sm]} className='w-[20%] text-center'>
+        </Text> */}
+        {/* <Text style={[styles.text_sm]} className='w-[20%] text-center'>
           {item.promptCompleted}
-        </Text>
+        </Text> */}
         <Text style={[styles.text_sm]} className='w-[20%] text-center'>
           {item.promptInPercentage}
         </Text>
@@ -196,27 +199,33 @@ export default function Stats() {
           <View className='flex px-[1vw] border-b-[1px] flex-row items-center'>
             <Text
               style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
-              className='w-[40%] border-r-[1px] pt-[1vh] h-full'
+              className='w-[10%] text-center border-r-[1px] pt-[1vh] h-full'
             >
-              Handler
+              SN
             </Text>
             <Text
+              style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
+              className='w-[70%] text-center border-r-[1px] pt-[1vh] h-full'
+            >
+              Name
+            </Text>
+            {/* <Text
               style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
               className='w-[20%] pt-[1vh] border-r-[1px] h-full text-center'
             >
               Assigned
-            </Text>
-            <Text
+            </Text> */}
+            {/* <Text
               style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
               className='w-[20%] border-r-[1px] h-full text-center'
             >
               Prompt Completed
-            </Text>
+            </Text> */}
             <Text
               style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
               className='w-[20%] text-center'
             >
-              Prompt Completion(%)
+              Completed Promptly(%)
             </Text>
           </View>
         }

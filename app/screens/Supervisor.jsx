@@ -47,43 +47,18 @@ export default function Supervisor() {
     user?.logOut();
   }, [user]);
 
-  // convert Realm collection to JavaScript array
-  const chatroomsArray = Array.from(chatrooms);
-
-  // create a map with the most recent createdAt dates for each room
-  const lastDatesMap = new Map();
-  chatroomsArray.forEach((room) => {
-    const chatsForRoom = chats.filtered(`roomId == $0`, room._id);
-    const lastMessage = chatsForRoom.sorted("createdAt", true)[0];
-    lastDatesMap.set(room._id, lastMessage?.createdAt);
-  });
-
-  // sort chatrooms by most recent message's createdAt date
-  const sortedChatrooms = chatroomsArray.sort((a, b) => {
-    const lastDateA = lastDatesMap.get(a._id);
-    const lastDateB = lastDatesMap.get(b._id);
-
-    if (lastDateA > lastDateB) {
-      return -1;
-    } else if (lastDateA < lastDateB) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
-  useEffect(() => {
-    setData(sortedChatrooms);
-    setIsLoading(false);
-  }, [focus, isLoading]);
   function countStatusBySupervisor(dataArray, supervisorName) {
     let completedCount = 0;
     let inProgressCount = 0;
     let pendingCount = 0;
     let overdueCount = 0;
     let awaitingCount = 0;
+    let totalCount = 0;
 
     dataArray.forEach((dataObj) => {
       if (dataObj.supervisor === supervisorName) {
+        totalCount++;
+
         if (dataObj.status === "Completed") {
           completedCount++;
         } else if (dataObj.status === "InProgress") {
@@ -109,6 +84,7 @@ export default function Supervisor() {
       pending: addLeadingZero(pendingCount),
       awaiting: addLeadingZero(awaitingCount),
       overdue: addLeadingZero(overdueCount),
+      total: addLeadingZero(totalCount),
     };
   }
 
@@ -131,8 +107,8 @@ export default function Supervisor() {
     <Background bgColor='min-h-[96vh]'>
       <HandlerTopscreen text3={formattedDate} text={`Hello, ${name}`}>
         <View className=' absolute bottom-[3vh] space-y-3  w-full self-center  flex  px-[5vw]'>
-          <View className='w-full  flex flex-row justify-between'>
-            <View className='relative '>
+          <View className='w-full space-x-[25vw]  flex flex-row justify-between'>
+            <View className='relative flex-1 '>
               <Text
                 style={[
                   styles.text,
@@ -157,7 +133,7 @@ export default function Supervisor() {
                 className={`bg-primary_light absolute w-[1px] opacity-40 rounded-full left-[25vw] top-[3.5vh] h-[60%]`}
               ></View>
             </View>
-            <View className='relative '>
+            <View className='relative flex-1 '>
               <Text
                 style={[
                   styles.text,
@@ -184,7 +160,7 @@ export default function Supervisor() {
                 }
               ></View>
             </View>
-            <View className='relative '>
+            <View className='relative flex-1 '>
               <Text
                 style={[
                   styles.text,
@@ -210,8 +186,8 @@ export default function Supervisor() {
               </View>
             </View>
           </View>
-          <View className='w-full flex  flex-row justify-between'>
-            <View className='relative '>
+          <View className='w-full space-x-[25vw] flex  flex-row justify-between'>
+            <View className='relative flex-1 '>
               <Text
                 style={[
                   styles.text,
@@ -241,7 +217,7 @@ export default function Supervisor() {
                 }
               ></View>
             </View>
-            <View className='relative '>
+            <View className='relative flex-1 '>
               <Text
                 style={[
                   styles.text,
@@ -271,7 +247,7 @@ export default function Supervisor() {
                 }
               ></View>
             </View>
-            <View className='relative opacity-0'>
+            <View className='relative flex-1'>
               <Text
                 style={[
                   styles.text,
@@ -282,17 +258,17 @@ export default function Supervisor() {
                 ]}
                 className='text-primary_light'
               >
-                {supervisorStats.completed}
+                {supervisorStats.total}
               </Text>
               <View>
                 <Text
                   style={styles.text_md}
                   className='text-[14px] flex text-white'
                 >
-                  Jobs
+                  Total
                 </Text>
                 <Text style={styles.text_md} className='text-[14px] text-white'>
-                  Completed inj
+                  Jobs
                 </Text>
               </View>
             </View>

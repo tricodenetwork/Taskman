@@ -16,9 +16,13 @@ import {
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import SelectComponent from "../components/SelectComponent";
-import { activejob } from "../models/Task";
+import { activejob, job } from "../models/Task";
 import { AccountRealmContext } from "../models";
-import { setCurrentTask, setHandler } from "../store/slice-reducers/ActiveJob";
+import {
+  setCurrentTask,
+  setHandler,
+  setPassword,
+} from "../store/slice-reducers/ActiveJob";
 import { useDispatch, useSelector } from "react-redux";
 import { Account, holiday } from "../models/Account";
 import ChatScreen from "./ChatScreen";
@@ -37,16 +41,32 @@ const TaskDetailsPage = () => {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [visible, setVisible] = useState(false);
-  const { currenttask, handler } = useSelector((state) => state.ActiveJob);
+  const { currenttask, handler, password } = useSelector(
+    (state) => state.ActiveJob
+  );
   const { user } = useSelector((state) => state);
   const route = useRoute();
   const realm = useRealm();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { id, name, job, matno, supervisor, status } = route.params; // current handler for particular task
-  const activeJob = useObject(activejob, Realm.BSON.ObjectId(id));
+  // const { name, job, matno, supervisor, status } = route.params; // current handler for particular task
+  const activeJob = useObject(activejob, Realm.BSON.ObjectId(route.params?.id));
   const Accounts = useQuery(Account);
   const clients = useQuery(activejob);
+  const tasks = useQuery(job).filtered(`name == "Transcript"`)[0].tasks;
+
+  let result = clients.reduce((acc, params) => {
+    const filteredTasks = params.tasks.filter(
+      (item) => item.handler == user.name
+    );
+    return acc.concat(filteredTasks);
+  }, []);
+  let uniqueTasks = result.reduce((unique, task) => {
+    if (!unique.some((item) => item.name === task.name)) {
+      unique.push(task);
+    }
+    return unique;
+  }, []);
 
   const handlers = Accounts.filter(
     (obj) =>
@@ -124,19 +144,19 @@ const TaskDetailsPage = () => {
           multipleJobs.forEach((params) => {
             clients.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
               // Set task to inProgress and begin counting
-              if (
-                (task.name == name) &
-                (task.handler == route.params.handler)
-              ) {
+              if ((task.name == password) & (task.handler == user.name)) {
                 task.status = "InProgress";
                 task.inProgress = new Date();
               }
             });
           });
         } else {
-          activeJob.tasks.map((task) => {
+          activeJob?.tasks.map((task) => {
             // Set task to inProgress and begin counting
-            if ((task.name == name) & (task.handler == route.params.handler)) {
+            if (
+              (task.name == route.params?.name) &
+              (task.handler == route.params.handler)
+            ) {
               task.status = "InProgress";
               task.inProgress = new Date();
             }
@@ -152,7 +172,7 @@ const TaskDetailsPage = () => {
   }, [
     realm,
     currenttask,
-    route.params.handler,
+    route.params?.handler,
     multipleJobs,
     clients,
     handler,
@@ -190,7 +210,7 @@ const TaskDetailsPage = () => {
           multipleJobs.forEach((params) => {
             clients.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
               // on handling next task, first of all set your current task to completed
-              if (task.name === name && task.handler === route.params.handler) {
+              if ((task.name == password) & (task.handler == user.name)) {
                 const timeCompleted = millisecondSinceStartDate(
                   task.inProgress
                 );
@@ -211,9 +231,12 @@ const TaskDetailsPage = () => {
           });
           alert("Task Completed! ✔ multi");
         } else {
-          activeJob.tasks.map((task) => {
+          activeJob?.tasks.map((task) => {
             // on handling next task, first of all set your current task to completed
-            if (task.name === name && task.handler === route.params.handler) {
+            if (
+              task.name === route.params?.name &&
+              task.handler === route.params?.handler
+            ) {
               const timeCompleted = millisecondSinceStartDate(task.inProgress);
 
               task.status = "Completed";
@@ -243,9 +266,9 @@ const TaskDetailsPage = () => {
     currenttask,
     multipleJobs,
     clients,
-    route.params.handler,
+    route.params?.handler,
     handler,
-    name,
+    route.params?.name,
   ]);
   const handleErrorSubmit = () => {
     // Perform the necessary actions to send the task back to the previous handler
@@ -289,9 +312,12 @@ const TaskDetailsPage = () => {
     realm.write(() => {
       try {
         let Error;
-        activeJob.tasks.map((task) => {
-          // set your recieved task to pending and not the time you've spent on the job
-          if ((task.name == name) & (task.handler == route.params.handler)) {
+        activeJob?.tasks.map((task) => {
+          // set your recieved task to pending and not the time you've spent on the route.params?.job
+          if (
+            (task.name == route.params?.name) &
+            (task.handler == route.params.handler)
+          ) {
             Error = millisecondSinceStartDate(task.inProgress);
             task.status = "Pending";
             task.inProgress = null;
@@ -299,7 +325,7 @@ const TaskDetailsPage = () => {
           }
         });
 
-        activeJob.tasks.map((task) => {
+        activeJob?.tasks.map((task) => {
           if (task.name == currenttask) {
             task.status = "Pending";
             task.inProgress = null;
@@ -319,25 +345,46 @@ const TaskDetailsPage = () => {
 
     setIsErrorModalOpen(false);
   };
-
   return (
     <Background bgColor='min-h-screen'>
-      <Topscreen text={job} />
+      <Topscreen text={route.params?.job} />
       <View className='h-[75vh] absolute bottom-0 bg-white w-full flex items-start pb-[3vh] pt-[5vh] px-[3vw] justify-between'>
         {/* Display the task details */}
-        <MultiSelect
-          title={"ClientJobs:"}
-          setData={(params) => {
-            dispatch(setMulti(params));
-          }}
-          data={Array.from(clients).sort(
-            (a, b) => b._id.getTimestamp() - a._id.getTimestamp()
+        <View>
+          {route.params ? null : (
+            <SelectComponent
+              title={"Task:"}
+              placeholder={"Select Task"}
+              data={uniqueTasks}
+              setData={(params) => {
+                dispatch(setPassword(params));
+              }}
+            />
           )}
-          placeholder={"Multiple"}
-        />
-        <Text style={[styles.text_md]}>ClientId: {matno}</Text>
-        <Text style={[styles.text_md]}>Supervisor: {supervisor}</Text>
-        <Text style={[styles.text_md]}>Task: {name}</Text>
+          {route.params ? null : (
+            <MultiSelect
+              title={"Jobs:"}
+              setData={(params) => {
+                dispatch(setMulti(params));
+              }}
+              data={Array.from(clients).sort(
+                (a, b) => b._id.getTimestamp() - a._id.getTimestamp()
+              )}
+              placeholder={"Multiple"}
+            />
+          )}
+        </View>
+        {route.params ? (
+          <Text style={[styles.text_md]}>ClientId: {route.params?.matno}</Text>
+        ) : null}
+        {route.params ? (
+          <Text style={[styles.text_md]}>
+            Supervisor: {route.params?.supervisor}
+          </Text>
+        ) : null}
+        {route.params ? (
+          <Text style={[styles.text_md]}>Task: {route.params?.name}</Text>
+        ) : null}
 
         {visible ? (
           <TouchableOpacity
@@ -372,9 +419,9 @@ const TaskDetailsPage = () => {
           {/* Accept button */}
           <Button
             disabled={
-              status == "InProgress" ||
-              status == "Completed" ||
-              status == "Overdue"
+              route.params?.status == "InProgress" ||
+              route.params?.status == "Completed" ||
+              route.params?.status == "Overdue"
             }
             color={"#FF925C"}
             title='Accept'
@@ -385,9 +432,9 @@ const TaskDetailsPage = () => {
           {/* Done button */}
           <Button
             disabled={
-              status == "Completed" ||
-              status == "Awaiting" ||
-              status == "Pending"
+              route.params?.status == "Completed" ||
+              route.params?.status == "Awaiting" ||
+              route.params?.status == "Pending"
             }
             color={"#006400"}
             title='Done'
@@ -396,7 +443,7 @@ const TaskDetailsPage = () => {
 
           {/* Error button */}
           <Button
-            disabled={status == "Completed"}
+            disabled={route.params?.status == "Completed"}
             color={"#ff4747"}
             title='Reject'
             onPress={handleErrorButton}
@@ -418,15 +465,20 @@ const TaskDetailsPage = () => {
                 <SelectComponent
                   title={"Tasks:"}
                   placeholder={"Assign Next Task"}
-                  data={activeJob.tasks.filter(
-                    (obj) =>
-                      (obj.status == "Pending" || obj.status == "") &
-                      (obj.handler == "" || obj.handler == null)
-                  )}
+                  data={
+                    route.params
+                      ? activeJob?.tasks.filter(
+                          (obj) =>
+                            (obj.status == "Pending" || obj.status == "") &
+                            (obj.handler == "" || obj.handler == null)
+                        )
+                      : tasks
+                  }
                   setData={(params) => {
                     dispatch(setCurrentTask(params));
                   }}
                 />
+
                 <SelectComponent
                   title={"Handler:"}
                   placeholder={"Assign Next Handler"}
@@ -466,7 +518,7 @@ const TaskDetailsPage = () => {
                 className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
               >
                 <Button
-                  disabled={handler == ""}
+                  disabled={handler == "" || currenttask == ""}
                   title='Submit'
                   onPress={() => setVisible(!visible)}
                 />
@@ -504,7 +556,7 @@ const TaskDetailsPage = () => {
                   <SelectComponent
                     title={"Task"}
                     placeholder={"Choose faulty task"}
-                    data={activeJob.tasks.filter(
+                    data={activeJob?.tasks.filter(
                       (obj) => obj.status == "Completed"
                     )}
                     setData={(params) => {

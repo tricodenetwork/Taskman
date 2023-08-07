@@ -23,7 +23,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { Motion } from "@legendapp/motion";
 import { activejob } from "../models/Task";
 import { Ionicons } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
+import { useIsFocused, useRoute } from "@react-navigation/native";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -34,6 +34,7 @@ export default function MessageScreen({ navigation }) {
   const [chatroom, setChatroom] = useState([]);
   const [showdelete, setShowdelete] = useState(false);
   const [id, setId] = useState("");
+  const focus = useIsFocused();
 
   const realm = useRealm();
   const route = useRoute();
@@ -270,7 +271,7 @@ export default function MessageScreen({ navigation }) {
       }
     });
     setChatroom(sortedChatrooms);
-  }, [showdelete]);
+  }, [focus]);
   return (
     <Background>
       <SafeAreaView className='relative bg-red-100 w-full h-full'>

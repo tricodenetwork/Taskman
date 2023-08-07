@@ -11,6 +11,7 @@ import { holiday } from "../models/Account";
 import Realm from "realm";
 import { AccountRealmContext } from "../models";
 import { useIsFocused } from "@react-navigation/native";
+import OdinaryButton from "../components/OdinaryButton";
 
 const { useRealm, useQuery } = AccountRealmContext;
 export default function ActiveJobs({ navigation }) {
@@ -26,7 +27,15 @@ export default function ActiveJobs({ navigation }) {
 
   return (
     <Background bgColor='min-h-[98vh]'>
-      <Topscreen text={!user.clientId ? "ActiveJobs" : "MyJob"} />
+      <Topscreen text={!user.clientId ? "ActiveJobs" : "MyJob"}>
+        <OdinaryButton
+          navigate={() => {
+            navigation.navigate("it");
+          }}
+          text='Multiple'
+          style={"absolute top-[10vh] left-[6vw] bg-white"}
+        />
+      </Topscreen>
       <View
         className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '

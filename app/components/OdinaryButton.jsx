@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 
-export default function OdinaryButton({ navigate, text, style,disabled }) {
+export default function OdinaryButton({ navigate, text, style, disabled }) {
   return (
     <View
       // style={{ backgroundColor:  }}
@@ -17,7 +17,7 @@ export default function OdinaryButton({ navigate, text, style,disabled }) {
       >
         <Text
           style={[styles.text_md2, { fontSize: actuatedNormalize(13) }]}
-          className='font-extrabold text-center text-slate-300'
+          className='font-extrabold text-center text-white'
         >
           {text}
         </Text>
