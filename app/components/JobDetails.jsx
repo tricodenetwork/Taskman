@@ -92,7 +92,6 @@ export default function JobDetails({ onPress }) {
 
           if (currentTime?.includes("-")) {
             task.status = "Overdue";
-            break;
           }
         }
       });
