@@ -3,9 +3,7 @@
     "name": "TaskMan",
     "slug": "manager",
     "version": "1.0.0",
-    "runtimeVersion": {
-      "policy": "sdkVersion"
-    },
+    "runtimeVersion": "1.0.0",
     "assetBundlePatterns": ["**/*"],
     "android": {
       "package": "tasks.uniben.vic",

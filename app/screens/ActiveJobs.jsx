@@ -29,11 +29,13 @@ export default function ActiveJobs({ navigation }) {
     <Background bgColor='min-h-[98vh]'>
       <Topscreen text={!user.clientId ? "ActiveJobs" : "MyJob"}>
         <OdinaryButton
+          color={"#0D037A"}
+          bg={"#77E6B6"}
           navigate={() => {
             navigation.navigate("it");
           }}
-          text='Multiple'
-          style={"absolute top-[10vh] left-[6vw] bg-white"}
+          text='Assign Multiple Taskss'
+          style={"absolute top-[10vh] w-[90vw]"}
         />
       </Topscreen>
       <View

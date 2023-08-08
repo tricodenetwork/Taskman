@@ -1,28 +1,17 @@
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
-import Svg, { Circle, Rect } from "react-native-svg";
-import { useIsFocused, useRoute } from "@react-navigation/native";
-import { Fragment as MainBox } from "react";
-import { Completed } from "../api/Functions";
-import { MaterialIcons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import { calculateTime, millisecondSinceStartDate } from "../api/test";
 import { useSelector } from "react-redux";
 import { holiday } from "../models/Account";
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useRealm, useQuery } = AccountRealmContext;
 
 export default function HandlerCard({ item }) {
   //____________________________________________________________________STATE AND VARIABLES____________________________________________________________________//
   const [time, setTime] = useState("");
-  const route = useRoute();
   const realm = useRealm();
   const hols = useQuery(holiday);
   const Focus = useIsFocused();
@@ -138,7 +127,6 @@ export default function HandlerCard({ item }) {
     setStatusOverdue();
   }, [Focus]);
   return (
-    // <ActivityIndicator />
     <View
       style={styles.Pcard}
       className='bg-white flex-row   rounded-2xl mb-4 self-center w-[90vw] h-[14vh] px-[7] items-center justify-between'

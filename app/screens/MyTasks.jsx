@@ -69,11 +69,13 @@ export default function MyTasks({ navigation }) {
     <Background bgColor='min-h-[98vh]'>
       <Topscreen text={"My Tasks"}>
         <OdinaryButton
+          bg={"#77E6B6"}
+          color={"#0D037A"}
           navigate={() => {
             navigation.navigate("taskdetailsscreen");
           }}
-          text='Multiple'
-          style={"absolute top-[10vh] left-[6vw] bg-white"}
+          text='Assign Multiple Tasks'
+          style={"absolute top-[10vh] w-[90vw] bg-white"}
         />
       </Topscreen>
 
