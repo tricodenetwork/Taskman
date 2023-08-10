@@ -86,7 +86,7 @@ export default function ActiveTasks({ navigation }) {
       />
 
       <View
-        className='bg-slate-200 h-[80vh] rounded-t-3xl  p-2 w-full absolute bottom-0
+        className='bg-slate-200 h-[84vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
       >
         <View className='mb-1'>

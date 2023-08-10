@@ -21,7 +21,6 @@ const HandlerCard = ({ item }) => {
   const Time = item.completedIn
     ? calculateTime(item.completedIn.getTime())
     : null;
-  const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
   const status =
     item.status === "Pending" || item.status === ""
       ? "gray"
@@ -48,19 +47,8 @@ const HandlerCard = ({ item }) => {
   //   });
   // };
 
-  const isTodayHoliday = hols.some((holiday) => {
-    const holidayDate = new Date(holiday.day);
-    const today = new Date();
-
-    return (
-      holidayDate.getFullYear() === today.getFullYear() &&
-      holidayDate.getMonth() === today.getMonth() &&
-      holidayDate.getDate() === today.getDate()
-    );
-  });
-
   function calculateRemainingTime(duration) {
-    if (!item.inProgress) {
+    if (!item.inProgress || item.status == "Completed") {
       return;
     }
     let countDownTimer;
@@ -97,11 +85,6 @@ const HandlerCard = ({ item }) => {
   }
 
   const time = calculateRemainingTime(taskDuration);
-  // useEffect(() => {
-  //   calculateRemainingTime(taskDuration);
-
-  //   // Clear the interval when the component is unmounted
-  // }, [item.inProgress, overdue, isWeekend, isAllowedTime, isTodayHoliday]);
 
   // useEffect(() => {
   //   setStatusOverdue();
@@ -128,13 +111,17 @@ const HandlerCard = ({ item }) => {
           <MaterialIcons
             name='timer'
             size={actuatedNormalize(12)}
-            color={time?.includes("-") ? "red" : "#004343"}
+            // color={time?.includes("-") ? "red" : "#004343"}
+            color={status}
           />
           {!item.inProgress ? (
             <Text
               id='TIMER'
               className=' text-primary'
-              style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
+              style={[
+                styles.text_sm,
+                { color: status, fontSize: actuatedNormalize(10) },
+              ]}
             >
               {`${item.duration?.days == null ? 0 : item.duration?.days}d ${
                 item.duration?.hours == null ? 0 : item.duration?.hours
@@ -146,7 +133,10 @@ const HandlerCard = ({ item }) => {
             <Text
               id='TIMER'
               className={time?.includes("-") ? "text-red-600" : "text-primary"}
-              style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
+              style={[
+                styles.text_sm,
+                { color: status, fontSize: actuatedNormalize(10) },
+              ]}
             >
               {item.status == "Completed" ? Time : time}
             </Text>

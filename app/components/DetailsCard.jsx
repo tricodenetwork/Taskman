@@ -16,7 +16,6 @@ const { useQuery } = AccountRealmContext;
 
 const DetailsCard = React.memo(
   ({ item, id, index }) => {
-    const [time, setTime] = useState("");
     const hols = useQuery(holiday);
     const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
     const { user } = useSelector((state) => state);
@@ -24,9 +23,9 @@ const DetailsCard = React.memo(
     const status =
       item.status === "Pending" || item.status == ""
         ? "gray"
-        : item.status === "InProgress" && !time.includes("-")
+        : item.status === "InProgress"
         ? "#FFD700"
-        : item.status === "Overdue" && time.includes("-")
+        : item.status === "Overdue"
         ? "#ff4747"
         : item.status === "Completed"
         ? "green"
@@ -38,62 +37,48 @@ const DetailsCard = React.memo(
       ? calculateTime(item.completedIn.getTime())
       : null;
 
-    const isTodayHoliday = hols.some((holiday) => {
-      const holidayDate = new Date(holiday.day);
-      const today = new Date();
-
-      return (
-        holidayDate.getFullYear() === today.getFullYear() &&
-        holidayDate.getMonth() === today.getMonth() &&
-        holidayDate.getDate() === today.getDate()
-      );
-    });
-
     const { days, hours, minutes } = item.duration;
     const taskDuration =
       days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
 
-    // Set up an effect hook for setting up and cleaning the timer
-    useEffect(() => {
-      function calculateRemainingTime(duration) {
-        // Check if the task is completed
-        if (!item.inProgress) {
-          return;
-        }
-        let countDownTimer;
-        let timeSpent = item.error
-          ? item.completedIn.getTime() +
-            item.error +
-            millisecondSinceStartDate(item.inProgress, hols)
-          : millisecondSinceStartDate(item.inProgress, hols);
-
-        // Calculate the remaining time in milliseconds
-        countDownTimer = duration - timeSpent;
-
-        // Calculate the remaining days, hours, minutes, and seconds
-
-        const remainingDays = Math.floor(
-          Math.abs(countDownTimer) / (24 * 60 * 60 * 1000)
-        );
-        const remainingHours = Math.floor(
-          (Math.abs(countDownTimer) % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
-        );
-        const remainingMinutes = Math.floor(
-          (Math.abs(countDownTimer) % (60 * 60 * 1000)) / (60 * 1000)
-        );
-
-        // Add negative sign if time is elapsed
-
-        const isElapsed = countDownTimer <= 0;
-        const sign = isElapsed ? "-" : "";
-
-        // set the time variable to display on the UI
-        const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m`;
-        setTime(Timer);
+    function calculateRemainingTime(duration) {
+      // Check if the task is completed
+      if (!item.inProgress || item.status == "Completed") {
+        return;
       }
+      let countDownTimer;
+      let timeSpent = item.error
+        ? item.completedIn.getTime() +
+          item.error +
+          millisecondSinceStartDate(item.inProgress, hols)
+        : millisecondSinceStartDate(item.inProgress, hols);
 
-      calculateRemainingTime(taskDuration);
-    }, [item.inProgress, isWeekend, isAllowedTime, isTodayHoliday]);
+      // Calculate the remaining time in milliseconds
+      countDownTimer = duration - timeSpent;
+
+      // Calculate the remaining days, hours, minutes, and seconds
+
+      const remainingDays = Math.floor(
+        Math.abs(countDownTimer) / (24 * 60 * 60 * 1000)
+      );
+      const remainingHours = Math.floor(
+        (Math.abs(countDownTimer) % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+      );
+      const remainingMinutes = Math.floor(
+        (Math.abs(countDownTimer) % (60 * 60 * 1000)) / (60 * 1000)
+      );
+
+      // Add negative sign if time is elapsed
+
+      const isElapsed = countDownTimer <= 0;
+      const sign = isElapsed ? "-" : "";
+
+      // set the time variable to display on the UI
+      const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m`;
+      return Timer;
+    }
+
+    const time = calculateRemainingTime(taskDuration);
 
     return (
       <View
@@ -117,13 +102,17 @@ const DetailsCard = React.memo(
             <MaterialIcons
               name='timer'
               size={actuatedNormalize(12)}
-              color={time.includes("-") & item.inProgress ? "red" : "#004343"}
+              // color={time?.includes("-") ? "red" : "#004343"}
+              color={status}
             />
             {!item.inProgress ? (
               <Text
                 id='TIMER'
                 className=' text-primary'
-                style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
+                style={[
+                  styles.text_sm,
+                  { color: status, fontSize: actuatedNormalize(10) },
+                ]}
               >
                 {`${item.duration.days == null ? 0 : item.duration.days}d ${
                   item.duration.hours == null ? 0 : item.duration.hours
@@ -134,8 +123,13 @@ const DetailsCard = React.memo(
             ) : (
               <Text
                 id='TIMER'
-                className={time.includes("-") ? "text-red-600" : "text-primary"}
-                style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
+                className={
+                  time?.includes("-") ? "text-red-600" : "text-primary"
+                }
+                style={[
+                  styles.text_sm,
+                  { color: status, fontSize: actuatedNormalize(10) },
+                ]}
               >
                 {item.status == "Completed" ? Time : time}
               </Text>

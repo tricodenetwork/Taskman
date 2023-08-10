@@ -52,6 +52,8 @@ export default function Stats() {
             Assigned: 0,
             promptCompleted: 0,
             promptInPercentage: 0,
+            lateCompletion: 0,
+            overdue: 0,
             pending: 0,
             completed: 0,
           };
@@ -74,16 +76,20 @@ export default function Stats() {
 
           if (isPromptCompleted) {
             handlerStats.promptCompleted++;
+          } else if (!isPromptCompleted) {
+            handlerStats.lateCompletion++;
           }
         } else if (task.status === "Pending") {
           handlerStats.pending++;
+        } else if (task.status === "Overdue") {
+          handlerStats.overdue++;
         }
       });
     });
 
     taskStats.forEach((stats) => {
       const promptCompletionPercentage =
-        (stats.promptCompleted / stats.completed) * 100 || 0;
+        (stats.promptCompleted / (stats.completed + stats.overdue)) * 100 || 0;
       stats.promptInPercentage = promptCompletionPercentage.toFixed(2);
     });
 
@@ -138,7 +144,9 @@ export default function Stats() {
         "<h1>Transcript Tracking And Performance Evaluation (TTAPE)</h1>";
       data.forEach((item) => {
         htmlContent += `<p>Handler: ${item.handler}</p>`;
-        // htmlContent += `<p>Assigned: ${item.Assigned}</p>`;
+        htmlContent += `<p>Assigned: ${item.Assigned}</p>`;
+        htmlContent += `<p>Late Completed: ${item.lateCompletion}</p>`;
+        htmlContent += `<p>Pending: ${item.pending}</p>`;
         htmlContent += `<p>Prompt Completed: ${item.promptCompleted}</p>`;
         htmlContent += `<p>Tasks Completed Promptly(%): ${item.promptInPercentage}%</p>`;
         htmlContent += "<hr/>";
@@ -230,6 +238,8 @@ export default function Stats() {
           </View>
         }
         data={handlerTaskStats}
+        initialNumToRender={30}
+        maxToRenderPerBatch={60}
         renderItem={render}
         keyExtractor={(item) => item.id}
         ListFooterComponent={
