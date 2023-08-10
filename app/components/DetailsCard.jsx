@@ -1,11 +1,16 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
-import { actuatedNormalize, styles } from "../styles/stylesheet";
+import {
+  actuatedNormalize,
+  actuatedNormalizeVertical,
+  styles,
+} from "../styles/stylesheet";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AccountRealmContext } from "../models";
 import { calculateTime, millisecondSinceStartDate } from "../api/test";
 import { useSelector } from "react-redux";
 import { holiday } from "../models/Account";
+import { formatDate } from "../api/Functions";
 
 const { useQuery } = AccountRealmContext;
 
@@ -50,13 +55,9 @@ const DetailsCard = React.memo(
 
     // Set up an effect hook for setting up and cleaning the timer
     useEffect(() => {
-      let interval = null;
-      // let newTargetTime = Date.now(); // Initialize newTargetTime outside the interval
-      // setStatusOverdue();
       function calculateRemainingTime(duration) {
         // Check if the task is completed
-        if (item.status == "Completed") {
-          clearInterval(interval);
+        if (!item.inProgress) {
           return;
         }
         let countDownTimer;
@@ -80,9 +81,6 @@ const DetailsCard = React.memo(
         const remainingMinutes = Math.floor(
           (Math.abs(countDownTimer) % (60 * 60 * 1000)) / (60 * 1000)
         );
-        const remainingSeconds = Math.floor(
-          (Math.abs(countDownTimer) % (60 * 1000)) / 1000
-        );
 
         // Add negative sign if time is elapsed
 
@@ -90,31 +88,11 @@ const DetailsCard = React.memo(
         const sign = isElapsed ? "-" : "";
 
         // set the time variable to display on the UI
-        const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s`;
+        const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m`;
         setTime(Timer);
       }
 
-      function calculateInterval() {
-        if (!item.inProgress) {
-          return;
-        }
-
-        // Set up the interval to update the remaining time every second
-        interval = setInterval(() => {
-          calculateRemainingTime(taskDuration);
-        }, 1000);
-      }
-
-      // Call calculateInterval when the component mounts during working hours
-      !isWeekend & isAllowedTime & !isTodayHoliday &&
-        calculateInterval(item.duration, item.inProgress, item.completedIn);
-
       calculateRemainingTime(taskDuration);
-
-      // Clear the interval when the component is unmounted
-      return () => {
-        clearInterval(interval);
-      };
     }, [item.inProgress, isWeekend, isAllowedTime, isTodayHoliday]);
 
     return (
@@ -180,26 +158,45 @@ const DetailsCard = React.memo(
               : item.handler}
           </Text>
         </View>
-        <View
-          style={{
-            backgroundColor: status,
-            borderColor: status,
-            borderWidth: 1,
-          }}
-          className={` rounded-md relative py-2 w-[21vw]`}
-        >
+        <View className='relative h-full flex items-center justify-around'>
           <Text
-            style={[styles.text_md, { fontSize: actuatedNormalize(10) }]}
-            className={`text-center`}
+            style={[
+              styles.text_md,
+              {
+                fontSize: actuatedNormalize(10),
+                lineHeight: actuatedNormalizeVertical(18),
+                color: status,
+              },
+            ]}
+            className={`text-Handler3 w-[70%]  self-center text-center`}
           >
-            {item.status}
+            {item.started
+              ? formatDate(item.started)
+              : item.inProgress
+              ? formatDate(item.inProgress)
+              : null}
           </Text>
           <View
             style={{
               backgroundColor: status,
+              borderColor: status,
+              borderWidth: 1,
             }}
-            className={`absolute w-[80%]  rounded-full self-center bottom-[-7px] h-[2.5px]`}
-          ></View>
+            className={` rounded-md relative py-2 w-[21vw]`}
+          >
+            <Text
+              style={[styles.text_md, { fontSize: actuatedNormalize(10) }]}
+              className={`text-center`}
+            >
+              {item.status}
+            </Text>
+            <View
+              style={{
+                backgroundColor: status,
+              }}
+              className={`absolute w-[80%]  rounded-full self-center bottom-[-7px] h-[2.5px]`}
+            ></View>
+          </View>
         </View>
       </View>
     );

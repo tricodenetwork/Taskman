@@ -1,20 +1,23 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
-import { actuatedNormalize, styles } from "../styles/stylesheet";
-import { useIsFocused } from "@react-navigation/native";
+import {
+  actuatedNormalize,
+  actuatedNormalizeVertical,
+  styles,
+} from "../styles/stylesheet";
 import { AccountRealmContext } from "../models";
 import { calculateTime, millisecondSinceStartDate } from "../api/test";
 import { useSelector } from "react-redux";
 import { holiday } from "../models/Account";
+import { MaterialIcons } from "@expo/vector-icons";
+import { formatDate } from "../api/Functions";
 
-const { useRealm, useQuery } = AccountRealmContext;
+const { useQuery } = AccountRealmContext;
 
-export default function HandlerCard({ item }) {
+const HandlerCard = ({ item }) => {
   //____________________________________________________________________STATE AND VARIABLES____________________________________________________________________//
-  const [time, setTime] = useState("");
-  const realm = useRealm();
+  // const [time, setTime] = useState("");
   const hols = useQuery(holiday);
-  const Focus = useIsFocused();
   const Time = item.completedIn
     ? calculateTime(item.completedIn.getTime())
     : null;
@@ -22,7 +25,7 @@ export default function HandlerCard({ item }) {
   const status =
     item.status === "Pending" || item.status === ""
       ? "gray"
-      : item.status === "InProgress" && !time.includes("-")
+      : item.status === "InProgress"
       ? "#FFD700"
       : item.status === "Overdue"
       ? "#ff4747"
@@ -35,15 +38,15 @@ export default function HandlerCard({ item }) {
   const taskDuration =
     days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
 
-  const overdue = time.includes("-");
+  // const overdue = time.includes("-");
 
-  const setStatusOverdue = () => {
-    realm.write(() => {
-      if (overdue && item.status == "InProgress") {
-        item.status = "Overdue";
-      }
-    });
-  };
+  // const setStatusOverdue = () => {
+  //   realm.write(() => {
+  //     if (overdue && item.status == "InProgress") {
+  //       item.status = "Overdue";
+  //     }
+  //   });
+  // };
 
   const isTodayHoliday = hols.some((holiday) => {
     const holidayDate = new Date(holiday.day);
@@ -56,76 +59,53 @@ export default function HandlerCard({ item }) {
     );
   });
 
-  useEffect(() => {
-    let interval = null;
-
-    function calculateRemainingTime(duration) {
-      // Check if the task is completed
-      if (item.status == "Completed") {
-        clearInterval(interval);
-        return;
-      }
-      let countDownTimer;
-      let timeSpent = item.error
-        ? item.completedIn.getTime() +
-          item.error +
-          millisecondSinceStartDate(item.inProgress, hols)
-        : millisecondSinceStartDate(item.inProgress, hols);
-
-      // Calculate the remaining time in milliseconds
-      countDownTimer = duration - timeSpent;
-
-      // Calculate the remaining days, hours, minutes, and seconds
-
-      const remainingDays = Math.floor(
-        Math.abs(countDownTimer) / (24 * 60 * 60 * 1000)
-      );
-      const remainingHours = Math.floor(
-        (Math.abs(countDownTimer) % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
-      );
-      const remainingMinutes = Math.floor(
-        (Math.abs(countDownTimer) % (60 * 60 * 1000)) / (60 * 1000)
-      );
-      const remainingSeconds = Math.floor(
-        (Math.abs(countDownTimer) % (60 * 1000)) / 1000
-      );
-
-      // Add negative sign if time is elapsed
-
-      const isElapsed = countDownTimer <= 0;
-      const sign = isElapsed ? "-" : "";
-
-      // set the time variable to display on the UI
-      const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s`;
-      setTime(Timer);
+  function calculateRemainingTime(duration) {
+    if (!item.inProgress) {
+      return;
     }
+    let countDownTimer;
+    let timeSpent = item.error
+      ? item.completedIn.getTime() +
+        item.error +
+        millisecondSinceStartDate(item.inProgress, hols)
+      : millisecondSinceStartDate(item.inProgress, hols);
 
-    function calculateInterval() {
-      if (!item.inProgress) {
-        return;
-      }
+    // Calculate the remaining time in milliseconds
+    countDownTimer = duration - timeSpent;
 
-      // Set up the interval to update the remaining time every second
-      interval = setInterval(() => {
-        calculateRemainingTime(taskDuration);
-      }, 1000);
-    }
+    // Calculate the remaining days, hours, minutes, and seconds
 
-    // Call calculateInterval when the component mounts during working hours
-    !isWeekend & isAllowedTime & !isTodayHoliday &&
-      calculateInterval(item.duration, item.inProgress, item.completedIn);
+    const remainingDays = Math.floor(
+      Math.abs(countDownTimer) / (24 * 60 * 60 * 1000)
+    );
+    const remainingHours = Math.floor(
+      (Math.abs(countDownTimer) % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
+    );
+    const remainingMinutes = Math.floor(
+      (Math.abs(countDownTimer) % (60 * 60 * 1000)) / (60 * 1000)
+    );
 
-    calculateRemainingTime(taskDuration);
+    // Add negative sign if time is elapsed
 
-    // Clear the interval when the component is unmounted
-    return () => {
-      clearInterval(interval);
-    };
-  }, [item.inProgress, overdue, isWeekend, isAllowedTime, isTodayHoliday]);
+    const isElapsed = countDownTimer <= 0;
+    const sign = isElapsed ? "-" : "";
 
-  useEffect(() => {
-    setStatusOverdue();
-  }, [Focus]);
+    // set the time variable to display on the UI
+    const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m`;
+    return Timer;
+    // setTime(Timer);
+  }
+
+  const time = calculateRemainingTime(taskDuration);
+  // useEffect(() => {
+  //   calculateRemainingTime(taskDuration);
+
+  //   // Clear the interval when the component is unmounted
+  // }, [item.inProgress, overdue, isWeekend, isAllowedTime, isTodayHoliday]);
+
+  // useEffect(() => {
+  //   setStatusOverdue();
+  // }, [Focus]);
   return (
     <View
       style={styles.Pcard}
@@ -148,7 +128,7 @@ export default function HandlerCard({ item }) {
           <MaterialIcons
             name='timer'
             size={actuatedNormalize(12)}
-            color={time.includes("-") ? "red" : "#004343"}
+            color={time?.includes("-") ? "red" : "#004343"}
           />
           {!item.inProgress ? (
             <Text
@@ -156,14 +136,16 @@ export default function HandlerCard({ item }) {
               className=' text-primary'
               style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
             >
-              {`${item.duration.days == null ? 0 : item.duration.days}d ${
-                item.duration.hours == null ? 0 : item.duration.hours
-              }h ${item.duration.minutes == null ? 0 : item.duration.minutes}m`}
+              {`${item.duration?.days == null ? 0 : item.duration?.days}d ${
+                item.duration?.hours == null ? 0 : item.duration?.hours
+              }h ${
+                item.duration?.minutes == null ? 0 : item.duration?.minutes
+              }m`}
             </Text>
           ) : (
             <Text
               id='TIMER'
-              className={time.includes("-") ? "text-red-600" : "text-primary"}
+              className={time?.includes("-") ? "text-red-600" : "text-primary"}
               style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}
             >
               {item.status == "Completed" ? Time : time}
@@ -184,29 +166,52 @@ export default function HandlerCard({ item }) {
         </Text>
         <Text
           style={[styles.text_sm, { fontSize: actuatedNormalize(12) }]}
-          className='text-Handler2 absolute bottom-1 left-[22%]'
+          className='text-Handler3 absolute bottom-1 left-[22%]'
         >
           {item.job}
         </Text>
       </View>
-      <View
-        id='STATUS'
-        style={{
-          backgroundColor: status,
-          borderColor: status,
-          borderWidth: 1,
-        }}
-        className={`rounded-md  py-2 w-[21vw]`}
-      >
+      <View className='relative h-full flex items-center justify-around'>
         <Text
-          style={[styles.text_md, { fontSize: actuatedNormalize(11) }]}
-          className={`${
-            item.role ? dynamicColor().textColor : status
-          } text-center`}
+          style={[
+            styles.text_md,
+            {
+              fontSize: actuatedNormalize(10),
+              lineHeight: actuatedNormalizeVertical(18),
+            },
+          ]}
+          className={`text-Handler3 w-[70%]  self-center text-center`}
         >
-          {item.status ? item.status : item.status == "" && "PENDING"}
+          {item.started
+            ? formatDate(item.started)
+            : item.inProgress
+            ? formatDate(item.inProgress)
+            : null}
         </Text>
+        <View
+          style={{
+            backgroundColor: status,
+            borderColor: status,
+            borderWidth: 1,
+          }}
+          className={` rounded-md relative py-2 w-[21vw]`}
+        >
+          <Text
+            style={[styles.text_md, { fontSize: actuatedNormalize(10) }]}
+            className={`text-center`}
+          >
+            {item.status}
+          </Text>
+          <View
+            style={{
+              backgroundColor: status,
+            }}
+            className={`absolute w-[80%]  rounded-full self-center bottom-[-7px] h-[2.5px]`}
+          ></View>
+        </View>
       </View>
     </View>
   );
-}
+};
+
+export default React.memo(HandlerCard);

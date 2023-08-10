@@ -49,10 +49,7 @@ const Background = ({ children, bgColor = "bg-slate-200" }) => {
 
   if (!fontsLoaded) {
     return (
-      <Text
-        style={styles.text}
-        className='absolute text-white top-[50vh] text-center w-full'
-      >
+      <Text className='absolute text-white top-[50vh] text-center w-full'>
         Loading...
       </Text>
     );
@@ -62,7 +59,7 @@ const Background = ({ children, bgColor = "bg-slate-200" }) => {
         <DismissKeyboard>
           <SafeAreaView
             // style={[{ minHeight: Math.round(windowHeight) }]}
-            className={`${bgColor} h-full  border-red-  w-full relative`}
+            className={`${bgColor} h-full  border-red-500   w-full relative`}
           >
             {children}
           </SafeAreaView>

@@ -8,6 +8,7 @@ const initialState = {
   password: "",
   handler: "",
   currenttask: "",
+  timeframe: {},
   job: "",
   category: "",
   tasks: [],
@@ -33,6 +34,7 @@ const ActiveJob = createSlice({
     setJob: (state, action) => {
       state.job = action.payload.name;
       state.category = action.payload.category.name;
+      state.timeframe = action.payload.duration;
       // state.job._id = new Realm.BSON.ObjectId();
     },
     setEmail: (state, action) => {

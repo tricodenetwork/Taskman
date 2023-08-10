@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   multipleJobs: [],
-  refresh:1
+  handler: [],
 };
 
 const App = createSlice({
@@ -20,11 +20,11 @@ const App = createSlice({
     resetMulti(state) {
       state.multipleJobs = [];
     },
-    setRefresh(state,action) {
-      state.refresh>10? state.refresh=0:state.refresh = state.refresh+1;
+    setHandler(state, action) {
+      state.handler = action.payload;
     },
   },
 });
 
-export const { setMulti, resetMulti,setRefresh } = App.actions;
+export const { setMulti, resetMulti, setHandler } = App.actions;
 export default App.reducer;

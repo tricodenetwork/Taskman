@@ -281,9 +281,9 @@ export default function MessageScreen({ navigation }) {
           </View>
         ) : (
           <>
-            <View className='absolute top-0 w-[100vw]'>
+            <View className='absolute top-1 w-[100vw]'>
               {!showdelete ? (
-                <View className='relative  w-[20%]'>
+                <View className='relative w-[20%]'>
                   <Text
                     style={[styles.text, { fontSize: actuatedNormalize(17) }]}
                     className='px-[2vw] text-primary'
@@ -299,7 +299,7 @@ export default function MessageScreen({ navigation }) {
                   initial={{ y: -20 }}
                   animate={{ y: 0 }}
                   transition={{ type: "spring", stiffness: 20, duration: 1 }}
-                  className='w-full h-[5vh] bg-primary '
+                  className='w-full h-[5vh] mt-2 bg-primary '
                 >
                   {showdelete ? (
                     <TouchableOpacity
@@ -332,7 +332,7 @@ export default function MessageScreen({ navigation }) {
             <FlatList
               initialNumToRender={20}
               removeClippedSubviews={true} // Add this line.
-              className='mt-2'
+              className='mt-7'
               keyExtractor={(item) => item._id}
               data={chatroom}
               renderItem={renderItemProps}

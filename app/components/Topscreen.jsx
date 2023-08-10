@@ -4,6 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import Notify from "../../assets/images/notify.svg";
 import {
+  SCREEN_HEIGHT,
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
@@ -79,7 +80,7 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
   return (
     <LinearGradient
       style={styls.topSection}
-      colors={["#004343", "#0C4D4D"]}
+      colors={["#1F271B", "#0C4D4D"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
@@ -224,7 +225,14 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
 };
 
 const styls = StyleSheet.create({
-  topSection: { height: "40%", borderBottomLeftRadius: 35, zIndex: 0 },
+  topSection: {
+    height: SCREEN_HEIGHT < 500 ? 0.14 * SCREEN_HEIGHT : 0.15 * SCREEN_HEIGHT,
+    // borderWidth: 2,
+    // borderColor: "red",
+
+    // borderBottomLeftRadius: 35,
+    zIndex: 0,
+  },
   // backArrow:{position:'absolute',left:0,top:0, alignSelf:'flex-start', marginLeft: 20, marginTop: 20}
   // backArrow:{position:'absolute',left:0,top:0, alignSelf:'flex-start', marginLeft: 20, marginTop: 20}
 });

@@ -207,3 +207,24 @@ export async function sendPushNotification(
     body: JSON.stringify(message),
   });
 }
+export function objectIdToDate(objectId) {
+  // Extract the timestamp from the ObjectId
+  const timestampHex = objectId.substring(0, 8);
+  const timestamp = parseInt(timestampHex, 16) * 1000;
+
+  // Convert to Date
+  return new Date(timestamp);
+}
+export function formatDate(date) {
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const dateOfMonth = date.getDate().toString().padStart(2, "0");
+  const year = date.getFullYear().toString().slice(2, 4);
+  let hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const ampm = hours >= 12 ? "pm" : "am";
+
+  if (hours > 12) hours -= 12;
+  if (hours === 0) hours = 12;
+
+  return `${dateOfMonth}/${month}/${year} ${hours}:${minutes}${ampm}`;
+}

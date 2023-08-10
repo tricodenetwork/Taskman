@@ -115,14 +115,15 @@ export default function IndividualTask({ navigation }) {
           multipleJobs.forEach((params) => {
             let tasks = clientsJob.filtered(`matno ==$0`, params)[0].tasks;
             for (let task of tasks) {
-              if (
-                task.name == route.params?.taskName ||
-                task.name == currenttask
-              ) {
+              if (task.name == currenttask) {
                 task.handler = handler;
-                handler == ""
-                  ? (task.status = "Pending")
-                  : (task.status = "Awaiting");
+                if (handler == "") {
+                  task.status = "Pending";
+                  task.started = null; // Ensure the start time is cleared if there's no handler
+                } else {
+                  task.status = "Awaiting";
+                  task.started = new Date();
+                }
                 task.inProgress = null;
                 break; // Breaks out of the loop
               }
@@ -137,15 +138,19 @@ export default function IndividualTask({ navigation }) {
             const { name } = task;
             if (name == route.params?.taskName) {
               task.handler = handler;
-              handler == ""
-                ? (task.status = "Pending")
-                : (task.status = "Awaiting");
-              task.inProgress = null;
-              handler == ""
-                ? alert(`${route.params?.taskName} 📃 Unassigned Single`)
-                : alert(
-                    `${route.params?.taskName} 📃 assign to ${handler} single👤 `
-                  );
+              if (handler == "") {
+                task.status = "Pending";
+                task.started = null;
+                task.inProgress = null;
+                alert(`${route.params?.taskName} 📃 Unassigned Single`);
+              } else {
+                task.status = "Awaiting";
+                task.started = new Date();
+                task.inProgress = null;
+                alert(
+                  `${route.params?.taskName} 📃 assign to ${handler} single👤 `
+                );
+              }
               return;
             }
           });

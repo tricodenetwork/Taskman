@@ -44,7 +44,7 @@ export default function TaskDetails({
     return () => {
       setRefreshing(false);
     };
-  }, [isFocused, refreshing, taskdata]);
+  }, [isFocused, refreshing]);
 
   return (
     <DraggableFlatList
@@ -114,7 +114,7 @@ export default function TaskDetails({
                 <View>
                   {route.name == "activetasks" ? (
                     <DetailsCard
-                    key={refresh}
+                      key={refresh}
                       isActive={isActive}
                       id={jobId}
                       index={getIndex()}
@@ -138,7 +138,9 @@ export default function TaskDetails({
         );
       }}
       showsVerticalScrollIndicator
-      keyExtractor={(item, index) => index}
+      keyExtractor={(item, index) => index.toString()}
+      initialNumToRender={20}
+      maxToRenderPerBatch={60}
       // style={{ height: route.name == "tasks" ? "95%" : "95%" }}
     />
   );

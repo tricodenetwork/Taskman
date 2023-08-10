@@ -1,38 +1,25 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useApp, useUser } from "@realm/react";
-import {
-  Pressable,
-  StyleSheet,
-  Platform,
-  Text,
-  KeyboardAvoidingView,
-} from "react-native";
+import { StyleSheet, Platform, KeyboardAvoidingView } from "react-native";
 
-import { Account, client, holiday } from "./models/Account";
+import { holiday } from "./models/Account";
 import { AccountRealmContext } from "./models";
 import { buttonStyles } from "./styles/button";
 import { shadows } from "./styles/shadows";
 import colors from "./styles/colors";
 import { Provider } from "react-redux";
 import { persistor, store } from "./store/store";
-import { PersistGate } from "redux-persist/lib/integration/react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { MainStack } from "./navigator/AppNavigator";
 import RealmPlugin from "realm-flipper-plugin-device";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
-import { user, chatroom, chats } from "./models/Chat";
+import { chatroom, chats } from "./models/Chat";
 import { category } from "./models/Task";
-import { useDispatch } from "react-redux";
-import { sendPushNotification } from "./api/Functions";
-import Login from "./screens/Login";
+import { LinearGradient } from "expo-linear-gradient";
+import { SCREEN_HEIGHT } from "./styles/stylesheet";
+import { View } from "react-native";
 
 const originalWarn = console.warn; // Store the original console.warn method
 
@@ -151,17 +138,27 @@ export const AppSync = () => {
       <Provider store={store}>
         {/* <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}> */}
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <StatusBar
-            style='light'
-            backgroundColor='#004343'
-            animated={true}
-            //  hidden
-          />
+          <LinearGradient
+            colors={["#1F271B", "#0C4D4D"]}
+            style={{
+              height:
+                SCREEN_HEIGHT < 500
+                  ? 0.05 * SCREEN_HEIGHT
+                  : 0.04 * SCREEN_HEIGHT,
+            }}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <StatusBar
+              style='light'
+              backgroundColor='transparent'
+              translucent={true}
+            />
+            {/* rest of your components */}
+          </LinearGradient>
           <RealmPlugin realms={[realm]} />
-          {/* <KeyboardAvoidingView style={{ flex: 1 }} enabled behavior='padding'> */}
           <MainStack />
           {/* <Login /> */}
-          {/* </KeyboardAvoidingView> */}
         </GestureHandlerRootView>
         {/* </PersistGate> */}
       </Provider>

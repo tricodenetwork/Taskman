@@ -64,7 +64,7 @@ const HandlerTopscreen = ({ text, text2, text3, children, Edit }) => {
   return (
     <LinearGradient
       style={styls.topSection}
-      colors={["#004343", "#0C4D4D"]}
+      colors={["#1F271B", "#0C4D4D"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >

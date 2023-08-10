@@ -21,7 +21,7 @@ export default function SearchComponent({ filterItems = [] }) {
   return (
     <View
       style={{ borderRadius: actuatedNormalize(6) }}
-      className={`bg-slate-400 w-[90%] self-center relative h-max py-[1vh] flex flex-row items-center px-[1vw]`}
+      className={`bg-[#A6C9C9] w-[90vw] self-center relative h-max py-[1vh] flex flex-row items-center px-[1vw]`}
     >
       <MaterialIcons
         name='search'
@@ -35,7 +35,7 @@ export default function SearchComponent({ filterItems = [] }) {
         style={[styles.averageText, { color: "#004343" }]}
         placeholder={filter === "MatNo" ? "Client ID" : filter || "Name"}
         placeholderTextColor={"rgba(0, 67,67,0.6)"}
-        className='w-[80%] h-[5vh] bg-slate-400 rounded-sm self-center'
+        className='w-[80%] h-[4vh] bg-[#A6C9C9] rounded-sm self-center'
       />
       <View className='absolute right-[1vw]'>
         <TouchableOpacity

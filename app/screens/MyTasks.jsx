@@ -1,33 +1,18 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  RefreshControl,
-  TextInput,
-  Button,
-} from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { View, ActivityIndicator } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
-import { actuatedNormalizeVertical, styles } from "../styles/stylesheet";
-import { FontAwesome5 } from "@expo/vector-icons";
-import LowerButton from "../components/LowerButton";
 import SearchComponent from "../components/SearchComponent";
-import DetailsCard from "../components/DetailsCard";
-import UserDetails from "../components/UserDetails";
-import JobDetails from "../components/JobDetails";
-import TaskDetails from "../components/TaskDetails";
-import { Modal } from "react-native";
-import { setDuration } from "../store/slice-reducers/JobSlice";
 import OdinaryButton from "../components/OdinaryButton";
-import { updateAddress } from "../store/slice-reducers/Database";
-import { getJobDetails, addTask } from "../api/Functions";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import { activejob } from "../models/Task";
 import { useDispatch, useSelector } from "react-redux";
-import { resetMulti } from "../store/slice-reducers/App";
+import { resetMulti, setHandler } from "../store/slice-reducers/App";
+import HandlerDetails from "../components/HandlerDetails";
+import TaskDetails from "../components/TaskDetails";
+import { Text } from "react-native";
+import { SCREEN_HEIGHT, styles } from "../styles/stylesheet";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -37,30 +22,37 @@ export default function MyTasks({ navigation }) {
   const realm = useRealm();
   const focus = useIsFocused();
   const dispatch = useDispatch();
-  const [refreshing, setRefreshing] = useState(false);
+  const [update, setUpdate] = useState(false);
+
   const ActiveJobs = useQuery(activejob);
   const { user } = useSelector((state) => state);
+  const { handler } = useSelector((state) => state.App);
 
-  const myTasks = useMemo(
-    () =>
-      Array.from(ActiveJobs).map((job) => {
-        const assigned =
-          job?.tasks.filter((obj) => obj.handler === user.name) ?? [];
-        assigned.forEach((obj) => {
-          obj.id = job._id.toString();
-          obj.job = job.job;
-          obj.supervisor = job.supervisor;
-          obj.matno = job.matno;
-        });
-        return assigned;
-      }),
-    [ActiveJobs, focus]
-  );
+  const tasks = useMemo(() => {
+    const myTasks = Array.from(ActiveJobs).map((job) => {
+      const assigned =
+        job?.tasks.filter((obj) => obj.handler === user.name) ?? [];
+      assigned.forEach((obj) => {
+        obj.id = job._id.toString();
+        obj.job = job.job;
+        obj.supervisor = job.supervisor;
+        obj.matno = job.matno;
+      });
+      return assigned;
+    });
 
-  const mergedTasks = () => myTasks.reduce((acc, obj) => acc.concat(obj), []);
+    const merged = myTasks.reduce((acc, obj) => acc.concat(obj), []);
+    return merged.sort((a, b) => (a.id < b.id ? 1 : -1));
+  }, [focus]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      // dispatch(setHandler(tasks));
+      setUpdate(true);
+    }, 0);
+  }, []);
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
-
   useEffect(() => {
     dispatch(resetMulti());
   }, [focus]);
@@ -69,28 +61,38 @@ export default function MyTasks({ navigation }) {
     <Background bgColor='min-h-[98vh]'>
       <Topscreen text={"My Tasks"}>
         <OdinaryButton
-          bg={"#77E6B6"}
-          color={"#0D037A"}
+          // bg={"#77E6B6"}
+          color={"white"}
           navigate={() => {
             navigation.navigate("taskdetailsscreen");
           }}
           text='Assign Multiple Tasks'
-          style={"absolute top-[10vh] w-[90vw] bg-white"}
+          style={`absolute ${
+            SCREEN_HEIGHT < 500 ? "top-[7vh]" : "top-[9vh]"
+          } w-[55vw]`}
         />
       </Topscreen>
 
       <View
-        className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
+        style={[styles.Pcard]}
+        className='bg-slate-200 h-[84vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
       >
-        <View className='mb-1'>
+        <View className='mb-2'>
           <SearchComponent filterItems={["MatNo", "Status", "Supervisor"]} />
         </View>
         <View>
-          <TaskDetails
-            taskdata={mergedTasks}
-            // jobId={route.params.id}
-          />
+          {!update ? (
+            <View className='relative top-[5vh]'>
+              <ActivityIndicator size={"large"} color={"rgb(88 28 135)"} />
+            </View>
+          ) : (
+            // <Text>{tasks.length}</Text>
+            <HandlerDetails
+              taskdata={tasks}
+              // jobId={route.params.id}
+            />
+          )}
         </View>
       </View>
     </Background>

@@ -6,7 +6,7 @@ import {
   Modal,
   RefreshControl,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import {
@@ -17,18 +17,15 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import LowerButton from "../components/LowerButton";
 import SearchComponent from "../components/SearchComponent";
-import DetailsCard from "../components/DetailsCard";
-import UserDetails from "../components/UserDetails";
 import JobDetails from "../components/JobDetails";
 import { useSelector, useDispatch } from "react-redux";
 import { replaceTask, setTask } from "../store/slice-reducers/JobSlice";
 import OdinaryButton from "../components/OdinaryButton";
-import SelectComponent from "../components/SelectComponent";
 import { TextInput } from "react-native";
 import { AccountRealmContext } from "../models";
-import { category } from "../models/Task";
-import { Object } from "realm";
+import { category, job } from "../models/Task";
 import { setFilter } from "../store/slice-reducers/Formslice";
+import { convertToMinutes, formatDuration, sumField } from "../api/Functions";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -39,6 +36,7 @@ export default function Jobs({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const realm = useRealm();
   const Cat = useQuery(category);
+  const jobs = useQuery(job);
   // const value = realm.objectForPrimaryKey("category", edit.id) ?? [];
   const value = Cat.filtered(`name == $0`, name);
 
@@ -91,10 +89,29 @@ export default function Jobs({ navigation }) {
     [realm]
   );
 
+  const sum3 = useMemo(() => {
+    const tempSum1 = sumField(jobs[0].tasks, "duration");
+    const tempSum2 = convertToMinutes(tempSum1);
+    return formatDuration(tempSum2);
+  }, [jobs.length]);
+  console.log(sum3);
+
   useEffect(() => {
     dispatch(setFilter("Name"));
     // dispatch(setvi)
   }, []);
+
+  useEffect(() => {
+    try {
+      realm.write(() => {
+        jobs.forEach((job) => {
+          job.duration = sum3;
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }, [jobs.length]);
 
   const render = ({ item }) => {
     const highlight =

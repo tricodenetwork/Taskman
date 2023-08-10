@@ -225,6 +225,7 @@ const TaskDetailsPage = () => {
               if (task.name == currenttask) {
                 task.handler = handler;
                 task.status = "Awaiting";
+                task.started = new Date();
                 sendPushNotification(pushToken, task.name);
               }
             });
@@ -249,6 +250,7 @@ const TaskDetailsPage = () => {
             if (task.name == currenttask) {
               task.handler = handler;
               task.status = "Awaiting";
+              task.started = new Date();
               sendPushNotification(pushToken, task.name);
             }
           });

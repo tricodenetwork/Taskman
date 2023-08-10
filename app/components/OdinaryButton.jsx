@@ -12,10 +12,10 @@ export default function OdinaryButton({
 }) {
   return (
     <View
-      style={{ backgroundColor: bg }}
+      // style={{ backgroundColor: bg ? bg : "rgb(88 28 135)" }}
       className={` ${style} ${
-        disabled ? "bg-slate-500" : "bg-purple-900"
-      }  self-center disabled:bg-slate-500 rounded-lg  mx-auto`}
+        disabled ? "bg-slate-500" : bg ? `bg-[${bg}]` : "bg-purple-900"
+      }  self-center  rounded-md  mx-auto`}
     >
       <TouchableOpacity
         disabled={disabled}
@@ -25,9 +25,12 @@ export default function OdinaryButton({
         <Text
           style={[
             styles.text_md2,
-            { fontSize: actuatedNormalize(13), color: color ? color : "white" },
+            {
+              fontSize: actuatedNormalize(13),
+              color: color ? color : "white",
+            },
           ]}
-          className='font-extrabold text-center text-white'
+          className='text-center text-white'
         >
           {text}
         </Text>
