@@ -226,11 +226,12 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
 
 const styls = StyleSheet.create({
   topSection: {
-    height: SCREEN_HEIGHT < 500 ? 0.14 * SCREEN_HEIGHT : 0.15 * SCREEN_HEIGHT,
+    // height: SCREEN_HEIGHT < 500 ? 0.14 * SCREEN_HEIGHT : 0.15 * SCREEN_HEIGHT,
+    height: "40%",
     // borderWidth: 2,
     // borderColor: "red",
 
-    // borderBottomLeftRadius: 35,
+    borderBottomLeftRadius: 35,
     zIndex: 0,
   },
   // backArrow:{position:'absolute',left:0,top:0, alignSelf:'flex-start', marginLeft: 20, marginTop: 20}

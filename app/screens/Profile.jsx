@@ -13,7 +13,6 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 
 const Profile = ({ navigation }) => {
   const user = useUser();
-
   const handleLogout = useCallback(() => {
     user?.logOut();
   }, [user]);

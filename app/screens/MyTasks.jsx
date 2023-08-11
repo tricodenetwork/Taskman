@@ -59,7 +59,13 @@ export default function MyTasks({ navigation }) {
   //----------------------------------------------------RENDERED COMPONENT
   return (
     <Background bgColor='min-h-[98vh]'>
-      <Topscreen text={"My Tasks"}>
+      <Topscreen text={"My Tasks"}></Topscreen>
+
+      <View
+        style={[styles.Pcard]}
+        className='bg-slate-200 h-[84vh] rounded-t-3xl  p-2 w-full absolute bottom-0
+      '
+      >
         <OdinaryButton
           // bg={"#77E6B6"}
           color={"white"}
@@ -68,16 +74,9 @@ export default function MyTasks({ navigation }) {
           }}
           text='Assign Multiple Tasks'
           style={`absolute ${
-            SCREEN_HEIGHT < 500 ? "top-[7vh]" : "top-[9vh]"
+            SCREEN_HEIGHT < 500 ? "-top-[2vh]" : "-top-[5vh]"
           } w-[55vw]`}
         />
-      </Topscreen>
-
-      <View
-        style={[styles.Pcard]}
-        className='bg-slate-200 h-[84vh] rounded-t-3xl  p-2 w-full absolute bottom-0
-      '
-      >
         <View className='mb-2'>
           <SearchComponent filterItems={["MatNo", "Status", "Supervisor"]} />
         </View>

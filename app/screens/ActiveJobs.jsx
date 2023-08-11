@@ -129,7 +129,11 @@ export default function ActiveJobs({ navigation }) {
 
   return (
     <Background bgColor='min-h-[98vh]'>
-      <Topscreen text={!user.clientId ? "ActiveJobs" : "MyJob"}>
+      <Topscreen text={!user.clientId ? "ActiveJobs" : "MyJob"}></Topscreen>
+      <View
+        className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
+      '
+      >
         <OdinaryButton
           color={"white"}
           // bg={"#77e6b6"}
@@ -138,14 +142,9 @@ export default function ActiveJobs({ navigation }) {
           }}
           text='Assign Multiple Tasks'
           style={`absolute ${
-            SCREEN_HEIGHT < 500 ? "top-[7vh]" : "top-[9vh]"
+            SCREEN_HEIGHT < 500 ? "-top-[2vh]" : "-top-[5vh]"
           } w-[55vw]`}
         />
-      </Topscreen>
-      <View
-        className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
-      '
-      >
         <View className='mb-1'>
           {!user.clientId ? (
             <SearchComponent
