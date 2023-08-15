@@ -111,7 +111,7 @@ export default function ChatScreen() {
       return new Chats(realm, messageObject);
     });
 
-    sendPushNotification(pushToken, name, messageObject.text);
+    sendPushNotification(pushToken, user.name, messageObject.text);
   }, []);
 
   function renderBubble(props) {

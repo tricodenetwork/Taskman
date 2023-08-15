@@ -12,12 +12,13 @@ import { holiday } from "../models/Account";
 import { MaterialIcons } from "@expo/vector-icons";
 import { formatDate } from "../api/Functions";
 
-const { useQuery } = AccountRealmContext;
+const { useQuery, useRealm } = AccountRealmContext;
 
 const HandlerCard = ({ item }) => {
   //____________________________________________________________________STATE AND VARIABLES____________________________________________________________________//
   // const [time, setTime] = useState("");
   const hols = useQuery(holiday);
+  const realm = useRealm();
   const Time = item.completedIn
     ? calculateTime(item.completedIn.getTime())
     : null;
@@ -36,16 +37,6 @@ const HandlerCard = ({ item }) => {
   const { days, hours, minutes } = item.duration;
   const taskDuration =
     days * 24 * 60 * 60 * 1000 + hours * 60 * 60 * 1000 + minutes * 60 * 1000;
-
-  // const overdue = time.includes("-");
-
-  // const setStatusOverdue = () => {
-  //   realm.write(() => {
-  //     if (overdue && item.status == "InProgress") {
-  //       item.status = "Overdue";
-  //     }
-  //   });
-  // };
 
   function calculateRemainingTime(duration) {
     if (!item.inProgress || item.status == "Completed") {
@@ -85,14 +76,24 @@ const HandlerCard = ({ item }) => {
   }
 
   const time = calculateRemainingTime(taskDuration);
+  const overdue = time?.includes("-");
 
-  // useEffect(() => {
-  //   setStatusOverdue();
-  // }, [Focus]);
+  const setStatusOverdue = () => {
+    realm.write(() => {
+      if (item.status == "InProgress") {
+        item.status = "Overdue";
+      }
+    });
+  };
+  useEffect(() => {
+    if (overdue) {
+      setStatusOverdue();
+    }
+  }, [overdue]);
   return (
     <View
       style={styles.Pcard}
-      className='bg-white flex-row   rounded-2xl mb-4 self-center w-[90vw] h-[14vh] px-[7] items-center justify-between'
+      className='bg-white flex-row   rounded-2xl  self-center w-[90vw] h-[14vh] px-[7] items-center justify-between'
     >
       <View
         style={{
@@ -106,7 +107,7 @@ const HandlerCard = ({ item }) => {
       >
         <View
           id='TIMER'
-          className='absolute items-center space-x-[3vw] flex flex-row top-[5%] left-[22%]'
+          className='absolute items-center space-x-[3vw] flex flex-row top-[5%] left-[10%]'
         >
           <MaterialIcons
             name='timer'
@@ -156,7 +157,7 @@ const HandlerCard = ({ item }) => {
         </Text>
         <Text
           style={[styles.text_sm, { fontSize: actuatedNormalize(12) }]}
-          className='text-Handler3 absolute bottom-1 left-[22%]'
+          className='text-Handler3 absolute bottom-1 left-[10%]'
         >
           {item.job}
         </Text>
@@ -168,14 +169,17 @@ const HandlerCard = ({ item }) => {
             {
               fontSize: actuatedNormalize(10),
               lineHeight: actuatedNormalizeVertical(18),
+              color: status,
             },
           ]}
-          className={`text-Handler3 w-[70%]  self-center text-center`}
+          className={`w-[70%]  self-center text-center`}
         >
-          {item.started
-            ? formatDate(item.started)
+          {item.finished
+            ? formatDate(item.finished)
             : item.inProgress
             ? formatDate(item.inProgress)
+            : item.started
+            ? formatDate(item.started)
             : null}
         </Text>
         <View

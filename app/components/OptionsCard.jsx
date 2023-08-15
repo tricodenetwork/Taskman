@@ -6,7 +6,7 @@ const OptionsCard = ({ text, icon }) => {
   return (
     <View
       style={styles.Pcard}
-      className='bg-white rounded-md mb-[3vh] h-[10vh] flex flex-row justify-between items-center px-[4vw] w-[90vw] self-center'
+      className='bg-white rounded-md  h-[10vh] flex flex-row justify-between items-center px-[4vw] w-[90vw] self-center'
     >
       {icon}
       <Text style={styles.text_sm2}>{text}</Text>

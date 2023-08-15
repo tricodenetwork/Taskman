@@ -1,4 +1,4 @@
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, TouchableOpacity } from "react-native";
 import React from "react";
 import Background from "../components/Background";
 import { FlatList } from "react-native-gesture-handler";
@@ -145,8 +145,9 @@ export default function Stats() {
       data.forEach((item) => {
         htmlContent += `<p>Handler: ${item.handler}</p>`;
         htmlContent += `<p>Assigned: ${item.Assigned}</p>`;
-        htmlContent += `<p>Late Completed: ${item.lateCompletion}</p>`;
+        htmlContent += `<p>Completed: ${item.completed}</p>`;
         htmlContent += `<p>Pending: ${item.pending}</p>`;
+        htmlContent += `<p>Overdue: ${item.overdue}</p>`;
         htmlContent += `<p>Prompt Completed: ${item.promptCompleted}</p>`;
         htmlContent += `<p>Tasks Completed Promptly(%): ${item.promptInPercentage}%</p>`;
         htmlContent += "<hr/>";
@@ -178,31 +179,34 @@ export default function Stats() {
 
   const render = ({ item, index }) => {
     return (
-      <View className='flex px-[1vw] border-b-[1px] py-[1vh] flex-row justify-center items-center'>
-        <Text style={[styles.text_sm]} className='w-[10%] text-left'>
-          {index + 1}
-        </Text>
-        <Text style={[styles.text_sm]} className='w-[70%] text-left px-2'>
-          {item.handler}
-        </Text>
-        {/* <Text style={[styles.text_sm]} className='w-[20%] text-center'>
+      <TouchableOpacity activeOpacity={1}>
+        <View className='flex px-[1vw] border-b-[1px] py-[1vh] flex-row justify-center items-center'>
+          <Text style={[styles.text_sm]} className='w-[10%] text-left'>
+            {index + 1}
+          </Text>
+          <Text style={[styles.text_sm]} className='w-[70%] text-left px-2'>
+            {item.handler}
+          </Text>
+          {/* <Text style={[styles.text_sm]} className='w-[20%] text-center'>
           {item.Assigned}
         </Text> */}
-        {/* <Text style={[styles.text_sm]} className='w-[20%] text-center'>
+          {/* <Text style={[styles.text_sm]} className='w-[20%] text-center'>
           {item.promptCompleted}
         </Text> */}
-        <Text style={[styles.text_sm]} className='w-[20%] text-center'>
-          {item.promptInPercentage}
-        </Text>
-      </View>
+          <Text style={[styles.text_sm]} className='w-[20%] text-center'>
+            {item.promptInPercentage}
+          </Text>
+        </View>
+      </TouchableOpacity>
     );
   };
 
   return (
     <Background bgColor='flex flex-row items-start'>
       <FlatList
-        style={{ height: "100%", padding: 0.01 * SCREEN_WIDTH }}
-        contentContainerStyle={{ height: "100%" }}
+        style={{ height: "94%", padding: 0.01 * SCREEN_WIDTH }}
+        className='border-b-2 '
+        // contentContainerStyle={{ height: "90%" }}
         ListHeaderComponent={
           <View className='flex px-[1vw] border-b-[1px] flex-row items-center'>
             <Text
@@ -242,20 +246,13 @@ export default function Stats() {
         maxToRenderPerBatch={60}
         renderItem={render}
         keyExtractor={(item) => item.id}
-        ListFooterComponent={
-          <OdinaryButton
-            navigate={() => {
-              generatePDF(handlerTaskStats);
-            }}
-            text='Print'
-            style={"bg-Handler3"}
-          />
-        }
-        ListFooterComponentStyle={{
-          position: "absolute",
-          bottom: actuatedNormalizeVertical(10),
-          right: actuatedNormalize(15),
+      />
+      <OdinaryButton
+        navigate={() => {
+          generatePDF(handlerTaskStats);
         }}
+        text='Print'
+        style={"bg-Handler3 absolute bottom-2 right-2"}
       />
     </Background>
   );

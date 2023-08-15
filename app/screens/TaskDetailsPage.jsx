@@ -41,6 +41,8 @@ const TaskDetailsPage = () => {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [visible, setVisible] = useState(false);
+  const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
+
   const { currenttask, handler, password } = useSelector(
     (state) => state.ActiveJob
   );
@@ -76,7 +78,6 @@ const TaskDetailsPage = () => {
     `name == $0 AND role == "Handler"`,
     handler
   )[0];
-  const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
   const { multipleJobs } = useSelector((state) => state.App);
 
   const pushToken = account?.pushToken || "";
@@ -85,19 +86,7 @@ const TaskDetailsPage = () => {
     "senderId == $0 ||  recieverId == $0",
     user._id
   );
-
-  const holidas = useQuery(holiday);
-  const isTodayHoliday = holidas.some((holiday) => {
-    const holidayDate = new Date(holiday.day);
-    const today = new Date();
-
-    return (
-      holidayDate.getFullYear() === today.getFullYear() &&
-      holidayDate.getMonth() === today.getMonth() &&
-      holidayDate.getDate() === today.getDate()
-    );
-  });
-
+  const update = route.params?.update;
   // Create a chat room
   const createChatRoom = (recieverId) => {
     // Generate a unique chat room ID
@@ -168,6 +157,7 @@ const TaskDetailsPage = () => {
         alert("Error accepting message");
       }
     });
+    update([]);
     navigation.navigate("mytasks");
   }, [
     realm,
@@ -216,6 +206,7 @@ const TaskDetailsPage = () => {
                 );
 
                 task.status = "Completed";
+                task.finished = new Date();
                 task.completedIn = task.completedIn
                   ? new Date(timeCompleted + task.completedIn)
                   : new Date(timeCompleted);
@@ -241,6 +232,7 @@ const TaskDetailsPage = () => {
               const timeCompleted = millisecondSinceStartDate(task.inProgress);
 
               task.status = "Completed";
+              task.finished = new Date();
               task.completedIn = task.completedIn
                 ? new Date(timeCompleted + task.completedIn)
                 : new Date(timeCompleted);
@@ -260,7 +252,7 @@ const TaskDetailsPage = () => {
         console.log({ error, msg: "Error Assigning next task" });
       }
     });
-
+    update([]);
     navigation.navigate("mytasks");
     // setIsNextTaskModalOpen(false);
   }, [
@@ -343,6 +335,7 @@ const TaskDetailsPage = () => {
     });
 
     sendPushNotification(pushToken, "Error in Task");
+    update([]);
     navigation.navigate("mytasks");
 
     setIsErrorModalOpen(false);
@@ -388,32 +381,6 @@ const TaskDetailsPage = () => {
           <Text style={[styles.text_md]}>Task: {route.params?.name}</Text>
         ) : null}
 
-        {visible ? (
-          <TouchableOpacity
-            className='bg-primary_light rounded-2xl self-center absolute top-[5vh] justify-center w-[100%] h-[75%]'
-            activeOpacity={1}
-          >
-            <Motion.View
-              initial={{ x: -500 }}
-              animate={{ x: 0 }}
-              transition={{ type: "spring", stiffness: 100 }}
-              className='justify-center h-full  w-full  flex self-center'
-            >
-              <Text style={styles.text_sm} className='text-center mb-2'>
-                Press Ok to Accept
-              </Text>
-              <OdinaryButton
-                style={"rounded-sm mt-4 bg-primary"}
-                navigate={() => {
-                  handleAcceptButton();
-
-                  setVisible(!visible);
-                }}
-                text={"OK"}
-              />
-            </Motion.View>
-          </TouchableOpacity>
-        ) : null}
         <View
           id='BUTTONS'
           className='flex justify-around w-[80vw] self-center flex-row'
@@ -423,12 +390,16 @@ const TaskDetailsPage = () => {
             disabled={
               route.params?.status == "InProgress" ||
               route.params?.status == "Completed" ||
-              route.params?.status == "Overdue"
+              route.params?.status == "Overdue" ||
+              isWeekend ||
+              !isAllowedTime ||
+              (route.params == undefined && multipleJobs.length == 0) ||
+              (route.params == undefined && password == "")
             }
             color={"#FF925C"}
             title='Accept'
             onPress={() => {
-              setVisible(!visible);
+              handleAcceptButton();
             }}
           />
           {/* Done button */}
@@ -436,7 +407,11 @@ const TaskDetailsPage = () => {
             disabled={
               route.params?.status == "Completed" ||
               route.params?.status == "Awaiting" ||
-              route.params?.status == "Pending"
+              route.params?.status == "Pending" ||
+              isWeekend ||
+              !isAllowedTime ||
+              (route.params == undefined && multipleJobs.length == 0) ||
+              (route.params == undefined && password == "")
             }
             color={"#006400"}
             title='Done'
@@ -444,12 +419,14 @@ const TaskDetailsPage = () => {
           />
 
           {/* Error button */}
-          <Button
-            disabled={route.params?.status == "Completed"}
-            color={"#ff4747"}
-            title='Reject'
-            onPress={handleErrorButton}
-          />
+          {route.params !== undefined && (
+            <Button
+              disabled={route.params?.status == "Completed"}
+              color={"#ff4747"}
+              title='Reject'
+              onPress={handleErrorButton}
+            />
+          )}
         </View>
 
         {/* Next task modal */}

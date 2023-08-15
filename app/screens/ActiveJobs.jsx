@@ -134,17 +134,19 @@ export default function ActiveJobs({ navigation }) {
         className='bg-slate-200 h-[85vh] rounded-t-3xl  p-2 w-full absolute bottom-0
       '
       >
-        <OdinaryButton
-          color={"white"}
-          // bg={"#77e6b6"}
-          navigate={() => {
-            navigation.navigate("it");
-          }}
-          text='Assign Multiple Tasks'
-          style={`absolute ${
-            SCREEN_HEIGHT < 500 ? "-top-[2vh]" : "-top-[5vh]"
-          } w-[55vw]`}
-        />
+        {!user.clientId ? (
+          <OdinaryButton
+            color={"white"}
+            // bg={"#77e6b6"}
+            navigate={() => {
+              navigation.navigate("it");
+            }}
+            text='Assign Multiple Tasks'
+            style={`absolute ${
+              SCREEN_HEIGHT < 500 ? "-top-[6vh]" : "-top-[5vh]"
+            } w-[55vw]`}
+          />
+        ) : null}
         <View className='mb-1'>
           {!user.clientId ? (
             <SearchComponent

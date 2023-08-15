@@ -48,10 +48,10 @@ export const MainStack = () => {
   const dispatch = useDispatch();
   const user = useUser();
   const oid = user.identities[0].id;
-  const cleanedOid = oid.replace(/[^0-9a-zA-Z]/g, "");
+  const cleanedOid = oid.replace(/[^0-9a-zA-Z ]/g, "");
 
   const account =
-    cleanedOid.length > 10
+    cleanedOid.length > 20
       ? useObject("account", Realm.BSON.ObjectId(cleanedOid))
       : useQuery("client").filtered(`clientId == $0`, cleanedOid)[0];
 

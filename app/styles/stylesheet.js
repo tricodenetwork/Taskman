@@ -43,10 +43,10 @@ export function isScreenHeight770() {
 
 export const styles = StyleSheet.create({
   Pcard: {
-    shadowColor: "white",
-    shadowOffset: { height: 50, width: 20 },
-    shadowOpacity: 1,
-    shadowRadius: 3.84,
+    shadowColor: "black",
+    shadowOffset: { height: 5, width: 5 },
+    shadowOpacity: 0.15,
+    shadowRadius: 1.5,
     elevation: 5,
   },
   image: {

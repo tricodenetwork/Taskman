@@ -17,7 +17,7 @@ import { Text } from "react-native";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
-export default function HandlerDetails({ jobId, taskdata }) {
+export default function HandlerDetails({ jobId, taskdata, update }) {
   const [data, setData] = useState(taskdata);
   const [refreshing, setRefreshing] = useState(false);
   const { search, filter } = useSelector((state) => state.app);
@@ -34,7 +34,8 @@ export default function HandlerDetails({ jobId, taskdata }) {
     const { name, id, job, matno, supervisor, handler, status } = item;
     return (
       <TouchableOpacity
-        activeOpacity={0.8}
+        activeOpacity={0.9}
+        className='flex  w-[90vw] self-center bg-primary rounded-2xl mb-5'
         onPress={() => {
           // item contains non_serializable values. id
 
@@ -46,6 +47,7 @@ export default function HandlerDetails({ jobId, taskdata }) {
             job: job,
             handler: handler,
             status: status,
+            update: update,
           });
         }}
       >
@@ -78,6 +80,7 @@ export default function HandlerDetails({ jobId, taskdata }) {
         <RefreshControl
           refreshing={refreshing}
           onRefresh={() => {
+            update([]);
             setRefreshing(true);
           }}
         />

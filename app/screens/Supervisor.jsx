@@ -275,13 +275,14 @@ export default function Supervisor() {
           </View>
         </View>
       </HandlerTopscreen>
-      <View className='self-center pt-[3vh]'>
+      <View className='self-center flex justify-between h-[40vh] py-[2.5vh]'>
         <View>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("activeJobs");
             }}
-            activeOpacity={0.5}
+            activeOpacity={0.9}
+            className='rounded-md bg-primary'
           >
             <OptionsCard
               icon={
@@ -299,7 +300,8 @@ export default function Supervisor() {
           onPress={() => {
             navigation.navigate("profile");
           }}
-          activeOpacity={0.5}
+          activeOpacity={0.9}
+          className='rounded-md bg-primary'
         >
           <OptionsCard
             icon={
@@ -313,11 +315,12 @@ export default function Supervisor() {
           />
         </TouchableOpacity>
         <TouchableOpacity
-          className='relative max-h-max'
+          className='relative flex flex-row max-h-max'
           onPress={() => {
             navigation.navigate("messages");
           }}
-          activeOpacity={0.5}
+          activeOpacity={0.9}
+          className='rounded-md bg-primary'
         >
           <OptionsCard
             icon={
@@ -335,7 +338,7 @@ export default function Supervisor() {
                 width: actuatedNormalize(25),
                 height: actuatedNormalize(25),
               }}
-              className='rounded-full absolute left-[15vw] top-[26%]   flex items-center justify-center bg-purple-500'
+              className='rounded-full absolute left-[15vw] self-center   flex items-center justify-center bg-purple-500'
             >
               <Text
                 className='text-red-100'

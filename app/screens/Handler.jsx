@@ -83,6 +83,7 @@ export default function Handler({ navigation }) {
           roomId
         ).length > 0
     );
+
   return (
     <Background bgColor='-z-40'>
       <HandlerTopscreen text3={formattedDate} text={`Hello, ${name}`}>
@@ -249,13 +250,14 @@ export default function Handler({ navigation }) {
           </View>
         </View>
       </HandlerTopscreen>
-      <View className='flex justify-between self-center  pt-[1.5vh]'>
+      <View className='flex justify-between self-center h-[40vh]  py-[1.5vh]'>
         <View>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("mytasks");
             }}
-            activeOpacity={0.5}
+            activeOpacity={0.9}
+            className='rounded-md bg-primary'
           >
             <OptionsCard
               icon={
@@ -274,7 +276,8 @@ export default function Handler({ navigation }) {
             onPress={() => {
               navigation.navigate("profile");
             }}
-            activeOpacity={0.5}
+            activeOpacity={0.9}
+            className='rounded-md bg-primary'
           >
             <OptionsCard
               icon={
@@ -290,11 +293,11 @@ export default function Handler({ navigation }) {
         </View>
         <View>
           <TouchableOpacity
-            className='relative flex-1 max-h-max'
+            className='relative flex  flex-row  rounded-md bg-primary  max-h-max'
             onPress={() => {
               navigation.navigate("messages");
             }}
-            activeOpacity={0.5}
+            activeOpacity={0.9}
           >
             <OptionsCard
               icon={
@@ -312,7 +315,7 @@ export default function Handler({ navigation }) {
                   width: actuatedNormalize(25),
                   height: actuatedNormalize(25),
                 }}
-                className='rounded-full absolute left-[15vw] top-[26%]   flex items-center justify-center bg-purple-500'
+                className='rounded-full absolute  left-[15vw] self-center  flex items-center justify-center bg-purple-500'
               >
                 <Text
                   className='text-red-100'

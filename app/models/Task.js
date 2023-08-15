@@ -110,7 +110,8 @@ export class activejob extends Realm.Object {
     properties: {
       _id: { type: "objectId", default: () => new Realm.BSON.ObjectId() },
       job: "string?",
-      matno: "string?",
+      matno: { type: "string?", indexed: true }, // Add indexed property here if you frequently search or query by matno.
+
       category: "string?",
       supervisor: "string?",
       duration: "string?",

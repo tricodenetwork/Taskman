@@ -171,7 +171,7 @@ const ActivateJob = ({ navigation }) => {
       sendClientDetails(item.email, item);
       // sendPushNotification(pushToken);
     },
-    [realm, clientExist]
+    [realm, clientExist, ActiveJob]
   );
   const deleteActiveJob = useCallback(() => {
     realm.write(() => {

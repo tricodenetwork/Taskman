@@ -85,10 +85,10 @@ export const AppSync = () => {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
-  const oid = user.identities[0].id;
-  const cleanedOid = oid.replace(/[^0-9a-zA-Z]/g, "");
+  const oid = user.identities[0].id.trim();
+  const cleanedOid = oid.replace(/[^0-9a-zA-Z ]/g, "");
   const appuser =
-    cleanedOid.length > 10
+    cleanedOid.length > 20
       ? useObject("account", Realm.BSON.ObjectId(cleanedOid))
       : useQuery("client").filtered(`clientId ==$0`, cleanedOid)[0];
 

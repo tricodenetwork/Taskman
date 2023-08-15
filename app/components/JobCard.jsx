@@ -1,27 +1,24 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { View, Text } from "react-native";
+import React, { useEffect, useMemo } from "react";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
 } from "../styles/stylesheet";
-import { AntDesign } from "@expo/vector-icons";
-import OdinaryButton from "./OdinaryButton";
-import { Motion } from "@legendapp/motion";
 import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import {
-  sumField,
-  formatDuration,
   convertToMinutes,
   formatDate,
+  formatDuration,
   objectIdToDate,
+  sumField,
 } from "../api/Functions";
 import { activejob } from "../models/Task";
 
-const { useRealm, useQuery } = AccountRealmContext;
+const { useQuery, useRealm } = AccountRealmContext;
 
-const JobCard = ({ isActive, id, name }) => {
+const JobCard = ({ isActive, id }) => {
   const route = useRoute();
   const realm = useRealm();
   const activeJobs = useQuery(activejob);
@@ -41,39 +38,39 @@ const JobCard = ({ isActive, id, name }) => {
       : item.status === "Overdue"
       ? "#ff4747"
       : null;
-  const sumAll = useMemo(() => {
-    return sumField(
-      item.tasks ? item.tasks : item.job && item.tasks ? item.tasks : [],
-      "duration"
-    );
-  }, [item.tasks, item.job]);
+  // const sumAll = useMemo(() => {
+  //   return sumField(
+  //     item.tasks ? item.tasks : item.job && item.tasks ? item.tasks : [],
+  //     "duration"
+  //   );
+  // }, [item.tasks, item.job]);
 
-  const convert = useMemo(() => {
-    return convertToMinutes(sumAll);
-  }, [sumAll]);
+  // const convert = useMemo(() => {
+  //   return convertToMinutes(sumAll);
+  // }, [sumAll]);
 
-  const sum = useMemo(() => {
-    return formatDuration(convert);
-  }, [convert]);
+  // const sum = useMemo(() => {
+  //   return formatDuration(convert);
+  // }, [convert]);
 
-  useEffect(() => {
-    if (!item.timeframe) {
-      try {
-        realm.write(() => {
-          activeJobs.forEach((job) => {
-            job.timeframe = sum;
-          });
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!item.timeframe) {
+  //     try {
+  //       realm.write(() => {
+  //         activeJobs.forEach((job) => {
+  //           job.timeframe = sum;
+  //         });
+  //       });
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  // }, []);
 
   return (
     <View
       style={[styles.Pcard, { backgroundColor: isActive ? "pink" : "white" }]}
-      className='bg-white flex-row rounded-2xl mb-5 self-center w-[90vw] h-[14vh] px-[7] items-center justify-between'
+      className='bg-white flex-row rounded-2xl self-center w-[90vw] h-[14vh] px-[7] items-center justify-between'
     >
       <View
         style={{

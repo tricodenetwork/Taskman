@@ -83,7 +83,7 @@ const DetailsCard = React.memo(
     return (
       <View
         style={styles.Pcard}
-        className='bg-white flex-row   rounded-2xl mb-4 self-center w-[90vw] h-[14vh] px-[7] items-center justify-between'
+        className='bg-white flex-row   rounded-2xl  self-center w-[90vw] h-[14vh] px-[7] items-center justify-between'
       >
         <View
           style={{
@@ -97,7 +97,7 @@ const DetailsCard = React.memo(
         >
           <View
             id='TIMER'
-            className='absolute items-center space-x-[3vw] flex flex-row top-[5%] left-[22%]'
+            className='absolute items-center space-x-[3vw] flex flex-row top-[5%] left-[10%]'
           >
             <MaterialIcons
               name='timer'
@@ -152,7 +152,7 @@ const DetailsCard = React.memo(
               : item.handler}
           </Text>
         </View>
-        <View className='relative h-full flex items-center justify-around'>
+        <View className='relative h-full flex items-center  pb-1 justify-around'>
           <Text
             style={[
               styles.text_md,
@@ -162,12 +162,14 @@ const DetailsCard = React.memo(
                 color: status,
               },
             ]}
-            className={`text-Handler3 w-[70%]  self-center text-center`}
+            className={`w-[70%]  self-center text-center`}
           >
-            {item.started
-              ? formatDate(item.started)
+            {item.finished
+              ? formatDate(item.finished)
               : item.inProgress
               ? formatDate(item.inProgress)
+              : item.started
+              ? formatDate(item.started)
               : null}
           </Text>
           <View
@@ -188,7 +190,7 @@ const DetailsCard = React.memo(
               style={{
                 backgroundColor: status,
               }}
-              className={`absolute w-[80%]  rounded-full self-center bottom-[-7px] h-[2.5px]`}
+              className={`absolute w-[80%]  rounded-full self-center bottom-[-5px] h-[2.5px]`}
             ></View>
           </View>
         </View>

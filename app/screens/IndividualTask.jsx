@@ -1,7 +1,11 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { actuatedNormalize, styles } from "../styles/stylesheet";
+import {
+  actuatedNormalize,
+  actuatedNormalizeVertical,
+  styles,
+} from "../styles/stylesheet";
 import { setCurrentTask, setHandler } from "../store/slice-reducers/ActiveJob";
 import SelectComponent from "../components/SelectComponent";
 import { AccountRealmContext } from "../models";
@@ -16,6 +20,7 @@ import { TouchableOpacity } from "react-native";
 import MultiSelect from "../components/MultiSelect";
 import { activejob, job as jobs } from "../models/Task";
 import { resetMulti, setMulti } from "../store/slice-reducers/App";
+import { sendPushNotification } from "../api/Functions";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -36,6 +41,14 @@ export default function IndividualTask({ navigation }) {
     "activejob",
     Realm.BSON.ObjectId(route.params?.id)
   );
+
+  // Select handler account and retrieve push token
+  const account = useQuery("account").filtered(
+    `name == $0 AND role == "Handler"`,
+    handler
+  )[0];
+  const pushToken = account?.pushToken || "";
+
   const tasks = useQuery(jobs).filtered(`name == "Transcript"`)[0].tasks;
 
   const inProgress = job?.tasks.filter(
@@ -123,6 +136,7 @@ export default function IndividualTask({ navigation }) {
                 } else {
                   task.status = "Awaiting";
                   task.started = new Date();
+                  sendPushNotification(pushToken, task.name);
                 }
                 task.inProgress = null;
                 break; // Breaks out of the loop
@@ -147,6 +161,8 @@ export default function IndividualTask({ navigation }) {
                 task.status = "Awaiting";
                 task.started = new Date();
                 task.inProgress = null;
+                sendPushNotification(pushToken, task.name);
+
                 alert(
                   `${route.params?.taskName} 📃 assign to ${handler} single👤 `
                 );
@@ -178,8 +194,14 @@ export default function IndividualTask({ navigation }) {
     <Background bgColor=''>
       <View className=' h-[90%] pt-[5vh] self-center flex justify-between items-center'>
         <Text
-          className='self-center text-center w-[50vw]'
-          style={[styles.text_sm2, { fontSize: actuatedNormalize(20) }]}
+          className='self-center  text-center w-[50vw]'
+          style={[
+            styles.text_sm2,
+            {
+              fontSize: actuatedNormalize(20),
+              lineHeight: actuatedNormalizeVertical(20 * 1.5),
+            },
+          ]}
         >
           Assign Task
         </Text>
@@ -246,7 +268,7 @@ export default function IndividualTask({ navigation }) {
         ) : null}
         <View
           id='BUTTONS'
-          className='flex justify-between align-bottom w-[65vw]  self-center flex-row'
+          className='flex justify-between align-bottom w-[75vw]  self-center flex-row'
         >
           <Button
             disabled={

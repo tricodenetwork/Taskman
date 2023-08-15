@@ -80,7 +80,8 @@ export default function TaskDetails({
                 route.name !== "mytasks" ? drag() : null;
                 isActive && setRefreshing(false);
               }}
-              activeOpacity={0.8}
+              activeOpacity={0.9}
+              className='flex  w-[90vw] self-center bg-primary rounded-2xl mb-5'
               onPress={() => {
                 // item contains non_serializable values. id
                 route.name == "mytasks" &&

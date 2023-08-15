@@ -18,15 +18,13 @@ const { useRealm, useQuery } = AccountRealmContext;
 
 export default function MyTasks({ navigation }) {
   //--------------------------------------------------------------------------------------STATE AND VARIABLES
-  const route = useRoute();
-  const realm = useRealm();
   const focus = useIsFocused();
   const dispatch = useDispatch();
-  const [update, setUpdate] = useState(false);
+  const route = useRoute();
+  const [handlerTasks, setHandlerTasks] = useState([]);
 
   const ActiveJobs = useQuery(activejob);
   const { user } = useSelector((state) => state);
-  const { handler } = useSelector((state) => state.App);
 
   const tasks = useMemo(() => {
     const myTasks = Array.from(ActiveJobs).map((job) => {
@@ -42,20 +40,32 @@ export default function MyTasks({ navigation }) {
     });
 
     const merged = myTasks.reduce((acc, obj) => acc.concat(obj), []);
-    return merged.sort((a, b) => (a.id < b.id ? 1 : -1));
+    return merged.sort((a, b) =>
+      a.started.getTime() < b.started.getTime() ? 1 : -1
+    );
   }, [focus]);
 
   useEffect(() => {
+    const unsubscribeBlur = navigation.addListener("blur", () => {
+      // Screen lost focus
+      dispatch(resetMulti());
+
+      setHandlerTasks([]);
+    });
+
     setTimeout(() => {
-      // dispatch(setHandler(tasks));
-      setUpdate(true);
+      setHandlerTasks(tasks);
     }, 0);
-  }, []);
 
-  //-------------------------------------------------------------EFFECTS AND FUNCTIONS
-  useEffect(() => {
-    dispatch(resetMulti());
-  }, [focus]);
+    return () => {
+      unsubscribeBlur();
+    };
+  }, [handlerTasks.length]);
+
+  // //-------------------------------------------------------------EFFECTS AND FUNCTIONS
+  // useEffect(() => {
+  //   dispatch(resetMulti());
+  // }, [focus]);
   //----------------------------------------------------RENDERED COMPONENT
   return (
     <Background bgColor='min-h-[98vh]'>
@@ -74,21 +84,22 @@ export default function MyTasks({ navigation }) {
           }}
           text='Assign Multiple Tasks'
           style={`absolute ${
-            SCREEN_HEIGHT < 500 ? "-top-[2vh]" : "-top-[5vh]"
+            SCREEN_HEIGHT < 500 ? "-top-[6vh]" : "-top-[5vh]"
           } w-[55vw]`}
         />
         <View className='mb-2'>
           <SearchComponent filterItems={["MatNo", "Status", "Supervisor"]} />
         </View>
         <View>
-          {!update ? (
+          {handlerTasks.length == 0 ? (
             <View className='relative top-[5vh]'>
               <ActivityIndicator size={"large"} color={"rgb(88 28 135)"} />
             </View>
           ) : (
             // <Text>{tasks.length}</Text>
             <HandlerDetails
-              taskdata={tasks}
+              taskdata={handlerTasks}
+              update={setHandlerTasks}
               // jobId={route.params.id}
             />
           )}

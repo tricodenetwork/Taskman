@@ -40,13 +40,14 @@ export default function ClientScreen() {
         text3={formattedDate}
         text={`Hello, ${clientId}`}
       ></HandlerTopscreen>
-      <View className='self-center pt-[3vh]'>
+      <View className='self-center flex justify-between h-[40vh] py-[2.5vh]'>
         <View>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("activeJobs");
             }}
-            activeOpacity={0.5}
+            activeOpacity={0.9}
+            className='rounded-md bg-primary'
           >
             <OptionsCard
               icon={
@@ -65,7 +66,8 @@ export default function ClientScreen() {
           onPress={() => {
             navigation.navigate("messages");
           }}
-          activeOpacity={0.5}
+          activeOpacity={0.9}
+          className='rounded-md bg-primary'
         >
           <OptionsCard
             icon={
@@ -78,30 +80,31 @@ export default function ClientScreen() {
             text={"Messages"}
           />
         </TouchableOpacity>
-      </View>
-      <View>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("security");
-          }}
-          activeOpacity={0.5}
-        >
-          <OptionsCard
-            text={"Change Password"}
-            icon={
-              <MaterialIcons
-                style={{
-                  // backgroundColor: "rgba(186,90,49,.5)",
-                  // padding: actuatedNormalize(7),
-                  borderRadius: 5,
-                }}
-                name='lock-outline'
-                size={actuatedNormalize(27)}
-                color='black'
-              />
-            }
-          />
-        </TouchableOpacity>
+        <View>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("security");
+            }}
+            activeOpacity={0.9}
+            className='rounded-md bg-primary'
+          >
+            <OptionsCard
+              text={"Change Password"}
+              icon={
+                <MaterialIcons
+                  style={{
+                    // backgroundColor: "rgba(186,90,49,.5)",
+                    // padding: actuatedNormalize(7),
+                    borderRadius: 5,
+                  }}
+                  name='lock-outline'
+                  size={actuatedNormalize(27)}
+                  color='black'
+                />
+              }
+            />
+          </TouchableOpacity>
+        </View>
       </View>
       <LowerButton
         style={"w-[90vw]"}

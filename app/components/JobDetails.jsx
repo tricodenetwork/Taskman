@@ -1,5 +1,5 @@
-import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import { FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import JobCard from "./JobCard";
 import {
   useIsFocused,
@@ -31,20 +31,46 @@ export default function JobDetails({ update }) {
   const isFocused = useIsFocused();
   const client = activeJobs.filtered(`matno ==$0`, user.clientId) ?? [];
 
-  const renderItem = ({ item }) => {
-    return (
-      <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={() => {
-          const screenName = route.name === "jobs" ? "tasks" : "activetasks";
-          navigation.navigate(screenName, { id: item._id.toString() });
-        }}
-      >
-        <JobCard id={item._id.toString()} />
-      </TouchableOpacity>
-    );
-  };
+  // Move the renderItem function outside of the component
+  // or wrap it in a useCallback hook to avoid unnecessary re-renders
+  const renderItem = useCallback(
+    ({ item }) => {
+      return (
+        <View>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            className='flex max-w-max w-[90vw] self-center bg-primary rounded-2xl mb-5'
+            onPress={() => {
+              const screenName =
+                route.name === "jobs" ? "tasks" : "activetasks";
+              navigation.navigate(screenName, {
+                id: item._id.toString(),
+              });
+            }}
+          >
+            <JobCard id={item._id.toString()} />
+          </TouchableOpacity>
+        </View>
+      );
+    },
+    [navigation, route.name]
+  );
 
+  // Use a memoized value for the filteredData variable to avoid unnecessary recalculations
+  const filteredData = useMemo(
+    () =>
+      data
+        .filter((item, index) =>
+          item[col]?.name
+            ? item[col].name.toLowerCase().includes(search.toLowerCase())
+            : item[col] &&
+              item[col].toLowerCase().includes(search.toLowerCase())
+        )
+        .sort((a, b) => b._id.getTimestamp() - a._id.getTimestamp()),
+    [col, data, search]
+  );
+
+  // Add activeJobs, jobs and client as dependencies to the useEffect hook so that it runs whenever their values change
   useEffect(() => {
     if (!user.clientId) {
       if (route.name == "activeJobs") {
@@ -58,7 +84,7 @@ export default function JobDetails({ update }) {
     return () => {
       setRefreshing(false);
     };
-  }, []);
+  }, [activeJobs, client, jobs, route.name, user.clientId]);
 
   useEffect(() => {
     if (route.name !== "jobs") {
@@ -68,6 +94,7 @@ export default function JobDetails({ update }) {
       setRefreshing(false);
     };
   }, [refreshing]);
+
   return (
     <FlatList
       refreshControl={
@@ -78,20 +105,12 @@ export default function JobDetails({ update }) {
           }}
         />
       }
-      data={data
-        .filter((item, index) =>
-          item[col]?.name
-            ? item[col].name.toLowerCase().includes(search.toLowerCase())
-            : item[col] &&
-              item[col].toLowerCase().includes(search.toLowerCase())
-        )
-        .sort((a, b) => b._id.getTimestamp() - a._id.getTimestamp())}
+      data={filteredData}
       renderItem={renderItem}
       showsVerticalScrollIndicator
       keyExtractor={(item) => item._id}
       style={{ height: "83%" }}
       initialNumToRender={50}
-      removeClippedSubviews={true}
       maxToRenderPerBatch={150}
     />
   );
