@@ -24,8 +24,7 @@ import {
   setPassword,
 } from "../store/slice-reducers/ActiveJob";
 import { useDispatch, useSelector } from "react-redux";
-import { Account, holiday } from "../models/Account";
-import ChatScreen from "./ChatScreen";
+import { Account } from "../models/Account";
 import { chats } from "../models/Chat";
 import { sendPushNotification } from "../api/Functions";
 import { millisecondSinceStartDate } from "../api/test";
@@ -54,10 +53,10 @@ const TaskDetailsPage = () => {
   // const { name, job, matno, supervisor, status } = route.params; // current handler for particular task
   const activeJob = useObject(activejob, Realm.BSON.ObjectId(route.params?.id));
   const Accounts = useQuery(Account);
-  const clients = useQuery(activejob);
+  const ActiveJobs = useQuery(activejob);
   const tasks = useQuery(job).filtered(`name == "Transcript"`)[0].tasks;
 
-  let result = clients.reduce((acc, params) => {
+  let result = ActiveJobs.reduce((acc, params) => {
     const filteredTasks = params.tasks.filter(
       (item) => item.handler == user.name
     );
@@ -131,7 +130,7 @@ const TaskDetailsPage = () => {
       try {
         if (multipleJobs.length !== 0) {
           multipleJobs.forEach((params) => {
-            clients.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
+            ActiveJobs.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
               // Set task to inProgress and begin counting
               if ((task.name == password) & (task.handler == user.name)) {
                 task.status = "InProgress";
@@ -164,7 +163,7 @@ const TaskDetailsPage = () => {
     currenttask,
     route.params?.handler,
     multipleJobs,
-    clients,
+    ActiveJobs,
     handler,
   ]);
 
@@ -190,7 +189,7 @@ const TaskDetailsPage = () => {
       try {
         if (multipleJobs.length !== 0) {
           multipleJobs.forEach((params) => {
-            clients.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
+            ActiveJobs.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
               // on handling next task, first of all set your current task to completed
               if ((task.name == password) & (task.handler == user.name)) {
                 const timeCompleted = millisecondSinceStartDate(
@@ -251,7 +250,7 @@ const TaskDetailsPage = () => {
     realm,
     currenttask,
     multipleJobs,
-    clients,
+    ActiveJobs,
     route.params?.handler,
     handler,
     route.params?.name,
@@ -354,7 +353,7 @@ const TaskDetailsPage = () => {
               setData={(params) => {
                 dispatch(setMulti(params));
               }}
-              data={Array.from(clients).sort(
+              data={Array.from(ActiveJobs).sort(
                 (a, b) => b._id.getTimestamp() - a._id.getTimestamp()
               )}
               placeholder={"Multiple"}

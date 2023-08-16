@@ -23,6 +23,10 @@ export default function MyTasks({ navigation }) {
 
   const ActiveJobs = useQuery(activejob);
   const { user } = useSelector((state) => state);
+  const tasksAssignedToHandler =
+    ActiveJobs.map((job) =>
+      job?.tasks.filter((obj) => obj.handler === user.name)
+    ) ?? [];
 
   const tasks = useMemo(() => {
     const myTasks = Array.from(ActiveJobs).map((job) => {
@@ -39,9 +43,9 @@ export default function MyTasks({ navigation }) {
 
     const merged = myTasks.reduce((acc, obj) => acc.concat(obj), []);
     return merged.sort((a, b) =>
-      a.started.getTime() < b.started.getTime() ? 1 : -1
+      a.started?.getTime() < b.started?.getTime() ? 1 : -1
     );
-  }, [focus]);
+  }, [tasksAssignedToHandler.length]);
 
   useEffect(() => {
     const unsubscribeBlur = navigation.addListener("blur", () => {
