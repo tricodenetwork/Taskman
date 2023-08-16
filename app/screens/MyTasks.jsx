@@ -8,9 +8,8 @@ import { useIsFocused, useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import { activejob } from "../models/Task";
 import { useDispatch, useSelector } from "react-redux";
-import { resetMulti, setHandler } from "../store/slice-reducers/App";
+import { resetMulti } from "../store/slice-reducers/App";
 import HandlerDetails from "../components/HandlerDetails";
-import TaskDetails from "../components/TaskDetails";
 import { Text } from "react-native";
 import { SCREEN_HEIGHT, styles } from "../styles/stylesheet";
 

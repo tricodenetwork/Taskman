@@ -7,8 +7,6 @@ import {
 } from "../styles/stylesheet";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
-import Constants from "expo-constants";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Motion } from "@legendapp/motion";
 import { useIsFocused } from "@react-navigation/native";
 import { useUser } from "@realm/react";

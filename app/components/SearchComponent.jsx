@@ -1,22 +1,22 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setSearch,
-  setVisible,
-  setFilter,
-} from "../store/slice-reducers/Formslice";
+import { setSearch, setFilter } from "../store/slice-reducers/Formslice";
 import { AntDesign } from "@expo/vector-icons";
-import { SelectList } from "react-native-dropdown-select-list";
-import { accountsFilter } from "../api/Functions";
 import { Motion } from "@legendapp/motion";
+import { useIsFocused } from "@react-navigation/native";
 
-export default function SearchComponent({ filterItems = [] }) {
+export default function SearchComponent({ filterItems = [], initialFilter }) {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const { filter } = useSelector((state) => state.app);
+  const focus = useIsFocused();
+
+  useEffect(() => {
+    dispatch(setFilter(initialFilter));
+  }, [focus]);
 
   return (
     <View

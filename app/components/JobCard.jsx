@@ -1,6 +1,7 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useMemo } from "react";
 import {
+  SCREEN_HEIGHT,
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
@@ -15,6 +16,7 @@ import {
   sumField,
 } from "../api/Functions";
 import { activejob } from "../models/Task";
+import { StyleSheet } from "react-native";
 
 const { useQuery, useRealm } = AccountRealmContext;
 
@@ -69,14 +71,12 @@ const JobCard = ({ isActive, id }) => {
 
   return (
     <View
-      style={[styles.Pcard, { backgroundColor: isActive ? "pink" : "white" }]}
-      className='bg-white flex-row rounded-2xl self-center w-[90vw] h-[14vh] px-[7] items-center justify-between'
+      style={[styles.Pcard, style.card]}
+      className='bg-white flex-row rounded-2xl self-center w-[90vw] px-[7] items-center justify-between'
     >
       <View
-        style={{
-          backgroundColor: "rgba(45, 206, 214, 0.7)",
-        }}
-        className={`bg-blue-500 absolute w-[1vw] rounded-full left-[-2px] h-[60%]`}
+        style={style.bg}
+        className={`bg-[rgba(45, 206, 214, 0.7)] absolute w-[1vw] rounded-full left-[-2px] h-[60%]`}
       ></View>
       <View className='text-left  w-[70%] pl-[1vw]'>
         <Text style={styles.text_md2} className='text-primary'>
@@ -109,13 +109,13 @@ const JobCard = ({ isActive, id }) => {
         </Text>
       </View>
       <Text
-        style={[styles.averageText, { fontSize: actuatedNormalize(12) }]}
+        style={[styles.averageText, style.text]}
         className='absolute text-Handler3 bottom-1 left-[22%]'
       >
         {item.supervisor && item.supervisor}
       </Text>
       <Text
-        style={[styles.averageText, { fontSize: actuatedNormalize(12) }]}
+        style={[styles.averageText, style.text]}
         className='absolute text-Handler3 bottom-1 left-[22%]'
       >
         {item.category && item.category.name}
@@ -157,3 +157,13 @@ const JobCard = ({ isActive, id }) => {
 };
 
 export default React.memo(JobCard);
+const style = StyleSheet.create({
+  text: { fontSize: actuatedNormalize(12) },
+  bg: {
+    backgroundColor: "rgba(45, 206, 214, 0.7)",
+  },
+  card: {
+    height: 0.14 * SCREEN_HEIGHT,
+    // backgroundColor: isActive ? "pink" : "white",
+  },
+});

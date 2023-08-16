@@ -146,7 +146,7 @@ export default function Stats() {
         htmlContent += `<p>Handler: ${item.handler}</p>`;
         htmlContent += `<p>Assigned: ${item.Assigned}</p>`;
         htmlContent += `<p>Completed: ${item.completed}</p>`;
-        htmlContent += `<p>Pending: ${item.pending}</p>`;
+        // htmlContent += `<p>Pending: ${item.pending}</p>`;
         htmlContent += `<p>Overdue: ${item.overdue}</p>`;
         htmlContent += `<p>Prompt Completed: ${item.promptCompleted}</p>`;
         htmlContent += `<p>Tasks Completed Promptly(%): ${item.promptInPercentage}%</p>`;

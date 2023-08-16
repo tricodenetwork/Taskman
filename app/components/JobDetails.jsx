@@ -13,6 +13,8 @@ import { Realm } from "@realm/react";
 import { setRefresh } from "../store/slice-reducers/App";
 import { millisecondSinceStartDate } from "../api/test";
 import { holiday } from "../models/Account";
+import { SCREEN_HEIGHT } from "../styles/stylesheet";
+import ActiveJobCard from "./ActiveJobCard";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -48,12 +50,12 @@ export default function JobDetails({ update }) {
               });
             }}
           >
-            <JobCard id={item._id.toString()} />
+            <ActiveJobCard id={item._id.toString()} />
           </TouchableOpacity>
         </View>
       );
     },
-    [navigation, route.name]
+    [route.name]
   );
 
   // Use a memoized value for the filteredData variable to avoid unnecessary recalculations
@@ -69,6 +71,13 @@ export default function JobDetails({ update }) {
         .sort((a, b) => b._id.getTimestamp() - a._id.getTimestamp()),
     [col, data, search]
   );
+  const ITEM_HEIGHT = 0.14 * SCREEN_HEIGHT;
+  const getItemLayout = (data, index) => ({
+    length: ITEM_HEIGHT,
+    offset: ITEM_HEIGHT * index,
+    index,
+  });
+  const keyExtractor = (item) => item._id;
 
   // Add activeJobs, jobs and client as dependencies to the useEffect hook so that it runs whenever their values change
   useEffect(() => {
@@ -84,7 +93,7 @@ export default function JobDetails({ update }) {
     return () => {
       setRefreshing(false);
     };
-  }, [activeJobs, client, jobs, route.name, user.clientId]);
+  }, []);
 
   useEffect(() => {
     if (route.name !== "jobs") {
@@ -108,10 +117,11 @@ export default function JobDetails({ update }) {
       data={filteredData}
       renderItem={renderItem}
       showsVerticalScrollIndicator
-      keyExtractor={(item) => item._id}
+      keyExtractor={keyExtractor}
       style={{ height: "83%" }}
       initialNumToRender={50}
-      maxToRenderPerBatch={150}
+      maxToRenderPerBatch={100}
+      getItemLayout={getItemLayout}
     />
   );
 }

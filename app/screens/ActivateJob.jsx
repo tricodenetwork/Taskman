@@ -1,20 +1,21 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
   TextInput,
-  Button,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
+import { FlatList } from "react-native-gesture-handler";
+import { Motion } from "@legendapp/motion";
+import { AntDesign } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
+import { MaterialIcons } from "@expo/vector-icons";
 import {
   setMatNo,
-  setDept,
-  setHandler,
   setJob,
   setEmail,
-  setCurrentTask,
   Replace,
   setPassword,
   setSupervisor,
@@ -22,33 +23,18 @@ import {
 } from "../store/slice-reducers/ActiveJob";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
-import { FlatList } from "react-native-gesture-handler";
-import {
-  setVisible,
-  setVisible2,
-  setVisible3,
-} from "../store/slice-reducers/Formslice";
-import { Motion } from "@legendapp/motion";
+import { setVisible } from "../store/slice-reducers/Formslice";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
 } from "../styles/stylesheet";
-import { AntDesign } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
 import LowerButton from "../components/LowerButton";
 import { AccountRealmContext } from "../models";
 import { activejob, job as jobSchema } from "../models/Task";
 import { Account, client } from "../models/Account";
-import { useUser } from "@realm/react";
 import Realm from "realm";
-import {
-  generatePassword,
-  sendClientDetails,
-  sendPushNotification,
-} from "../api/Functions";
-import OdinaryButton from "../components/OdinaryButton";
-import { MaterialIcons } from "@expo/vector-icons";
+import { generatePassword, sendClientDetails } from "../api/Functions";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -64,8 +50,7 @@ const ActivateJob = ({ navigation }) => {
   const realm = useRealm();
   const activeJobs = useQuery(activejob);
   const allJobs = useQuery(jobSchema);
-  const { visible, visible3 } = useSelector((state) => state.app);
-  const accounts = useQuery(client);
+  const { visible } = useSelector((state) => state.app);
 
   const { ActiveJob } = useSelector((state) => state);
   const { category, role, name } = useSelector((state) => state.user);
@@ -73,13 +58,10 @@ const ActivateJob = ({ navigation }) => {
     `role == "Supervisor" AND category.name ==$0`,
     category.name
   );
-  console.log(ActiveJob);
-  const pushToken =
-    useQuery("account").filtered(`name == $0 AND role == "Handler"`, handler)[0]
-      ?.pushToken ?? "";
 
-  const { matno, dept, handler, job, email, currenttask, password, id } =
-    useSelector((state) => state.ActiveJob);
+  const { matno, job, email, password } = useSelector(
+    (state) => state.ActiveJob
+  );
   const clientExist = activeJobs.filtered(
     `matno == $0 AND category == $1`,
     matno,
@@ -94,13 +76,8 @@ const ActivateJob = ({ navigation }) => {
         "activejob",
         Realm.BSON.ObjectId(route.params?.id)
       );
-      const currentActiveJob = {
-        matno: useThis.matno,
-        supervisor: useThis.supervisor,
-        email: useThis.email,
-        job: { name: useThis.job.name },
-      };
       useThis && dispatch(Replace(useThis));
+      console.log(useThis.password);
     } else {
       dispatch(Replace());
       return;

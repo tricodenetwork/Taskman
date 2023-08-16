@@ -315,12 +315,11 @@ export default function Supervisor() {
           />
         </TouchableOpacity>
         <TouchableOpacity
-          className='relative flex flex-row max-h-max'
+          className='relative flex rounded-md bg-primary flex-row max-h-max'
           onPress={() => {
             navigation.navigate("messages");
           }}
           activeOpacity={0.9}
-          className='rounded-md bg-primary'
         >
           <OptionsCard
             icon={

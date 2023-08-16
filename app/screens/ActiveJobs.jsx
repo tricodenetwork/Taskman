@@ -1,20 +1,20 @@
 import { View, Text, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useIsFocused } from "@react-navigation/native";
+
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import SearchComponent from "../components/SearchComponent";
 import JobDetails from "../components/JobDetails";
 import LowerButton from "../components/LowerButton";
 import { setFilter, setSearch } from "../store/slice-reducers/Formslice";
-import { useDispatch, useSelector } from "react-redux";
 import { holiday } from "../models/Account";
-import Realm from "realm";
 import { AccountRealmContext } from "../models";
-import { useIsFocused } from "@react-navigation/native";
 import OdinaryButton from "../components/OdinaryButton";
 import { activejob } from "../models/Task";
 import { millisecondSinceStartDate } from "../api/test";
-import { SCREEN_HEIGHT } from "../styles/stylesheet";
+import { SCREEN_HEIGHT, styles } from "../styles/stylesheet";
 
 const { useRealm, useQuery } = AccountRealmContext;
 export default function ActiveJobs({ navigation }) {
@@ -66,7 +66,12 @@ export default function ActiveJobs({ navigation }) {
     return Timer;
   }
 
-  function updateJobStatus(supervisorName) {
+  const updateJobStatus = () => {
+    if (user.clientId) {
+      setUpdate(true);
+      return;
+    }
+
     realm.write(() => {
       activeJobs.forEach((activejob) => {
         let jobstatus = "Pending";
@@ -112,12 +117,10 @@ export default function ActiveJobs({ navigation }) {
         activejob.status = jobstatus;
       });
     });
-    // console.log("updating");
+    console.log("updating");
     setUpdate(true);
-  }
-
+  };
   useEffect(() => {
-    dispatch(setFilter("MatNo"));
     dispatch(setSearch(""));
   }, [Focus]);
 
@@ -125,7 +128,7 @@ export default function ActiveJobs({ navigation }) {
     setTimeout(() => {
       updateJobStatus();
     }, 0);
-  }, [Focus]);
+  }, []);
 
   return (
     <Background bgColor='min-h-[98vh]'>
@@ -150,14 +153,18 @@ export default function ActiveJobs({ navigation }) {
         <View className='mb-1'>
           {!user.clientId ? (
             <SearchComponent
+              initialFilter={"MatNo"}
               filterItems={["Job Name", "Client ID", "Supervisor", "Status"]}
             />
           ) : null}
         </View>
         <View className=''>
           {!update ? (
-            <View className='relative top-[5vh]'>
-              <ActivityIndicator size={"large"} color={"rgb(88 28 135)"} />
+            <View className='relative bg-primary_light w-[35%] self-center flex items-center justify-between rounded- py-[2vh] top-[5vh]'>
+              <ActivityIndicator size={"small"} color={"rgb(13 3 122)"} />
+              <Text className='text-Blue relative top-2' style={styles.text_sm}>
+                Loading...
+              </Text>
             </View>
           ) : (
             <JobDetails update={updateJobStatus} />
