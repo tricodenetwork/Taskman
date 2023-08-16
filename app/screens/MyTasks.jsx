@@ -19,7 +19,6 @@ export default function MyTasks({ navigation }) {
   //--------------------------------------------------------------------------------------STATE AND VARIABLES
   const focus = useIsFocused();
   const dispatch = useDispatch();
-  const route = useRoute();
   const [handlerTasks, setHandlerTasks] = useState([]);
 
   const ActiveJobs = useQuery(activejob);
@@ -87,12 +86,18 @@ export default function MyTasks({ navigation }) {
           } w-[55vw]`}
         />
         <View className='mb-2'>
-          <SearchComponent filterItems={["MatNo", "Status", "Supervisor"]} />
+          <SearchComponent
+            initialFilter={"MatNo"}
+            filterItems={["MatNo", "Status", "Supervisor"]}
+          />
         </View>
         <View>
           {handlerTasks.length == 0 ? (
-            <View className='relative top-[5vh]'>
-              <ActivityIndicator size={"large"} color={"rgb(88 28 135)"} />
+            <View className='relative bg-primary_light w-[35%] self-center flex items-center justify-between rounded- py-[2vh] top-[5vh]'>
+              <ActivityIndicator size={"small"} color={"rgb(13 3 122)"} />
+              <Text className='text-Blue relative top-2' style={styles.text_sm}>
+                Loading...
+              </Text>
             </View>
           ) : (
             // <Text>{tasks.length}</Text>
