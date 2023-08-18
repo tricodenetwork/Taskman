@@ -127,7 +127,7 @@ export default function MessageScreen({ navigation }) {
               // Only navigate if showdelete is false
               navigation.navigate("chats", {
                 roomId: item._id,
-                name: name.name,
+                name: name?.name || name.clientId,
               });
             }}
             onLongPress={() => {
@@ -155,7 +155,7 @@ export default function MessageScreen({ navigation }) {
                             : null} */}
                   </Text>
                 </View>
-                <View className='flex relative w-[87vw] items-center space-x-1 mt-1 max-w-max flex-row'>
+                <View className='flex relative w-[87vw]  items-center space-x-1 mt-1 max-w-max flex-row'>
                   {lastMessage.user._id == user._id ? (
                     <Ionicons
                       name='checkmark-done'
@@ -175,7 +175,7 @@ export default function MessageScreen({ navigation }) {
                   )}
 
                   <Text
-                    className='font-light'
+                    className='font-light flex flex-row truncate flex-wrap w-[83vw]'
                     style={{
                       fontSize: actuatedNormalize(12),
                       lineHeight: actuatedNormalizeVertical(12 * 1.5),
@@ -190,7 +190,7 @@ export default function MessageScreen({ navigation }) {
                         width: actuatedNormalize(15),
                         height: actuatedNormalize(15),
                       }}
-                      className='rounded-full  absolute right-2 flex items-center justify-center bg-purple-500'
+                      className='rounded-full  absolute -right-4 flex items-center justify-center bg-purple-500'
                     >
                       <Text
                         className='text-red-100'
@@ -332,7 +332,7 @@ export default function MessageScreen({ navigation }) {
             <FlatList
               initialNumToRender={20}
               removeClippedSubviews={true} // Add this line.
-              className='mt-7'
+              className='mt-10'
               keyExtractor={(item) => item._id}
               data={chatroom}
               renderItem={renderItemProps}

@@ -50,7 +50,7 @@ export default function JobDetails({ update }) {
               });
             }}
           >
-            <ActiveJobCard id={item._id.toString()} />
+            <JobCard id={item._id.toString()} />
           </TouchableOpacity>
         </View>
       );
@@ -69,7 +69,7 @@ export default function JobDetails({ update }) {
               item[col].toLowerCase().includes(search.toLowerCase())
         )
         .sort((a, b) => b._id.getTimestamp() - a._id.getTimestamp()),
-    [col, data, search]
+    [col, data, search, isFocused]
   );
   const ITEM_HEIGHT = 0.14 * SCREEN_HEIGHT;
   const getItemLayout = (data, index) => ({
@@ -93,7 +93,7 @@ export default function JobDetails({ update }) {
     return () => {
       setRefreshing(false);
     };
-  }, []);
+  }, [route.name, isFocused]);
 
   useEffect(() => {
     if (route.name !== "jobs") {

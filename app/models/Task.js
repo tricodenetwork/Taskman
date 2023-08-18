@@ -115,7 +115,7 @@ export class activejob extends Realm.Object {
       category: "string?",
       supervisor: "string?",
       duration: "string?",
-      timeframe: "duration",
+      timeframe: "duration?",
       email: "string?",
       started: "date?",
       finished: "date?",

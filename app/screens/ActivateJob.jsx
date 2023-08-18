@@ -77,8 +77,6 @@ const ActivateJob = ({ navigation }) => {
         Realm.BSON.ObjectId(route.params?.id)
       );
       useThis && dispatch(Replace(useThis));
-      console.log(useThis.password);
-    } else {
       dispatch(Replace());
       return;
     }
@@ -126,18 +124,14 @@ const ActivateJob = ({ navigation }) => {
 
       realm.write(() => {
         try {
-          const { tasks, ...rest } = item;
+          const { tasks, timeframe } = item;
           const tasksArray = JSON.parse(JSON.stringify(tasks));
-          // const Item = JSON.parse(JSON.stringify(item));
+          const duration = JSON.parse(JSON.stringify(timeframe));
 
           const project = new activejob(realm, item);
           project.tasks = tasksArray;
+          project.timeframe = duration;
 
-          // project.tasks.map((task) => {
-          //   if (task.name == item.currenttask) {
-          //     task.handler = item.handler;
-          //   }
-          // });
           project.supervisor = name;
           alert("Job Activated ✔");
         } catch (error) {
@@ -176,6 +170,7 @@ const ActivateJob = ({ navigation }) => {
   };
   useEffect(() => {
     dispatch(setJob(allJobs[0]));
+
     dispatch(setTasks(allJobs[0].tasks));
   }, []);
 

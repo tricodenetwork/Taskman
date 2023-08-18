@@ -14,7 +14,7 @@ import { actuatedNormalize } from "../styles/stylesheet";
 import moment from "moment";
 import { Ionicons } from "@expo/vector-icons";
 import { sendPushNotification } from "../api/Functions";
-import { Account } from "../models/Account";
+import { Account, client } from "../models/Account";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -24,7 +24,9 @@ export default function ChatScreen() {
   const realm = useRealm();
   const { roomId, name } = route.params;
   const allChats = useQuery(Chats);
-  const pushToken = useQuery(Account).filtered(`name ==$0`, name)[0].pushToken;
+  const pushToken =
+    useQuery(Account).filtered(`name ==$0`, name)[0]?.pushToken ||
+    useQuery(client).filtered(`clientId ==$0`, name)?.pushToken;
   const { user } = useSelector((state) => state);
   const chatUser =
     user.role !== "Client"

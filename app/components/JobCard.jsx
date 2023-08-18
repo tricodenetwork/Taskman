@@ -40,34 +40,34 @@ const JobCard = ({ isActive, id }) => {
       : item.status === "Overdue"
       ? "#ff4747"
       : null;
-  // const sumAll = useMemo(() => {
-  //   return sumField(
-  //     item.tasks ? item.tasks : item.job && item.tasks ? item.tasks : [],
-  //     "duration"
-  //   );
-  // }, [item.tasks, item.job]);
+  const sumAll = useMemo(() => {
+    return sumField(
+      item.tasks ? item.tasks : item.job && item.tasks ? item.tasks : [],
+      "duration"
+    );
+  }, [item.tasks, item.job]);
 
-  // const convert = useMemo(() => {
-  //   return convertToMinutes(sumAll);
-  // }, [sumAll]);
+  const convert = useMemo(() => {
+    return convertToMinutes(sumAll);
+  }, [sumAll]);
 
-  // const sum = useMemo(() => {
-  //   return formatDuration(convert);
-  // }, [convert]);
+  const sum = useMemo(() => {
+    return formatDuration(convert);
+  }, [convert]);
 
-  // useEffect(() => {
-  //   if (!item.timeframe) {
-  //     try {
-  //       realm.write(() => {
-  //         activeJobs.forEach((job) => {
-  //           job.timeframe = sum;
-  //         });
-  //       });
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!item.timeframe) {
+      try {
+        realm.write(() => {
+          activeJobs.forEach((job) => {
+            job.timeframe = sum;
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, []);
 
   return (
     <View

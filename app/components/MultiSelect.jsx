@@ -92,7 +92,7 @@ export default function MultiSelect({
         <TextInput
           // keyboardType=''
           defaultValue={placehold}
-          //   value={value}
+          // value={multipleJobs.toString()}
           onChangeText={setFilter}
           //   editable={false}
           placeholder={placeholder}

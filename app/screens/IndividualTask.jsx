@@ -175,6 +175,9 @@ export default function IndividualTask({ navigation }) {
         console.log({ error, msg: "Error Assigning next task" });
       }
     });
+
+    dispatch(setCurrentTask(""));
+    dispatch(setHandler(""));
     // navigation.navigate("activetasks", { id: route.params.id });
   }, [
     realm,
@@ -285,7 +288,7 @@ export default function IndividualTask({ navigation }) {
             color={"#004343"}
           />
           <Button
-            // disabled={handler == ""}
+            disabled={handler == ""}
             title={handler == "" ? "Unassign" : "Assign"}
             onPress={() => setVisible(!visible)}
           />

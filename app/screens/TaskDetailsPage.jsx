@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -55,20 +55,7 @@ const TaskDetailsPage = () => {
   const Accounts = useQuery(Account);
   const ActiveJobs = useQuery(activejob);
   const tasks = useQuery(job).filtered(`name == "Transcript"`)[0].tasks;
-
-  let result = ActiveJobs.reduce((acc, params) => {
-    const filteredTasks = params.tasks.filter(
-      (item) => item.handler == user.name
-    );
-    return acc.concat(filteredTasks);
-  }, []);
-  let uniqueTasks = result.reduce((unique, task) => {
-    if (!unique.some((item) => item.name === task.name)) {
-      unique.push(task);
-    }
-    return unique;
-  }, []);
-
+  const { multipleJobs } = useSelector((state) => state.App);
   const handlers = Accounts.filter(
     (obj) =>
       (obj.role == "Handler") & (obj.category?.name == user.category.name)
@@ -77,8 +64,6 @@ const TaskDetailsPage = () => {
     `name == $0 AND role == "Handler"`,
     handler
   )[0];
-  const { multipleJobs } = useSelector((state) => state.App);
-
   const pushToken = account?.pushToken || "";
 
   const chatrooms = useQuery("chatroom").filtered(
@@ -86,6 +71,28 @@ const TaskDetailsPage = () => {
     user._id
   );
   const update = route.params?.update;
+  const result = useMemo(
+    () =>
+      ActiveJobs.reduce((acc, params) => {
+        const filteredTasks = params.tasks.filter(
+          (item) => item.handler == user.name
+        );
+        return acc.concat(filteredTasks);
+      }, []),
+    [ActiveJobs]
+  );
+
+  const uniqueTasks = useMemo(
+    () =>
+      result.reduce((unique, task) => {
+        if (!unique.some((item) => item.name === task.name)) {
+          unique.push(task);
+        }
+        return unique;
+      }, []),
+    [result]
+  );
+
   // Create a chat room
   const createChatRoom = (recieverId) => {
     // Generate a unique chat room ID
@@ -117,6 +124,8 @@ const TaskDetailsPage = () => {
       return roomId[0]._id;
     }
   };
+
+  // Functions and Buttons to accept, assign and reject tasks
 
   const handleAcceptButton = useCallback(() => {
     // Perform the necessary actions to accept task
@@ -151,12 +160,14 @@ const TaskDetailsPage = () => {
           });
         }
         alert("Task Accepted! ✔");
+        update([]);
       } catch (error) {
         console.log({ error, msg: "Error Accepting Task" });
         alert("Error accepting message");
       }
     });
-    update([]);
+    dispatch(setCurrentTask(""));
+    dispatch(setHandler(""));
     navigation.navigate("mytasks");
   }, [
     realm,
@@ -196,7 +207,8 @@ const TaskDetailsPage = () => {
                   task.inProgress
                 );
 
-                task.status = "Completed";
+                task.status =
+                  tasks.status == "Awaiting" ? "Awaiting" : "Completed";
                 task.finished = new Date();
                 task.completedIn = task.completedIn
                   ? new Date(timeCompleted + task.completedIn)
@@ -238,12 +250,15 @@ const TaskDetailsPage = () => {
             }
           });
           alert("Task Completed! ✔ single");
+          update([]);
         }
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
       }
     });
-    update([]);
+    dispatch(setCurrentTask(""));
+    dispatch(setHandler(""));
+    dispatch(setPassword(""));
     navigation.navigate("mytasks");
     // setIsNextTaskModalOpen(false);
   }, [
@@ -254,8 +269,10 @@ const TaskDetailsPage = () => {
     route.params?.handler,
     handler,
     route.params?.name,
+    route.name,
+    password,
   ]);
-  const handleErrorSubmit = () => {
+  const handleErrorSubmit = useCallback(() => {
     // Perform the necessary actions to send the task back to the previous handler
     // and send the error message to the supervisor
     // based on the values of nextTask and nextHandler
@@ -266,9 +283,11 @@ const TaskDetailsPage = () => {
 
     if (!handler) {
       alert("No handler selected!! ❌.");
+      return;
     }
     if (!currenttask) {
       alert("No Task selected ❌.");
+      return;
     }
 
     //select handler Id to send error
@@ -276,7 +295,7 @@ const TaskDetailsPage = () => {
     receiverId = Accounts.filtered(
       `role == "Handler" AND name == $0`,
       handler
-    )[0]._id;
+    )[0]?._id;
     const roomId = createChatRoom(receiverId.toHexString());
 
     const onSend = () => {
@@ -301,12 +320,12 @@ const TaskDetailsPage = () => {
           // set your recieved task to pending and not the time you've spent on the route.params?.job
           if (
             (task.name == route.params?.name) &
-            (task.handler == route.params.handler)
+            (task.handler == route.params?.handler)
           ) {
+            task.handler = "";
             Error = millisecondSinceStartDate(task.inProgress);
             task.status = "Pending";
             task.inProgress = null;
-            task.handler = "";
           }
         });
 
@@ -324,13 +343,22 @@ const TaskDetailsPage = () => {
         console.log({ error, msg: "Error Assigning next task" });
       }
     });
-
+    dispatch(setCurrentTask(""));
+    dispatch(setHandler(""));
     sendPushNotification(pushToken, "Error in Task");
     update([]);
     navigation.navigate("mytasks");
 
     setIsErrorModalOpen(false);
-  };
+  }, [
+    realm,
+    currenttask,
+    multipleJobs,
+    ActiveJobs,
+    route.params?.handler,
+    handler,
+    route.params?.name,
+  ]);
   return (
     <Background bgColor='min-h-screen'>
       <Topscreen text={route.params?.job} />
@@ -422,134 +450,43 @@ const TaskDetailsPage = () => {
 
         {/* Next task modal */}
         <Modal visible={isNextTaskModalOpen}>
-          <Background>
-            <View className=' h-[90%] pt-[5vh] flex justify-between items-center'>
-              <Text
-                className=' w-[50vw]'
-                style={[styles.text_sm2, { fontSize: actuatedNormalize(20) }]}
-              >
-                Assign Next Task
-              </Text>
-
-              <View className='h-[50vh] self-start px-[5vw] flex justify-around'>
-                <SelectComponent
-                  title={"Tasks:"}
-                  placeholder={"Assign Next Task"}
-                  data={
-                    route.params
-                      ? activeJob?.tasks.filter(
-                          (obj) =>
-                            (obj.status == "Pending" || obj.status == "") &
-                            (obj.handler == "" || obj.handler == null)
-                        )
-                      : tasks
-                  }
-                  setData={(params) => {
-                    dispatch(setCurrentTask(params));
-                  }}
-                />
-
-                <SelectComponent
-                  title={"Handler:"}
-                  placeholder={"Assign Next Handler"}
-                  data={handlers}
-                  setData={(params) => {
-                    dispatch(setHandler(params));
-                  }}
-                />
-              </View>
-              {visible ? (
-                <TouchableOpacity
-                  className='bg-primary_light rounded-2xl self-center absolute top-[12vh] justify-center w-[90%] h-[55%]'
-                  activeOpacity={1}
+          {isNextTaskModalOpen && (
+            <Background>
+              <View className=' h-[90%] pt-[5vh] flex justify-between items-center'>
+                <Text
+                  className=' w-[50vw]'
+                  style={[styles.text_sm2, { fontSize: actuatedNormalize(20) }]}
                 >
-                  <Motion.View
-                    initial={{ x: -500 }}
-                    animate={{ x: 0 }}
-                    transition={{ type: "spring", stiffness: 100 }}
-                    className='justify-center h-full  w-full  flex self-center'
-                  >
-                    <Text style={styles.text_sm} className='text-center mb-2'>
-                      Press Ok to confirm
-                    </Text>
-                    <OdinaryButton
-                      style={"rounded-sm mt-4 bg-primary"}
-                      navigate={() => {
-                        handleNextTaskSubmit();
-                        setVisible(!visible);
-                      }}
-                      text={"OK"}
-                    />
-                  </Motion.View>
-                </TouchableOpacity>
-              ) : null}
-              <View
-                id='BUTTONS'
-                className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
-              >
-                <Button
-                  disabled={handler == "" || currenttask == ""}
-                  title='Submit'
-                  onPress={() => setVisible(!visible)}
-                />
-                <Button
-                  color={"#ff4747"}
-                  title='Cancel'
-                  onPress={() => {
-                    setIsNextTaskModalOpen(false);
-                  }}
-                />
-              </View>
-            </View>
-          </Background>
-        </Modal>
+                  Assign Next Task
+                </Text>
 
-        {/* Error modal */}
-        <Modal visible={isErrorModalOpen}>
-          <Background>
-            <View className=' h-[70%] pt-[5vh] flex min-h-[40vh] self-center justify-between items-center'>
-              <Text
-                className='self-center  text-center w-[50vw]'
-                style={[
-                  styles.text_sm2,
-                  {
-                    fontSize: actuatedNormalize(20),
-                    lineHeight: actuatedNormalizeVertical(28),
-                  },
-                ]}
-              >
-                Report Error
-              </Text>
-
-              <View className='h-[70vh] flex justify-between'>
-                <View className='h-[40vh] self-start px-[5vw] flex justify-between'>
+                <View className='h-[50vh] self-start px-[5vw] flex justify-around'>
                   <SelectComponent
-                    title={"Task"}
-                    placeholder={"Choose faulty task"}
-                    data={activeJob?.tasks.filter(
-                      (obj) => obj.status == "Completed"
-                    )}
+                    title={"Tasks:"}
+                    placeholder={"Assign Next Task"}
+                    data={
+                      route.params
+                        ? activeJob?.tasks.filter(
+                            (obj) =>
+                              (obj.status == "Pending" || obj.status == "") &
+                              (obj.handler == "" || obj.handler == null)
+                          )
+                        : tasks
+                    }
                     setData={(params) => {
                       dispatch(setCurrentTask(params));
                     }}
                   />
+
                   <SelectComponent
-                    title={"Handler"}
-                    placeholder={"Send to Handler"}
+                    title={"Handler:"}
+                    placeholder={"Assign Next Handler"}
                     data={handlers}
                     setData={(params) => {
                       dispatch(setHandler(params));
                     }}
                   />
                 </View>
-                <TextInput
-                  style={[styles.averageText]}
-                  multiline={true}
-                  placeholder='Error Message to Handler'
-                  // value={errorMessage}
-                  className='w-[70vw] h-[10vh] border-2 border-gray-400 self-center rounded-md p-2'
-                  onChangeText={(text) => setErrorMessage(text)}
-                />
                 {visible ? (
                   <TouchableOpacity
                     className='bg-primary_light rounded-2xl self-center absolute top-[12vh] justify-center w-[90%] h-[55%]'
@@ -567,7 +504,7 @@ const TaskDetailsPage = () => {
                       <OdinaryButton
                         style={"rounded-sm mt-4 bg-primary"}
                         navigate={() => {
-                          handleErrorSubmit();
+                          handleNextTaskSubmit();
                           setVisible(!visible);
                         }}
                         text={"OK"}
@@ -579,17 +516,118 @@ const TaskDetailsPage = () => {
                   id='BUTTONS'
                   className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
                 >
-                  <Button title='Submit' onPress={() => setVisible(!visible)} />
                   <Button
+                    disabled={handler == "" || currenttask == ""}
+                    title='Assign'
+                    onPress={() => setVisible(!visible)}
+                  />
+                  <Button
+                    color={"#ff4747"}
                     title='Cancel'
                     onPress={() => {
-                      setIsErrorModalOpen(false);
+                      setIsNextTaskModalOpen(false);
                     }}
                   />
                 </View>
               </View>
-            </View>
-          </Background>
+            </Background>
+          )}
+        </Modal>
+
+        {/* Error modal */}
+        <Modal visible={isErrorModalOpen}>
+          {isErrorModalOpen && (
+            <Background>
+              <View className=' h-[70%] pt-[5vh] flex min-h-[40vh] self-center justify-between items-center'>
+                <Text
+                  className='self-center  text-center w-[50vw]'
+                  style={[
+                    styles.text_sm2,
+                    {
+                      fontSize: actuatedNormalize(20),
+                      lineHeight: actuatedNormalizeVertical(28),
+                    },
+                  ]}
+                >
+                  Report Error
+                </Text>
+
+                <View className='h-[70vh] flex justify-between'>
+                  <View className='h-[40vh] self-start px-[5vw] flex justify-between'>
+                    <SelectComponent
+                      title={"Task"}
+                      placeholder={"Choose faulty task"}
+                      data={activeJob?.tasks.filter(
+                        (obj) => obj.status == "Completed"
+                      )}
+                      setData={(params) => {
+                        dispatch(setCurrentTask(params));
+                      }}
+                    />
+                    <SelectComponent
+                      title={"Handler"}
+                      placeholder={"Send to Handler"}
+                      data={handlers}
+                      setData={(params) => {
+                        dispatch(setHandler(params));
+                      }}
+                    />
+                  </View>
+                  <TextInput
+                    style={[styles.averageText]}
+                    multiline={true}
+                    placeholder='Error Message to Handler'
+                    // value={errorMessage}
+                    className='w-[70vw] h-[10vh] border-2 border-gray-400 self-center rounded-md p-2'
+                    onChangeText={(text) => setErrorMessage(text)}
+                  />
+                  {visible ? (
+                    <TouchableOpacity
+                      className='bg-primary_light rounded-2xl self-center absolute top-[12vh] justify-center w-[90%] h-[55%]'
+                      activeOpacity={1}
+                    >
+                      <Motion.View
+                        initial={{ x: -500 }}
+                        animate={{ x: 0 }}
+                        transition={{ type: "spring", stiffness: 100 }}
+                        className='justify-center h-full  w-full  flex self-center'
+                      >
+                        <Text
+                          style={styles.text_sm}
+                          className='text-center mb-2'
+                        >
+                          Press Ok to confirm
+                        </Text>
+                        <OdinaryButton
+                          style={"rounded-sm mt-4 bg-primary"}
+                          navigate={() => {
+                            handleErrorSubmit();
+                            setVisible(!visible);
+                          }}
+                          text={"OK"}
+                        />
+                      </Motion.View>
+                    </TouchableOpacity>
+                  ) : null}
+                  <View
+                    id='BUTTONS'
+                    className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
+                  >
+                    <Button
+                      title='Submit'
+                      onPress={() => setVisible(!visible)}
+                    />
+                    <Button
+                      title='Cancel'
+                      onPress={() => {
+                        setIsErrorModalOpen(false);
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+            </Background>
+          )}
         </Modal>
       </View>
     </Background>

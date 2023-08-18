@@ -16,10 +16,7 @@ const { useRealm } = AccountRealmContext;
 const ActiveJobCard = ({ id }) => {
   const route = useRoute();
   const realm = useRealm();
-  const item =
-    route.name == "activeJobs"
-      ? realm.objectForPrimaryKey("activejob", Realm.BSON.ObjectId(id))
-      : realm.objectForPrimaryKey("job", Realm.BSON.ObjectId(id));
+  const item = realm.objectForPrimaryKey("activejob", Realm.BSON.ObjectId(id));
   const status =
     item.status === "Pending"
       ? "gray"
@@ -56,7 +53,9 @@ const ActiveJobCard = ({ id }) => {
           {item.job}
         </Text>
         <Text style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}>
-          {`${item.timeframe?.days}d ${item.timeframe?.hours}h ${item.timeframe?.minutes}m`}
+          {`${item.timeframe?.days == null ? 0 : item.timeframe?.days}d ${
+            item.timeframe?.hours == null ? 0 : item.timeframe?.hours
+          }h ${item.timeframe?.minutes == null ? 0 : item.timeframe?.minutes}m`}
         </Text>
       </View>
       <Text

@@ -1,5 +1,5 @@
 import { View, ActivityIndicator } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import SearchComponent from "../components/SearchComponent";
@@ -23,31 +23,9 @@ export default function MyTasks({ navigation }) {
 
   const ActiveJobs = useQuery(activejob);
   const { user } = useSelector((state) => state);
-  const tasksAssignedToHandler =
-    ActiveJobs.map((job) =>
-      job?.tasks.filter((obj) => obj.handler === user.name)
-    ) ?? [];
-
-  const tasks = useMemo(() => {
-    const myTasks = Array.from(ActiveJobs).map((job) => {
-      const assigned =
-        job?.tasks.filter((obj) => obj.handler === user.name) ?? [];
-      assigned.forEach((obj) => {
-        obj.id = job._id.toString();
-        obj.job = job.job;
-        obj.supervisor = job.supervisor;
-        obj.matno = job.matno;
-      });
-      return assigned;
-    });
-
-    const merged = myTasks.reduce((acc, obj) => acc.concat(obj), []);
-    return merged.sort((a, b) =>
-      a.started?.getTime() < b.started?.getTime() ? 1 : -1
-    );
-  }, [tasksAssignedToHandler.length]);
 
   useEffect(() => {
+    HandlerDetails;
     const unsubscribeBlur = navigation.addListener("blur", () => {
       // Screen lost focus
       dispatch(resetMulti());
@@ -56,13 +34,36 @@ export default function MyTasks({ navigation }) {
     });
 
     setTimeout(() => {
+      // const tasksAssignedToHandler =
+      //   ActiveJobs.map((job) =>
+      //     job?.tasks.filter((obj) => obj.handler === user.name)
+      //   ) ?? [];
+
+      const tasks = () => {
+        const myTasks = Array.from(ActiveJobs).map((job) => {
+          const assigned =
+            job?.tasks.filter((obj) => obj.handler === user.name) ?? [];
+          assigned.forEach((obj) => {
+            obj.id = job._id.toString();
+            obj.job = job.job;
+            obj.supervisor = job.supervisor;
+            obj.matno = job.matno;
+          });
+          return assigned;
+        });
+
+        const merged = myTasks.reduce((acc, obj) => acc.concat(obj), []);
+        return merged.sort((a, b) =>
+          a.started?.getTime() < b.started?.getTime() ? 1 : -1
+        );
+      };
       setHandlerTasks(tasks);
     }, 0);
 
     return () => {
       unsubscribeBlur();
     };
-  }, [handlerTasks.length]);
+  }, [handlerTasks.length, focus]);
 
   // //-------------------------------------------------------------EFFECTS AND FUNCTIONS
   // useEffect(() => {

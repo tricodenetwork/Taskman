@@ -1,21 +1,11 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
-import {
-  FlatList,
-  TextInput,
-  NativeViewGestureHandler,
-} from "react-native-gesture-handler";
+import React, { useEffect, useState } from "react";
+import { FlatList, TextInput } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 import { Motion } from "@legendapp/motion";
-import {
-  setFilter,
-  setVisible,
-  setVisible2,
-  setVisible3,
-} from "../store/slice-reducers/Formslice";
-import { useSelector, useDispatch } from "react-redux";
-import { setCurrentTask } from "../store/slice-reducers/ActiveJob";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
+import { useSelector } from "react-redux";
+import { current } from "@reduxjs/toolkit";
 
 export default function SelectComponent({
   value,
@@ -26,10 +16,16 @@ export default function SelectComponent({
   inputStyles = "w-[60vw]",
   visibleStyles = "w-[60vw]",
 }) {
-  const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
-  const [placehold, setPlacehold] = useState("");
   const [filter, setFilter] = useState("");
+
+  const { currenttask, handler } = useSelector((state) => state.ActiveJob);
+
+  useEffect(() => {
+    if (handler == "" && currenttask == "") {
+      setFilter("");
+    }
+  }, [handler, currenttask]);
 
   return (
     <View id='TASK' className='flex items-center  justify-between  flex-row'>
@@ -46,7 +42,7 @@ export default function SelectComponent({
             className={`bg-white absolute  bottom-0 right-0  space-y-1  border-[1px] border-black ${visibleStyles}  rounded-md`}
           >
             <FlatList
-              style={{ height: actuatedNormalize(150) }}
+              style={{ height: actuatedNormalize(150), marginBottom: 10 }}
               data={data.filter((params) =>
                 params?.name?.toLowerCase().includes(filter.toLowerCase())
               )}
@@ -73,7 +69,7 @@ export default function SelectComponent({
         )}
         <TextInput
           keyboardType='default'
-          defaultValue={placehold}
+          defaultValue={placeholder}
           editable={value ? false : true}
           value={value ? value : filter}
           onChangeText={setFilter}
