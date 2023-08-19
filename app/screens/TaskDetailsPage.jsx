@@ -16,7 +16,6 @@ import {
 import Background from "../components/Background";
 import Topscreen from "../components/Topscreen";
 import SelectComponent from "../components/SelectComponent";
-import { activejob, job } from "../models/Task";
 import { AccountRealmContext } from "../models";
 import {
   setCurrentTask,
@@ -24,7 +23,6 @@ import {
   setPassword,
 } from "../store/slice-reducers/ActiveJob";
 import { useDispatch, useSelector } from "react-redux";
-import { Account } from "../models/Account";
 import { chats } from "../models/Chat";
 import { sendPushNotification } from "../api/Functions";
 import { millisecondSinceStartDate } from "../api/test";
@@ -32,8 +30,10 @@ import { Motion } from "@legendapp/motion";
 import OdinaryButton from "../components/OdinaryButton";
 import MultiSelect from "../components/MultiSelect";
 import { setMulti } from "../store/slice-reducers/App";
+import useRealmData from "../hooks/useRealmData";
+import useActions from "../hooks/useActions";
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useRealm } = AccountRealmContext;
 
 const TaskDetailsPage = () => {
   const [isNextTaskModalOpen, setIsNextTaskModalOpen] = useState(false);
@@ -50,79 +50,24 @@ const TaskDetailsPage = () => {
   const realm = useRealm();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  // const { name, job, matno, supervisor, status } = route.params; // current handler for particular task
-  const activeJob = useObject(activejob, Realm.BSON.ObjectId(route.params?.id));
-  const Accounts = useQuery(Account);
-  const ActiveJobs = useQuery(activejob);
-  const tasks = useQuery(job).filtered(`name == "Transcript"`)[0].tasks;
   const { multipleJobs } = useSelector((state) => state.App);
-  const handlers = Accounts.filter(
-    (obj) =>
-      (obj.role == "Handler") & (obj.category?.name == user.category.name)
-  );
-  const account = useQuery("account").filtered(
-    `name == $0 AND role == "Handler"`,
-    handler
-  )[0];
-  const pushToken = account?.pushToken || "";
-
-  const chatrooms = useQuery("chatroom").filtered(
-    "senderId == $0 ||  recieverId == $0",
-    user._id
-  );
   const update = route.params?.update;
-  const result = useMemo(
-    () =>
-      ActiveJobs.reduce((acc, params) => {
-        const filteredTasks = params.tasks.filter(
-          (item) => item.handler == user.name
-        );
-        return acc.concat(filteredTasks);
-      }, []),
-    [ActiveJobs]
-  );
 
-  const uniqueTasks = useMemo(
-    () =>
-      result.reduce((unique, task) => {
-        if (!unique.some((item) => item.name === task.name)) {
-          unique.push(task);
-        }
-        return unique;
-      }, []),
-    [result]
-  );
+  const {
+    activeJob,
+    Accounts,
+    ActiveJobs,
+    tasks,
+    handlers,
+    pushToken,
+    uniqueTasks,
+  } = useRealmData(route.params);
 
   // Create a chat room
-  const createChatRoom = (recieverId) => {
-    // Generate a unique chat room ID
-    const chatRoomId = new Realm.BSON.ObjectId().toHexString();
+  const { createChatRoom } = useActions();
 
-    // Store the chat room in the Realm DB
-    const chatRoom = {
-      _id: chatRoomId,
-      senderId: user._id,
-      recieverId,
-      // Additional properties if needed
-    };
-
-    const roomId = chatrooms.filtered(
-      `senderId == $0 AND recieverId ==$1`,
-      user._id,
-      recieverId
-    );
-    // Check if chatroom exist and create one if not
-    if (roomId.length == 0) {
-      // Create a new chat room object in the Realm DB
-      realm.write(() => {
-        realm.create("chatroom", chatRoom);
-      });
-      // Return the created chat room ID
-
-      return chatRoomId;
-    } else {
-      return roomId[0]._id;
-    }
+  const filterMultipleJobs = (ActiveJobs, param) => {
+    return ActiveJobs.filtered(`matno ==$0`, param)[0]?.tasks;
   };
 
   // Functions and Buttons to accept, assign and reject tasks
@@ -139,7 +84,7 @@ const TaskDetailsPage = () => {
       try {
         if (multipleJobs.length !== 0) {
           multipleJobs.forEach((params) => {
-            ActiveJobs.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
+            filterMultipleJobs(ActiveJobs, params).map((task) => {
               // Set task to inProgress and begin counting
               if ((task.name == password) & (task.handler == user.name)) {
                 task.status = "InProgress";
@@ -200,7 +145,7 @@ const TaskDetailsPage = () => {
       try {
         if (multipleJobs.length !== 0) {
           multipleJobs.forEach((params) => {
-            ActiveJobs.filtered(`matno ==$0`, params)[0].tasks.map((task) => {
+            filterMultipleJobs(ActiveJobs, params).map((task) => {
               // on handling next task, first of all set your current task to completed
               if ((task.name == password) & (task.handler == user.name)) {
                 const timeCompleted = millisecondSinceStartDate(
@@ -360,9 +305,9 @@ const TaskDetailsPage = () => {
     route.params?.name,
   ]);
   return (
-    <Background bgColor='min-h-screen'>
+    <Background bgColor='min-h-screen bg-white'>
       <Topscreen text={route.params?.job} />
-      <View className='h-[75vh] absolute bottom-0 bg-white w-full flex items-start pb-[3vh] pt-[5vh] px-[3vw] justify-between'>
+      <View className='h-[75vh] absolute bottom-5 bg-white w-full flex items-start pb-[3vh] pt-[5vh] px-[3vw] justify-between'>
         {/* Display the task details */}
         <View>
           {route.params ? null : (

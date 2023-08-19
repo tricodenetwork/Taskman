@@ -49,7 +49,7 @@ const Background = ({ children, bgColor = "bg-slate-200" }) => {
 
   if (!fontsLoaded) {
     return (
-      <Text className='absolute text-white top-[50vh] text-center w-full'>
+      <Text className='absolute text-primary top-[50vh] text-center w-full'>
         Loading...
       </Text>
     );

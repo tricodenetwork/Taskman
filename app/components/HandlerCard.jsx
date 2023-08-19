@@ -188,7 +188,7 @@ const HandlerCard = ({ item }) => {
             borderColor: status,
             borderWidth: 1,
           }}
-          className={` rounded-md relative py-2 w-[21vw]`}
+          className={` rounded-md relative bottom-1 py-2 w-[21vw]`}
         >
           <Text
             style={[styles.text_md, { fontSize: actuatedNormalize(10) }]}
@@ -196,12 +196,12 @@ const HandlerCard = ({ item }) => {
           >
             {item.status}
           </Text>
-          <View
+          {/* <View
             style={{
               backgroundColor: status,
             }}
-            className={`absolute w-[80%]  rounded-full self-center bottom-[-7px] h-[2.5px]`}
-          ></View>
+            className={`absolute w-[80%]  rounded-full self-center bottom-[-5px] h-[2.5px]`}
+          ></View> */}
         </View>
       </View>
     </View>

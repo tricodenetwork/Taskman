@@ -9,7 +9,7 @@ import {
 import { setCurrentTask, setHandler } from "../store/slice-reducers/ActiveJob";
 import SelectComponent from "../components/SelectComponent";
 import { AccountRealmContext } from "../models";
-import { Account, client, holiday } from "../models/Account";
+import { holiday } from "../models/Account";
 import Background from "../components/Background";
 import { useCallback } from "react";
 import { Button } from "react-native";
@@ -18,9 +18,9 @@ import OdinaryButton from "../components/OdinaryButton";
 import { Motion } from "@legendapp/motion";
 import { TouchableOpacity } from "react-native";
 import MultiSelect from "../components/MultiSelect";
-import { activejob, job as jobs } from "../models/Task";
-import { resetMulti, setMulti } from "../store/slice-reducers/App";
+import { setMulti } from "../store/slice-reducers/App";
 import { sendPushNotification } from "../api/Functions";
+import useRealmData from "../hooks/useRealmData";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -28,30 +28,18 @@ export default function IndividualTask({ navigation }) {
   const { currenttask, handler } = useSelector((state) => state.ActiveJob);
   const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
   const [visible, setVisible] = useState(false);
+  const route = useRoute();
+  const realm = useRealm();
 
+  const { pushToken, tasks, Accounts, ActiveJobs, activeJob } = useRealmData(
+    route.params
+  );
   const dispatch = useDispatch();
-  const Accounts = useQuery(Account);
-  const clientsJob = useQuery(activejob);
-  const datas = Array.from(clientsJob);
+  const datas = Array.from(ActiveJobs);
   const { user } = useSelector((state) => state);
   const { multipleJobs } = useSelector((state) => state.App);
-  const realm = useRealm();
-  const route = useRoute();
-  const job = realm.objectForPrimaryKey(
-    "activejob",
-    Realm.BSON.ObjectId(route.params?.id)
-  );
 
-  // Select handler account and retrieve push token
-  const account = useQuery("account").filtered(
-    `name == $0 AND role == "Handler"`,
-    handler
-  )[0];
-  const pushToken = account?.pushToken || "";
-
-  const tasks = useQuery(jobs).filtered(`name == "Transcript"`)[0].tasks;
-
-  const inProgress = job?.tasks.filter(
+  const inProgress = activeJob?.tasks.filter(
     (item) => item.name == route.params?.taskName
   )[0].inProgress;
 
@@ -74,7 +62,7 @@ export default function IndividualTask({ navigation }) {
       try {
         if (multipleJobs.length !== 0) {
           multipleJobs.forEach((params) => {
-            let tasks = clientsJob.filtered(`matno ==$0`, params)[0].tasks;
+            let tasks = ActiveJobs.filtered(`matno ==$0`, params)[0].tasks;
             for (let task of tasks) {
               if (
                 task.name == route.params?.taskName ||
@@ -88,7 +76,7 @@ export default function IndividualTask({ navigation }) {
           });
           alert("Tasks Activated! ✔");
         } else {
-          job?.tasks.map((task) => {
+          activeJob?.tasks.map((task) => {
             const { name } = task;
             if (name == route.params.taskName) {
               // task.handler = handler;
@@ -113,7 +101,7 @@ export default function IndividualTask({ navigation }) {
     currenttask,
     handler,
     multipleJobs,
-    clientsJob,
+    ActiveJobs,
     route.params?.taskName,
   ]);
   const assignNextTask = useCallback(() => {
@@ -126,7 +114,7 @@ export default function IndividualTask({ navigation }) {
       try {
         if (multipleJobs.length != 0) {
           multipleJobs.forEach((params) => {
-            let tasks = clientsJob.filtered(`matno ==$0`, params)[0].tasks;
+            let tasks = ActiveJobs.filtered(`matno ==$0`, params)[0].tasks;
             for (let task of tasks) {
               if (task.name == currenttask) {
                 task.handler = handler;
@@ -148,7 +136,7 @@ export default function IndividualTask({ navigation }) {
             : alert(`${route.params.taskName} 📃 assign to ${handler} 👤 `);
           return;
         } else {
-          job?.tasks.map((task) => {
+          activeJob?.tasks.map((task) => {
             const { name } = task;
             if (name == route.params?.taskName) {
               task.handler = handler;
@@ -184,7 +172,7 @@ export default function IndividualTask({ navigation }) {
     currenttask,
     handler,
     multipleJobs,
-    clientsJob,
+    ActiveJobs,
     route.params?.taskName,
   ]);
 

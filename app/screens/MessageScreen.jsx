@@ -24,6 +24,7 @@ import { Motion } from "@legendapp/motion";
 import { activejob } from "../models/Task";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused, useRoute } from "@react-navigation/native";
+import useActions from "../hooks/useActions";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -63,36 +64,7 @@ export default function MessageScreen({ navigation }) {
     user._id
   );
   // Create a chat room
-  const createChatRoom = (recieverId) => {
-    // Generate a unique chat room ID
-    const chatRoomId = new Realm.BSON.ObjectId().toHexString();
-
-    // Store the chat room in the Realm DB
-    const chatRoom = {
-      _id: chatRoomId,
-      senderId: user._id,
-      recieverId,
-      // Additional properties if needed
-    };
-
-    const roomId = chatrooms.filtered(
-      `(senderId == $0 AND recieverId ==$1) OR (senderId == $1 AND recieverId ==$0)`,
-      user._id,
-      recieverId
-    );
-    // Check if chatroom exist and create one if not
-    if (roomId.length == 0) {
-      // Create a new chat room object in the Realm DB
-      realm.write(() => {
-        realm.create("chatroom", chatRoom);
-      });
-      // Return the created chat room ID
-
-      return chatRoomId;
-    } else {
-      return roomId[0]._id;
-    }
-  };
+  const { createChatRoom } = useActions();
   const renderItem = ({ item }, navigation, user, allChats, realm) => {
     const name =
       realm.objectForPrimaryKey(

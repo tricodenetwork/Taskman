@@ -186,12 +186,12 @@ const DetailsCard = React.memo(
             >
               {item.status}
             </Text>
-            <View
+            {/* <View
               style={{
                 backgroundColor: status,
               }}
               className={`absolute w-[80%]  rounded-full self-center bottom-[-5px] h-[2.5px]`}
-            ></View>
+            ></View> */}
           </View>
         </View>
       </View>

@@ -3,11 +3,6 @@ import {
   useNavigationContainerRef,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { AntDesign } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
-import { Motion } from "@legendapp/motion";
 import Profile from "../screens/Profile";
 import Login from "../screens/Login";
 import Accounts from "../screens/Accounts";
@@ -28,7 +23,7 @@ import ChatScreen from "../screens/ChatScreen";
 import MessageScreen from "../screens/MessageScreen";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { setId, setUser } from "../store/slice-reducers/userSlice";
+import { setUser } from "../store/slice-reducers/userSlice";
 import { useUser } from "@realm/react";
 import Stats from "../screens/Stats";
 import Security from "../screens/Security";
@@ -39,7 +34,6 @@ import Actions from "../screens/Actions";
 import DeleteJobs from "../screens/DeleteJobs";
 
 const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
 
 const { useObject, useQuery } = AccountRealmContext;
 
@@ -108,77 +102,3 @@ export const MainStack = () => {
     </NavigationContainer>
   );
 };
-
-// const TabNav = () => {
-//   return (
-//     <Tab.Navigator
-//       screenOptions={{
-//         tabBarHideOnKeyboard: true,
-//         tabBarActiveTintColor: "#FF6600",
-//         tabBarStyle: {
-//           backgroundColor: "white",
-//           borderTopWidth: 0,
-//           borderTopLeftRadius: 30,
-//           borderTopRightRadius: 30,
-//           position: "absolute",
-//           // top: 50,
-
-//           // left: 50,
-//           // right: 50,
-//           bottom: 0,
-//           height: "10%",
-//         },
-//         tabBarItemStyle: {
-//           // backgroundColor: "#00ff00",
-
-//           margin: 15,
-//         },
-//       }}
-//     >
-//       <Tab.Screen
-//         options={{
-//           tabBarIcon: ({ color, size }) => (
-//             <AntDesign name='home' color={color} size={30} />
-//           ),
-//           header: () => {},
-//         }}
-//         name='main'
-//         component={Home}
-//       />
-//       <Tab.Screen
-//         options={{
-//           tabBarIcon: ({ color, size }) => (
-//             <Ionicons
-//               name='ios-chatbubble-ellipses-outline'
-//               size={30}
-//               color={color}
-//             />
-//           ),
-//           header: () => {},
-//         }}
-//         name='chat'
-//         component={Initial}
-//       />
-//       <Tab.Screen
-//         options={{
-//           tabBarIcon: ({ color, size }) => (
-//             <Ionicons name='md-notifications-outline' size={30} color={color} />
-//           ),
-//           header: () => {},
-//         }}
-//         name='notificaton'
-//         component={Initial}
-//       />
-//       <Tab.Screen
-//         options={{
-//           tabBarIcon: ({ color, size }) => (
-//             <Ionicons name='md-settings-outline' size={30} color={color} />
-//           ),
-//           header: () => {},
-//         }}
-//         name='settings'
-//         component={Initial}
-//       />
-//     </Tab.Navigator>
-//   );
-// };

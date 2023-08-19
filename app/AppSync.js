@@ -1,14 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useApp, useUser } from "@realm/react";
-import { StyleSheet, Platform, KeyboardAvoidingView } from "react-native";
+import { Platform, KeyboardAvoidingView } from "react-native";
 
 import { holiday } from "./models/Account";
 import { AccountRealmContext } from "./models";
-import { buttonStyles } from "./styles/button";
-import { shadows } from "./styles/shadows";
-import colors from "./styles/colors";
 import { Provider } from "react-redux";
-import { persistor, store } from "./store/store";
+import { store } from "./store/store";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { MainStack } from "./navigator/AppNavigator";
@@ -16,10 +13,9 @@ import RealmPlugin from "realm-flipper-plugin-device";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import { chatroom, chats } from "./models/Chat";
-import { category } from "./models/Task";
+import { category, job } from "./models/Task";
 import { LinearGradient } from "expo-linear-gradient";
 import { SCREEN_HEIGHT } from "./styles/stylesheet";
-import { View } from "react-native";
 
 const originalWarn = console.warn; // Store the original console.warn method
 
@@ -80,7 +76,6 @@ const { useRealm, useQuery, useObject } = AccountRealmContext;
 export const AppSync = () => {
   const realm = useRealm();
   const user = useUser();
-  const app = useApp();
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
@@ -92,15 +87,19 @@ export const AppSync = () => {
       ? useObject("account", Realm.BSON.ObjectId(cleanedOid))
       : useQuery("client").filtered(`clientId ==$0`, cleanedOid)[0];
 
-  // const tasks = useMemo(() => result.sorted("createdAt"), [result]);
-  useEffect(() => {
+  const subscribe = () => {
     realm.subscriptions.update((mutableSubs) => {
       mutableSubs.add(realm.objects(chats));
       mutableSubs.add(realm.objects(chatroom));
       mutableSubs.add(realm.objects(category));
       mutableSubs.add(realm.objects(holiday));
+      mutableSubs.add(realm.objects(job));
       // mutableSubs.add(realm.objects(client));
     });
+  };
+
+  useEffect(() => {
+    setTimeout(() => subscribe(), 1000);
   }, [realm]);
 
   // const handleLogout = useCallback(() => {
@@ -165,21 +164,6 @@ export const AppSync = () => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  idText: {
-    color: "#999",
-    paddingHorizontal: 20,
-  },
-  authButton: {
-    ...buttonStyles.button,
-    ...shadows,
-    backgroundColor: colors.purpleDark,
-  },
-  authButtonText: {
-    ...buttonStyles.text,
-  },
-});
 
 {
   /* <Text style={styles.idText}>Syncing with app id: {app.id}</Text>

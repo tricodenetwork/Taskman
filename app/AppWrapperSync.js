@@ -8,7 +8,6 @@ import {
 import { SafeAreaView, StyleSheet } from "react-native";
 
 import { AccountRealmContext } from "./models";
-import colors from "./styles/colors";
 import { AppSync } from "./AppSync";
 import Login from "./screens/Login";
 import SplashScreen from "./components/SplashScreen";
@@ -29,7 +28,6 @@ export const AppWrapperSync = ({ appId }) => {
                 update(subs, realm) {
                   const subscriptionConfigs = [
                     { object: realm.objects("account"), name: "Acounts" },
-                    { object: realm.objects("job"), name: "Jobs" },
                     { object: realm.objects("activejob"), name: "ActiveJobs" },
                     { object: realm.objects("client"), name: "Client" },
                     // Add more subscription configurations as needed
@@ -65,7 +63,6 @@ export const AppWrapperSync = ({ appId }) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.darkBlue,
   },
 });
 
