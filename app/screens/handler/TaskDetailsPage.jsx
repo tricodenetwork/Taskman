@@ -37,19 +37,19 @@ const TaskDetailsPage = () => {
   let clientDetails = null;
   if (route.params) {
     clientDetails = (
-      <>
+      <View className='h-[50vh] flex justify-around'>
         <Text style={[styles.text_md]}>ClientId: {route.params.matno}</Text>
         <Text style={[styles.text_md]}>
           Supervisor: {route.params.supervisor}
         </Text>
         <Text style={[styles.text_md]}>Task: {route.params.name}</Text>
-      </>
+      </View>
     );
   }
 
   const disableButton =
     isWeekend ||
-    isAllowedTime ||
+    !isAllowedTime ||
     (route.params == undefined && multipleJobs.length == 0) ||
     (route.params == undefined && password == "");
 
@@ -135,7 +135,7 @@ const TaskDetailsPage = () => {
             />
           )}
         </View>
-        <View className='h-[50vh] flex justify-around'>{clientDetails}</View>
+        {clientDetails}
         <View
           id='BUTTONS'
           className='flex justify-around w-[80vw] self-center flex-row'
