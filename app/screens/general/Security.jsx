@@ -1,18 +1,18 @@
 import { View, Text, Pressable } from "react-native";
 import React, { useState } from "react";
-import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
+import Background from "../../components/Background";
+import Topscreen from "../../components/Topscreen";
 import { TextInput } from "react-native-gesture-handler";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
-} from "../styles/stylesheet";
-import OdinaryButton from "../components/OdinaryButton";
-import { AccountRealmContext } from "../models";
+} from "../../styles/stylesheet";
+import OdinaryButton from "../../components/OdinaryButton";
+import { AccountRealmContext } from "../../models";
 import { useSelector } from "react-redux";
-import Eye from "../../assets/icons/eye.svg";
-import EyesClosed from "../../assets/icons/closed.svg";
+import Eye from "../../../assets/icons/eye.svg";
+import EyesClosed from "../../../assets/icons/closed.svg";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 

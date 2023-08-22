@@ -50,12 +50,12 @@ export default function JobDetails({ update }) {
               });
             }}
           >
-            <JobCard id={item._id.toString()} />
+            <ActiveJobCard id={item._id.toString()} />
           </TouchableOpacity>
         </View>
       );
     },
-    [route.name]
+    [route.name, client]
   );
 
   // Use a memoized value for the filteredData variable to avoid unnecessary recalculations
@@ -69,7 +69,7 @@ export default function JobDetails({ update }) {
               item[col].toLowerCase().includes(search.toLowerCase())
         )
         .sort((a, b) => b._id.getTimestamp() - a._id.getTimestamp()),
-    [col, data, search, isFocused]
+    [col, data, search, isFocused, client]
   );
   const ITEM_HEIGHT = 0.14 * SCREEN_HEIGHT;
   const getItemLayout = (data, index) => ({
@@ -114,7 +114,7 @@ export default function JobDetails({ update }) {
           }}
         />
       }
-      data={filteredData}
+      data={user.clientId ? data : filteredData}
       renderItem={renderItem}
       showsVerticalScrollIndicator
       keyExtractor={keyExtractor}

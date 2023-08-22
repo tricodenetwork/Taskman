@@ -1,20 +1,16 @@
-import { View, Text, KeyboardAvoidingView } from "react-native";
+import { View, Text } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import Background from "../components/Background";
+import Background from "../../components/Background";
 import { Bubble, GiftedChat, Actions } from "react-native-gifted-chat";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute } from "@react-navigation/native";
-import { AccountRealmContext } from "../models";
-import { useUser } from "@realm/react";
-import { chats as Chats } from "../models/Chat";
-import { log } from "react-native-reanimated";
-import { render } from "react-dom";
+import { AccountRealmContext } from "../../models";
+import { chats as Chats } from "../../models/Chat";
 import { useSelector } from "react-redux";
-import { actuatedNormalize } from "../styles/stylesheet";
+import { actuatedNormalize } from "../../styles/stylesheet";
 import moment from "moment";
 import { Ionicons } from "@expo/vector-icons";
-import { sendPushNotification } from "../api/Functions";
-import { Account, client } from "../models/Account";
+import { sendPushNotification } from "../../api/Functions";
+import { Account, client } from "../../models/Account";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -113,7 +109,11 @@ export default function ChatScreen() {
       return new Chats(realm, messageObject);
     });
 
-    sendPushNotification(pushToken, user.name, messageObject.text);
+    sendPushNotification(
+      pushToken,
+      user.name || user.clientId,
+      messageObject.text
+    );
   }, []);
 
   function renderBubble(props) {

@@ -1,17 +1,17 @@
 import { View, Text, Button, TouchableOpacity } from "react-native";
 import React from "react";
-import Background from "../components/Background";
+import Background from "../../components/Background";
 import { FlatList } from "react-native-gesture-handler";
-import { AccountRealmContext } from "../models";
-import { activejob } from "../models/Task";
+import { AccountRealmContext } from "../../models";
+import { activejob } from "../../models/Task";
 import { useSelector } from "react-redux";
-import OdinaryButton from "../components/OdinaryButton";
+import OdinaryButton from "../../components/OdinaryButton";
 import {
   SCREEN_WIDTH,
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
-} from "../styles/stylesheet";
+} from "../../styles/stylesheet";
 // import PDFLib, { PDFDocument, PDFPage } from "react-native-pdf-lib";
 // import * as Print from "expo-print";
 // import * as Sharing from "expo-sharing";

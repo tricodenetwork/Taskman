@@ -8,18 +8,18 @@ import {
   useWindowDimensions,
   FlatList,
 } from "react-native";
-import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
+import Background from "../../components/Background";
+import Topscreen from "../../components/Topscreen";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
-} from "../styles/stylesheet";
-import LowerButton from "../components/LowerButton";
+} from "../../styles/stylesheet";
+import LowerButton from "../../components/LowerButton";
 
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { setVisible } from "../store/slice-reducers/Formslice";
+import { setVisible } from "../../store/slice-reducers/Formslice";
 import { Motion } from "@legendapp/motion";
 import {
   setName,
@@ -27,12 +27,12 @@ import {
   setNo,
   setCategory,
   setId,
-} from "../store/slice-reducers/JobSlice";
+} from "../../store/slice-reducers/JobSlice";
 import { Modal } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { job as jobber } from "../models/Task";
-import { AccountRealmContext } from "../models";
-import OdinaryButton from "../components/OdinaryButton";
+import { job as jobber } from "../../models/Task";
+import { AccountRealmContext } from "../../models";
+import OdinaryButton from "../../components/OdinaryButton";
 import { KeyboardAvoidingView } from "react-native";
 
 const { useRealm, useQuery } = AccountRealmContext;

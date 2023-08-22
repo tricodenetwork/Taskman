@@ -20,21 +20,21 @@ import {
   setPassword,
   setSupervisor,
   setTasks,
-} from "../store/slice-reducers/ActiveJob";
-import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
-import { setVisible } from "../store/slice-reducers/Formslice";
+} from "../../store/slice-reducers/ActiveJob";
+import Background from "../../components/Background";
+import Topscreen from "../../components/Topscreen";
+import { setVisible } from "../../store/slice-reducers/Formslice";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
-} from "../styles/stylesheet";
-import LowerButton from "../components/LowerButton";
-import { AccountRealmContext } from "../models";
-import { activejob, job as jobSchema } from "../models/Task";
-import { Account, client } from "../models/Account";
+} from "../../styles/stylesheet";
+import LowerButton from "../../components/LowerButton";
+import { AccountRealmContext } from "../../models";
+import { activejob, job as jobSchema } from "../../models/Task";
+import { Account, client } from "../../models/Account";
 import Realm from "realm";
-import { generatePassword, sendClientDetails } from "../api/Functions";
+import { generatePassword, sendClientDetails } from "../../api/Functions";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -77,8 +77,9 @@ const ActivateJob = ({ navigation }) => {
         Realm.BSON.ObjectId(route.params?.id)
       );
       useThis && dispatch(Replace(useThis));
-      dispatch(Replace());
       return;
+    } else {
+      dispatch(Replace());
     }
   }, [route.params]);
 

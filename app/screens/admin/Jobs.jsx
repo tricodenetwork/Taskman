@@ -7,25 +7,29 @@ import {
   RefreshControl,
 } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
+import Background from "../../components/Background";
+import Topscreen from "../../components/Topscreen";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
-} from "../styles/stylesheet";
+} from "../../styles/stylesheet";
 import { FontAwesome } from "@expo/vector-icons";
-import LowerButton from "../components/LowerButton";
-import SearchComponent from "../components/SearchComponent";
-import JobDetails from "../components/JobDetails";
+import LowerButton from "../../components/LowerButton";
+import SearchComponent from "../../components/SearchComponent";
+import JobDetails from "../../components/JobDetails";
 import { useSelector, useDispatch } from "react-redux";
-import { replaceTask, setTask } from "../store/slice-reducers/JobSlice";
-import OdinaryButton from "../components/OdinaryButton";
+import { replaceTask, setTask } from "../../store/slice-reducers/JobSlice";
+import OdinaryButton from "../../components/OdinaryButton";
 import { TextInput } from "react-native";
-import { AccountRealmContext } from "../models";
-import { category, job } from "../models/Task";
-import { setFilter } from "../store/slice-reducers/Formslice";
-import { convertToMinutes, formatDuration, sumField } from "../api/Functions";
+import { AccountRealmContext } from "../../models";
+import { category, job } from "../../models/Task";
+import { setFilter } from "../../store/slice-reducers/Formslice";
+import {
+  convertToMinutes,
+  formatDuration,
+  sumField,
+} from "../../api/Functions";
 
 const { useRealm, useQuery } = AccountRealmContext;
 

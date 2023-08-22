@@ -1,12 +1,12 @@
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import React, { useEffect } from "react";
-import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
-import LowerButton from "../components/LowerButton";
-import SearchComponent from "../components/SearchComponent";
-import UserDetails from "../components/UserDetails";
+import Background from "../../components/Background";
+import Topscreen from "../../components/Topscreen";
+import LowerButton from "../../components/LowerButton";
+import SearchComponent from "../../components/SearchComponent";
+import UserDetails from "../../components/UserDetails";
 import { useDispatch } from "react-redux";
-import { setFilter } from "../store/slice-reducers/Formslice";
+import { setFilter } from "../../store/slice-reducers/Formslice";
 // import { accounts } from "../api/Functions";
 
 export default function Accounts({ navigation }) {

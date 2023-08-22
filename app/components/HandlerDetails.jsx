@@ -1,34 +1,26 @@
 import { TouchableOpacity } from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   useIsFocused,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
-import DraggableFlatList, {
-  ScaleDecorator,
-} from "react-native-draggable-flatlist";
-import { AccountRealmContext } from "../models";
+import { useSelector } from "react-redux";
+
 import HandlerCard from "./HandlerCard";
 import { RefreshControl } from "react-native-gesture-handler";
 import { FlatList } from "react-native";
-import { Text } from "react-native";
 
-const { useRealm, useQuery } = AccountRealmContext;
-
-export default function HandlerDetails({ jobId, taskdata, update }) {
+export default function HandlerDetails({ taskdata, update }) {
   const [data, setData] = useState(taskdata);
   const [refreshing, setRefreshing] = useState(false);
   const { search, filter } = useSelector((state) => state.app);
   const col = filter && filter.toLowerCase();
 
-  const dispatch = useDispatch();
   const route = useRoute();
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { user } = useSelector((state) => state);
-  const { handler } = useSelector((state) => state.App);
 
   const render = ({ item }) => {
     const { name, id, job, matno, supervisor, handler, status } = item;

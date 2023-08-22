@@ -1,13 +1,12 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import Background from "../components/Background";
-import ProfileCard from "../components/ProfileCard";
-import OptionsCard from "../components/OptionsCard";
+import Background from "../../components/Background";
+import ProfileCard from "../../components/ProfileCard";
+import OptionsCard from "../../components/OptionsCard";
 import { MaterialIcons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
-import LowerButton from "../components/LowerButton";
-import Topscreen from "../components/Topscreen";
-import { actuatedNormalize } from "../styles/stylesheet";
+import LowerButton from "../../components/LowerButton";
+import Topscreen from "../../components/Topscreen";
+import { actuatedNormalize } from "../../styles/stylesheet";
 import { useUser } from "@realm/react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 

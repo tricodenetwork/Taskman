@@ -4,14 +4,14 @@ import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
-} from "../styles/stylesheet";
-import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
+} from "../../styles/stylesheet";
+import Background from "../../components/Background";
+import Topscreen from "../../components/Topscreen";
 import { Motion } from "@legendapp/motion";
 import { useIsFocused } from "@react-navigation/native";
 import { useUser } from "@realm/react";
-import { AccountRealmContext } from "../models";
-import { setUser } from "../store/slice-reducers/userSlice";
+import { AccountRealmContext } from "../../models";
+import { setUser } from "../../store/slice-reducers/userSlice";
 import { useDispatch } from "react-redux";
 
 const { useObject, useQuery } = AccountRealmContext;

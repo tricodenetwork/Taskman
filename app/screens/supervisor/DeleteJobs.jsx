@@ -1,55 +1,14 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  setMatNo,
-  setDept,
-  setHandler,
-  setJob,
-  setEmail,
-  setCurrentTask,
-  Replace,
-  setPassword,
-  setSupervisor,
-  setTasks,
-} from "../store/slice-reducers/ActiveJob";
-import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
-import { FlatList } from "react-native-gesture-handler";
-import {
-  setVisible,
-  setVisible2,
-  setVisible3,
-} from "../store/slice-reducers/Formslice";
-import { Motion } from "@legendapp/motion";
-import {
-  actuatedNormalize,
-  actuatedNormalizeVertical,
-  styles,
-} from "../styles/stylesheet";
-import { AntDesign } from "@expo/vector-icons";
+import React, { useState, useCallback } from "react";
+
+import { View, Text, ActivityIndicator } from "react-native";
+import Background from "../../components/Background";
+import Topscreen from "../../components/Topscreen";
+import { styles } from "../../styles/stylesheet";
 import { useRoute } from "@react-navigation/native";
-import LowerButton from "../components/LowerButton";
-import { AccountRealmContext } from "../models";
-import { activejob, job as jobSchema } from "../models/Task";
-import { Account, client } from "../models/Account";
-import { useUser } from "@realm/react";
-import Realm from "realm";
-import {
-  generatePassword,
-  sendClientDetails,
-  sendPushNotification,
-} from "../api/Functions";
-import OdinaryButton from "../components/OdinaryButton";
-import { MaterialIcons } from "@expo/vector-icons";
-import MultiSelect from "../components/MultiSelect";
+import LowerButton from "../../components/LowerButton";
+import { AccountRealmContext } from "../../models";
+import { activejob } from "../../models/Task";
+import MultiSelect from "../../components/MultiSelect";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 

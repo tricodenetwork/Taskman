@@ -7,22 +7,22 @@ import {
   TextInput,
 } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
+import Background from "../../components/Background";
+import Topscreen from "../../components/Topscreen";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
-} from "../styles/stylesheet";
+} from "../../styles/stylesheet";
 import { FontAwesome } from "@expo/vector-icons";
-import LowerButton from "../components/LowerButton";
-import SearchComponent from "../components/SearchComponent";
-import TaskDetails from "../components/TaskDetails";
+import LowerButton from "../../components/LowerButton";
+import SearchComponent from "../../components/SearchComponent";
+import TaskDetails from "../../components/TaskDetails";
 import { Modal } from "react-native";
-import OdinaryButton from "../components/OdinaryButton";
+import OdinaryButton from "../../components/OdinaryButton";
 import { useRoute } from "@react-navigation/native";
-import { AccountRealmContext } from "../models";
-import SelectComponent from "../components/SelectComponent";
+import { AccountRealmContext } from "../../models";
+import SelectComponent from "../../components/SelectComponent";
 
 const { useRealm, useQuery } = AccountRealmContext;
 

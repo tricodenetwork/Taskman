@@ -1,22 +1,23 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React, { useCallback, useEffect } from "react";
-import Background from "../components/Background";
-import HandlerTopscreen from "../components/HandlerTopScreen";
+import Background from "../../components/Background";
+import HandlerTopscreen from "../../components/HandlerTopScreen";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
-} from "../styles/stylesheet";
+} from "../../styles/stylesheet";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import OptionsCard from "../components/OptionsCard";
+import OptionsCard from "../../components/OptionsCard";
 import { FontAwesome5 } from "@expo/vector-icons";
-import LowerButton from "../components/LowerButton";
-import { AccountRealmContext } from "../models";
+import LowerButton from "../../components/LowerButton";
+import { AccountRealmContext } from "../../models";
 import { useSelector } from "react-redux";
-import { formattedDate } from "../api/Functions";
-import { activejob } from "../models/Task";
+import { formattedDate } from "../../api/Functions";
+import { activejob } from "../../models/Task";
 import { useUser } from "@realm/react";
 import { MaterialIcons } from "@expo/vector-icons";
+import { chats as chat, chatroom } from "../../models/Chat";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -26,6 +27,7 @@ export default function ClientScreen() {
   const route = useRoute();
   const user = useUser();
   const navigation = useNavigation();
+  const chats = useQuery(chat);
   const realm = useRealm();
   const { _id, clientId } = useSelector((state) => state.user);
   // const account = useObject("account", Realm.BSON.ObjectId(id));
@@ -33,6 +35,18 @@ export default function ClientScreen() {
   const handleLogout = useCallback(() => {
     user?.logOut();
   }, [user]);
+
+  const userRooms = useQuery(chatroom)
+    .filtered(`recieverId == $0 || senderId == $0`, _id)
+    .map((params) => params._id)
+    .filter(
+      (roomId) =>
+        chats.filtered(
+          `status != "read" AND user._id != $0 AND roomId == $1`,
+          _id,
+          roomId
+        ).length > 0
+    );
 
   return (
     <Background>
@@ -61,25 +75,6 @@ export default function ClientScreen() {
             />
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("messages");
-          }}
-          activeOpacity={0.9}
-          className='rounded-md bg-primary'
-        >
-          <OptionsCard
-            icon={
-              <FontAwesome5
-                name='rocketchat'
-                size={actuatedNormalize(25)}
-                color='black'
-              />
-            }
-            text={"Messages"}
-          />
-        </TouchableOpacity>
         <View>
           <TouchableOpacity
             onPress={() => {
@@ -105,6 +100,47 @@ export default function ClientScreen() {
             />
           </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("messages");
+          }}
+          activeOpacity={0.9}
+          className='relative flex rounded-md bg-primary flex-row max-h-max'
+        >
+          <OptionsCard
+            icon={
+              <FontAwesome5
+                name='rocketchat'
+                size={actuatedNormalize(25)}
+                color='black'
+              />
+            }
+            text={"Messages"}
+          />
+          {userRooms.length !== 0 ? (
+            <View
+              style={{
+                width: actuatedNormalize(25),
+                height: actuatedNormalize(25),
+              }}
+              className='rounded-full absolute left-[15vw] self-center   flex items-center justify-center bg-purple-500'
+            >
+              <Text
+                className='text-red-100'
+                style={[
+                  styles.text_sm,
+                  {
+                    fontSize: actuatedNormalize(12),
+                    lineHeight: actuatedNormalizeVertical(12 * 1.5),
+                  },
+                ]}
+              >
+                {userRooms.length}
+              </Text>
+            </View>
+          ) : null}
+        </TouchableOpacity>
       </View>
       <LowerButton
         style={"w-[90vw]"}

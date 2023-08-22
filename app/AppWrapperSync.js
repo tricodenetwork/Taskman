@@ -9,7 +9,7 @@ import { SafeAreaView, StyleSheet } from "react-native";
 
 import { AccountRealmContext } from "./models";
 import { AppSync } from "./AppSync";
-import Login from "./screens/Login";
+import Login from "./screens/general/Login";
 import SplashScreen from "./components/SplashScreen";
 
 export const AppWrapperSync = ({ appId }) => {

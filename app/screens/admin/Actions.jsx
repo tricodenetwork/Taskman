@@ -1,15 +1,15 @@
 import { View, Text, Button, Modal, ScrollView } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
-import { actuatedNormalize, styles } from "../styles/stylesheet";
-import OdinaryButton from "../components/OdinaryButton";
+import Background from "../../components/Background";
+import Topscreen from "../../components/Topscreen";
+import { actuatedNormalize, styles } from "../../styles/stylesheet";
+import OdinaryButton from "../../components/OdinaryButton";
 // import DatePicker from "react-native-date-picker";
 import { useDispatch, useSelector } from "react-redux";
-import { AddHoliday } from "../store/slice-reducers/Formslice";
-import { AccountRealmContext } from "../models";
-import { holiday } from "../models/Account";
-import LowerButton from "../components/LowerButton";
+import { AddHoliday } from "../../store/slice-reducers/Formslice";
+import { AccountRealmContext } from "../../models";
+import { holiday } from "../../models/Account";
+import LowerButton from "../../components/LowerButton";
 import DateTimePicker, {
   DateTimePickerAndroid,
 } from "@react-native-community/datetimepicker";

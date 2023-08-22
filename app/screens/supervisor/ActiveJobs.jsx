@@ -3,18 +3,18 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 
-import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
-import SearchComponent from "../components/SearchComponent";
-import JobDetails from "../components/JobDetails";
-import LowerButton from "../components/LowerButton";
-import { setFilter, setSearch } from "../store/slice-reducers/Formslice";
-import { holiday } from "../models/Account";
-import { AccountRealmContext } from "../models";
-import OdinaryButton from "../components/OdinaryButton";
-import { activejob } from "../models/Task";
-import { millisecondSinceStartDate } from "../api/test";
-import { SCREEN_HEIGHT, styles } from "../styles/stylesheet";
+import Background from "../../components/Background";
+import Topscreen from "../../components/Topscreen";
+import SearchComponent from "../../components/SearchComponent";
+import JobDetails from "../../components/JobDetails";
+import LowerButton from "../../components/LowerButton";
+import { setFilter, setSearch } from "../../store/slice-reducers/Formslice";
+import { holiday } from "../../models/Account";
+import { AccountRealmContext } from "../../models";
+import OdinaryButton from "../../components/OdinaryButton";
+import { activejob } from "../../models/Task";
+import { millisecondSinceStartDate } from "../../api/test";
+import { SCREEN_HEIGHT, styles } from "../../styles/stylesheet";
 
 const { useRealm, useQuery } = AccountRealmContext;
 export default function ActiveJobs({ navigation }) {

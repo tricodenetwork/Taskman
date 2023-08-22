@@ -7,18 +7,18 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
+import Background from "../../components/Background";
+import Topscreen from "../../components/Topscreen";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
-} from "../styles/stylesheet";
-import LowerButton from "../components/LowerButton";
-import { generatePassword, sendUserDetails } from "../api/Functions";
+} from "../../styles/stylesheet";
+import LowerButton from "../../components/LowerButton";
+import { generatePassword, sendUserDetails } from "../../api/Functions";
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { setVisible, setVisible2 } from "../store/slice-reducers/Formslice";
+import { setVisible, setVisible2 } from "../../store/slice-reducers/Formslice";
 import { Motion } from "@legendapp/motion";
 import {
   setName,
@@ -29,12 +29,12 @@ import {
   setPassword,
   setCategory,
   setUser,
-} from "../store/slice-reducers/userSlice";
+} from "../../store/slice-reducers/userSlice";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
-import { AccountRealmContext } from "../models";
-import { Account } from "../models/Account";
-import OdinaryButton from "../components/OdinaryButton";
+import { AccountRealmContext } from "../../models";
+import { Account } from "../../models/Account";
+import OdinaryButton from "../../components/OdinaryButton";
 
 const { useRealm, useQuery } = AccountRealmContext;
 

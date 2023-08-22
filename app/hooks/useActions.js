@@ -3,12 +3,14 @@
 import { useCallback } from "react";
 import { AccountRealmContext } from "../models";
 import useRealmData from "./useRealmData";
+import { useSelector } from "react-redux";
 
 const { useRealm } = AccountRealmContext;
 
 const useActions = () => {
   const realm = useRealm();
   const { chatrooms } = useRealmData();
+  const { user } = useSelector((state) => state);
 
   const createChatRoom = useCallback(
     (recieverId) => {

@@ -52,9 +52,10 @@ export const sendClientDetails = async (recipient, userDetails) => {
   const body = `
     Hello ${matno},
 
-    Welcome to Taskman! Your account details are as follows:
+    Welcome to Taskman! This app can be used to track the progress of your jobs.
+    Your account details are as follows:
 
-    **Email:** ${email}
+    **Username:** ${matno}
     **Password:** ${password}
   
     Kindly download the app from the link below:

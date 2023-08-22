@@ -1,22 +1,22 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import Background from "../components/Background";
-import HandlerTopscreen from "../components/HandlerTopScreen";
+import Background from "../../components/Background";
+import HandlerTopscreen from "../../components/HandlerTopScreen";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
-} from "../styles/stylesheet";
+} from "../../styles/stylesheet";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import OptionsCard from "../components/OptionsCard";
+import OptionsCard from "../../components/OptionsCard";
 import { FontAwesome5 } from "@expo/vector-icons";
-import LowerButton from "../components/LowerButton";
-import { AccountRealmContext } from "../models";
+import LowerButton from "../../components/LowerButton";
+import { AccountRealmContext } from "../../models";
 import { useSelector } from "react-redux";
-import { formattedDate } from "../api/Functions";
-import { activejob } from "../models/Task";
+import { formattedDate } from "../../api/Functions";
+import { activejob } from "../../models/Task";
 import { useUser } from "@realm/react";
-import { chats as chat, chatroom } from "../models/Chat";
+import { chats as chat, chatroom } from "../../models/Chat";
 import { useIsFocused } from "@react-navigation/native";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;

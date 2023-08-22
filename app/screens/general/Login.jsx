@@ -11,19 +11,19 @@ import {
   Image,
   Button,
 } from "react-native";
-import Background from "../components/Background";
+import Background from "../../components/Background";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
-} from "../styles/stylesheet";
-import LowerButton from "../components/LowerButton";
+} from "../../styles/stylesheet";
+import LowerButton from "../../components/LowerButton";
 import { Realm, useApp } from "@realm/react";
 import * as Updates from "expo-updates";
-import Eye from "../../assets/icons/eye.svg";
-import EyesClosed from "../../assets/icons/closed.svg";
-import Error from "../../assets/icons/error.svg";
-import Logo from "../../assets/images/C.svg";
+import Eye from "../../../assets/icons/eye.svg";
+import EyesClosed from "../../../assets/icons/closed.svg";
+import Error from "../../../assets/icons/error.svg";
+import Logo from "../../../assets/images/C.svg";
 // import { TouchableOpacity } from "react-native-gesture-handler";
 import { TouchableOpacity } from "react-native";
 

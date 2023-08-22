@@ -10,9 +10,6 @@ export function calculateTime(countDownTimer) {
   const remainingMinutes = Math.floor(
     (Math.abs(countDownTimer) % (60 * 60 * 1000)) / (60 * 1000)
   );
-  const remainingSeconds = Math.floor(
-    (Math.abs(countDownTimer) % (60 * 1000)) / 1000
-  );
 
   // Add negative sign if time is elapsed
 
@@ -20,7 +17,7 @@ export function calculateTime(countDownTimer) {
   const sign = isElapsed ? "-" : "";
 
   // set the time variable to display on the UI
-  const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s`;
+  const Timer = `${sign}${remainingDays}d ${remainingHours}h ${remainingMinutes}m`;
   return Timer;
 }
 

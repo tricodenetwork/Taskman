@@ -1,15 +1,15 @@
 import { ActivityIndicator, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import Background from "../components/Background";
-import Topscreen from "../components/Topscreen";
-import SearchComponent from "../components/SearchComponent";
-import TaskDetails from "../components/TaskDetails";
+import Background from "../../components/Background";
+import Topscreen from "../../components/Topscreen";
+import SearchComponent from "../../components/SearchComponent";
+import TaskDetails from "../../components/TaskDetails";
 import { useIsFocused, useRoute } from "@react-navigation/native";
-import { AccountRealmContext } from "../models";
+import { AccountRealmContext } from "../../models";
 import { useDispatch, useSelector } from "react-redux";
-import { setFilter } from "../store/slice-reducers/Formslice";
-import { resetMulti } from "../store/slice-reducers/App";
-import { styles } from "../styles/stylesheet";
+import { setFilter } from "../../store/slice-reducers/Formslice";
+import { resetMulti } from "../../store/slice-reducers/App";
+import { styles } from "../../styles/stylesheet";
 
 const { useRealm, useQuery } = AccountRealmContext;
 

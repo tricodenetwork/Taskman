@@ -6,25 +6,24 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import Background from "../components/Background";
-import SelectComponent from "../components/SelectComponent";
+import Background from "../../components/Background";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
-import { AccountRealmContext } from "../models";
-import { Account } from "../models/Account";
+import { AccountRealmContext } from "../../models";
+import { Account } from "../../models/Account";
 import { useDispatch, useSelector } from "react-redux";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
-} from "../styles/stylesheet";
-import { chatroom, chats, user } from "../models/Chat";
+} from "../../styles/stylesheet";
+import { chatroom, chats, user } from "../../models/Chat";
 import { FlatList } from "react-native-gesture-handler";
 import { Motion } from "@legendapp/motion";
-import { activejob } from "../models/Task";
+import { activejob } from "../../models/Task";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused, useRoute } from "@react-navigation/native";
-import useActions from "../hooks/useActions";
+import useActions from "../../hooks/useActions";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
