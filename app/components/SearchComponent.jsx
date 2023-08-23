@@ -1,5 +1,5 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,15 +8,21 @@ import { AntDesign } from "@expo/vector-icons";
 import { Motion } from "@legendapp/motion";
 import { useIsFocused } from "@react-navigation/native";
 
-export default function SearchComponent({ filterItems = [], initialFilter }) {
+function SearchComponent({ filterItems = [], initialFilter }) {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
-  const { filter } = useSelector((state) => state.app);
+  const [localfilter, setLocalFilter] = useState(initialFilter);
+
   const focus = useIsFocused();
 
   useEffect(() => {
     dispatch(setFilter(initialFilter));
   }, [focus]);
+  useEffect(() => {
+    setTimeout(() => {
+      dispatch(setFilter(localfilter));
+    }, 0);
+  }, [localfilter]);
 
   return (
     <View
@@ -33,7 +39,9 @@ export default function SearchComponent({ filterItems = [], initialFilter }) {
           dispatch(setSearch(value));
         }}
         style={[styles.averageText, { color: "#004343" }]}
-        placeholder={filter === "MatNo" ? "Client ID" : filter || "Name"}
+        placeholder={
+          localfilter === "MatNo" ? "Client ID" : localfilter || "Name"
+        }
         placeholderTextColor={"rgba(0, 67,67,0.6)"}
         className='w-[80%] h-[4vh] bg-[#A6C9C9] rounded-sm self-center'
       />
@@ -65,8 +73,9 @@ export default function SearchComponent({ filterItems = [], initialFilter }) {
             <TouchableOpacity
               key={index}
               onPress={() => {
-                dispatch(setFilter(item));
+                setLocalFilter(item);
                 setVisible(!visible);
+                // dispatch(setFilter(item));
               }}
             >
               <Text>{item}</Text>
@@ -77,3 +86,5 @@ export default function SearchComponent({ filterItems = [], initialFilter }) {
     </View>
   );
 }
+
+export default memo(SearchComponent);

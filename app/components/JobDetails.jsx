@@ -50,7 +50,11 @@ export default function JobDetails({ update }) {
               });
             }}
           >
-            <ActiveJobCard id={item._id.toString()} />
+            {route.name == "jobs" ? (
+              <JobCard id={item._id.toString()} />
+            ) : (
+              <ActiveJobCard id={item._id.toString()} />
+            )}
           </TouchableOpacity>
         </View>
       );

@@ -217,38 +217,44 @@ export default function MessageScreen({ navigation }) {
   });
 
   useEffect(() => {
-    // convert Realm collection to JavaScript array
-    const chatroomsArray = Array.from(chatrooms);
+    setTimeout(() => {
+      // convert Realm collection to JavaScript array
+      const chatroomsArray = Array.from(chatrooms);
 
-    // create a map with the most recent createdAt dates for each room
-    const lastDatesMap = new Map();
-    chatroomsArray.forEach((room) => {
-      const chatsForRoom = allChats.filtered(`roomId == $0`, room._id);
-      const lastMessage = chatsForRoom.sorted("createdAt", true)[0];
-      lastDatesMap.set(room._id, lastMessage?.createdAt);
-    });
+      // create a map with the most recent createdAt dates for each room
+      const lastDatesMap = new Map();
+      chatroomsArray.forEach((room) => {
+        const chatsForRoom = allChats.filtered(`roomId == $0`, room._id);
+        const lastMessage = chatsForRoom.sorted("createdAt", true)[0];
+        lastDatesMap.set(room._id, lastMessage?.createdAt);
+      });
 
-    // sort chatrooms by most recent message's createdAt date
-    const sortedChatrooms = chatroomsArray.sort((a, b) => {
-      const lastDateA = lastDatesMap.get(a._id);
-      const lastDateB = lastDatesMap.get(b._id);
+      // sort chatrooms by most recent message's createdAt date
+      const sortedChatrooms = chatroomsArray.sort((a, b) => {
+        const lastDateA = lastDatesMap.get(a._id);
+        const lastDateB = lastDatesMap.get(b._id);
 
-      if (lastDateA > lastDateB) {
-        return -1;
-      } else if (lastDateA < lastDateB) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-    setChatroom(sortedChatrooms);
+        if (lastDateA > lastDateB) {
+          return -1;
+        } else if (lastDateA < lastDateB) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+      setChatroom(sortedChatrooms);
+      setIsLoading(false);
+    }, 0);
   }, [focus]);
   return (
     <Background>
       <SafeAreaView className='relative bg-red-100 w-full h-full'>
-        {!isLoading ? (
-          <View className='flex-1 items-center justify-center'>
-            <ActivityIndicator size='large' color='#0000ff' />
+        {isLoading ? (
+          <View className='relative bg-primary_light w-[35%] self-center flex items-center justify-between rounded- py-[2vh] top-[5vh]'>
+            <ActivityIndicator size={"small"} color={"rgb(13 3 122)"} />
+            <Text className='text-Blue relative top-2' style={styles.text_sm}>
+              Loading...
+            </Text>
           </View>
         ) : (
           <>

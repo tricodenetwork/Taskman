@@ -5,7 +5,6 @@ import { AntDesign } from "@expo/vector-icons";
 import { Motion } from "@legendapp/motion";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { useSelector } from "react-redux";
-import { current } from "@reduxjs/toolkit";
 
 export default function SelectComponent({
   value,

@@ -10,7 +10,7 @@ import {
   setHandler,
   setPassword,
 } from "../../store/slice-reducers/ActiveJob";
-import { useDispatch, useSelector } from "react-redux";
+import { batch, useDispatch, useSelector } from "react-redux";
 import { millisecondSinceStartDate } from "../../api/test";
 import { sendPushNotification } from "../../api/Functions";
 import useRealmData from "../../hooks/useRealmData";
@@ -18,6 +18,7 @@ import { AccountRealmContext } from "../../models";
 import Background from "../../components/Background";
 import SelectComponent from "../../components/SelectComponent";
 import { Text } from "react-native";
+import { resetMulti } from "../../store/slice-reducers/App";
 
 const { useRealm } = AccountRealmContext;
 
@@ -35,6 +36,12 @@ const DoneTaskScreen = ({ navigation }) => {
     route.params
   );
 
+  const resetField = batch(() => {
+    dispatch(setCurrentTask(""));
+    dispatch(setHandler(""));
+    dispatch(resetMulti());
+    dispatch(setPassword(""));
+  });
   // Create a chat room
 
   const filterMultipleJobs = (ActiveJobs, param) => {
@@ -109,9 +116,7 @@ const DoneTaskScreen = ({ navigation }) => {
         console.log({ error, msg: "Error Assigning next task" });
       }
     });
-    dispatch(setCurrentTask(""));
-    dispatch(setHandler(""));
-    dispatch(setPassword(""));
+    resetField();
     navigation.navigate("mytasks");
     // setIsNextTaskModalOpen(false);
   }, [
@@ -191,15 +196,16 @@ const DoneTaskScreen = ({ navigation }) => {
           id='BUTTONS'
           className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
         >
-          <Button
+          <OdinaryButton
             disabled={handler == "" || currenttask == ""}
-            title='Assign'
-            onPress={() => setVisible(!visible)}
+            text='Assign'
+            bg={"#E57310"}
+            navigate={() => setVisible(!visible)}
           />
-          <Button
-            color={"#ff4747"}
-            title='Cancel'
-            onPress={() => {
+          <OdinaryButton
+            bg={"#ff4747"}
+            text='Cancel'
+            navigate={() => {
               navigation.goBack();
             }}
           />

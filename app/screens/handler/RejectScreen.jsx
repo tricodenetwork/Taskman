@@ -202,10 +202,15 @@ const RejectScreen = ({ navigation }) => {
             id='BUTTONS'
             className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
           >
-            <Button title='Submit' onPress={() => setVisible(!visible)} />
-            <Button
-              title='Cancel'
-              onPress={() => {
+            <OdinaryButton
+              text='Submit'
+              bg={"#8AD0AB"}
+              navigate={() => setVisible(!visible)}
+            />
+            <OdinaryButton
+              text='Cancel'
+              bg={"#ff4747"}
+              navigate={() => {
                 navigation.goBack();
               }}
             />

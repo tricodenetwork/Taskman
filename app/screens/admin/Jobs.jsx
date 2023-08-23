@@ -5,6 +5,7 @@ import {
   FlatList,
   Modal,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Background from "../../components/Background";
@@ -43,8 +44,12 @@ export default function Jobs({ navigation }) {
   const jobs = useQuery(job);
   // const value = realm.objectForPrimaryKey("category", edit.id) ?? [];
   const value = Cat.filtered(`name == $0`, name);
-
-  const dispatch = useDispatch();
+  const [update, setUpdate] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      setUpdate(true);
+    }, 0);
+  }, []);
 
   const addCat = useCallback(
     (item) => {
@@ -98,12 +103,6 @@ export default function Jobs({ navigation }) {
     const tempSum2 = convertToMinutes(tempSum1);
     return formatDuration(tempSum2);
   }, [jobs.length]);
-  console.log(sum3);
-
-  useEffect(() => {
-    dispatch(setFilter("Name"));
-    // dispatch(setvi)
-  }, []);
 
   useEffect(() => {
     try {
@@ -164,10 +163,22 @@ export default function Jobs({ navigation }) {
       '
       >
         <View className='mb-1'>
-          <SearchComponent filterItems={["Name", "Category"]} />
+          <SearchComponent
+            initialFilter={"Name"}
+            filterItems={["Name", "Category"]}
+          />
         </View>
         <View>
-          <JobDetails />
+          {!update ? (
+            <View className='relative bg-primary_light w-[35%] self-center flex items-center justify-between rounded- py-[2vh] top-[5vh]'>
+              <ActivityIndicator size={"small"} color={"rgb(13 3 122)"} />
+              <Text className='text-Blue relative top-2' style={styles.text_sm}>
+                Loading...
+              </Text>
+            </View>
+          ) : (
+            <JobDetails />
+          )}
         </View>
       </View>
       <View className='flex-row flex justify-around self-center absolute bottom-[2vh] w-[100vw]'>

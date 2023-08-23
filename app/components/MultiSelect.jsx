@@ -1,21 +1,12 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import {
-  FlatList,
-  TextInput,
-  NativeViewGestureHandler,
-} from "react-native-gesture-handler";
+import { FlatList, TextInput } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Motion } from "@legendapp/motion";
-import {
-  setVisible,
-  setVisible2,
-  setVisible3,
-} from "../store/slice-reducers/Formslice";
+
 import { useSelector, useDispatch } from "react-redux";
-import { setCurrentTask } from "../store/slice-reducers/ActiveJob";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 
 export default function MultiSelect({

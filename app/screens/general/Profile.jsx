@@ -26,7 +26,8 @@ const Profile = ({ navigation }) => {
           onPress={() => {
             navigation.navigate("security");
           }}
-          activeOpacity={0.5}
+          activeOpacity={0.9}
+          className='relative flex self-center rounded-md bg-primary flex-row max-h-max'
         >
           <OptionsCard
             text={"Change Password"}
@@ -44,21 +45,6 @@ const Profile = ({ navigation }) => {
             }
           />
         </TouchableOpacity>
-        {/* <OptionsCard
-          text={"Edit Profile"}
-          icon={
-            <AntDesign
-              name='user'
-              style={{
-                backgroundColor: "rgba(0,67,67,0.5)",
-                padding: actuatedNormalize(7),
-                borderRadius: 5,
-              }}
-              size={actuatedNormalize(25)}
-              color='black'
-            />
-          }
-        /> */}
       </View>
       <LowerButton
         style={"w-[90vw]"}

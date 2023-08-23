@@ -1,19 +1,18 @@
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
-import React, { useEffect } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import Background from "../../components/Background";
 import Topscreen from "../../components/Topscreen";
 import LowerButton from "../../components/LowerButton";
 import SearchComponent from "../../components/SearchComponent";
 import UserDetails from "../../components/UserDetails";
-import { useDispatch } from "react-redux";
-import { setFilter } from "../../store/slice-reducers/Formslice";
-// import { accounts } from "../api/Functions";
+import { styles } from "../../styles/stylesheet";
 
 export default function Accounts({ navigation }) {
-  const dispatch = useDispatch();
-
+  const [update, setUpdate] = useState(false);
   useEffect(() => {
-    dispatch(setFilter("Name"));
+    setTimeout(() => {
+      setUpdate(true);
+    }, 0);
   }, []);
   return (
     <Background bgColor='min-h-[98vh]'>
@@ -23,10 +22,22 @@ export default function Accounts({ navigation }) {
       '
       >
         <View className='mb-1'>
-          <SearchComponent filterItems={["Name", "Dept", "Role"]} />
+          <SearchComponent
+            initialFilter={"Name"}
+            filterItems={["Name", "Dept", "Role"]}
+          />
         </View>
         <View>
-          <UserDetails />
+          {!update ? (
+            <View className='relative bg-primary_light w-[35%] self-center flex items-center justify-between rounded- py-[2vh] top-[5vh]'>
+              <ActivityIndicator size={"small"} color={"rgb(13 3 122)"} />
+              <Text className='text-Blue relative top-2' style={styles.text_sm}>
+                Loading...
+              </Text>
+            </View>
+          ) : (
+            <UserDetails />
+          )}
         </View>
       </View>
       <LowerButton

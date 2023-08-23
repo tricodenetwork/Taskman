@@ -21,9 +21,10 @@ import OdinaryButton from "../../components/OdinaryButton";
 import { Motion } from "@legendapp/motion";
 import { TouchableOpacity } from "react-native";
 import MultiSelect from "../../components/MultiSelect";
-import { setMulti } from "../../store/slice-reducers/App";
+import { setMulti, resetMulti } from "../../store/slice-reducers/App";
 import { sendPushNotification } from "../../api/Functions";
 import useRealmData from "../../hooks/useRealmData";
+import { batch } from "react-redux";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -46,6 +47,8 @@ export default function IndividualTask({ navigation }) {
     (item) => item.name == route.params?.taskName
   )[0].inProgress;
 
+  console.log(inProgress);
+
   const holidas = useQuery(holiday);
   const isTodayHoliday = holidas.some((holiday) => {
     const holidayDate = new Date(holiday.day);
@@ -57,6 +60,14 @@ export default function IndividualTask({ navigation }) {
       holidayDate.getDate() === today.getDate()
     );
   });
+
+  const resetFields = () => {
+    batch(() => {
+      dispatch(setCurrentTask(""));
+      dispatch(setHandler(""));
+      dispatch(resetMulti());
+    });
+  };
 
   const Activate = useCallback(() => {
     // Perform the necessary actions to activate a certain task and handler by setting it to InProgress
@@ -167,8 +178,7 @@ export default function IndividualTask({ navigation }) {
       }
     });
 
-    dispatch(setCurrentTask(""));
-    dispatch(setHandler(""));
+    resetFields();
     // navigation.navigate("activetasks", { id: route.params.id });
   }, [
     realm,
@@ -264,7 +274,7 @@ export default function IndividualTask({ navigation }) {
           id='BUTTONS'
           className='flex justify-between align-bottom w-[75vw]  self-center flex-row'
         >
-          <Button
+          <OdinaryButton
             disabled={
               inProgress ||
               isWeekend ||
@@ -274,16 +284,22 @@ export default function IndividualTask({ navigation }) {
                 ? true
                 : false
             }
-            title='Activate'
-            onPress={Activate}
+            text='Activate'
+            navigate={Activate}
+            bg={"#8AD0AB"}
             color={"#004343"}
+            style={"w-[30vw]"}
           />
-          <Button
+          <OdinaryButton
             disabled={handler == ""}
-            title={handler == "" ? "Unassign" : "Assign"}
-            onPress={() => setVisible(!visible)}
+            color={"white"}
+            // bg={"#1F271B"}
+            bg={"#E57310"}
+            text={handler == "" ? "Unassign" : "Assign"}
+            navigate={() => setVisible(!visible)}
+            style={"w-[30vw]"}
           />
-          <Button
+          {/* <Button
             title='Back'
             onPress={() => {
               route.params
@@ -292,7 +308,7 @@ export default function IndividualTask({ navigation }) {
                   })
                 : navigation.goBack();
             }}
-          />
+          /> */}
         </View>
       </View>
     </Background>

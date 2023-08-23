@@ -11,10 +11,11 @@ import {
   setHandler,
   setPassword,
 } from "../../store/slice-reducers/ActiveJob";
-import { useDispatch, useSelector } from "react-redux";
-import { setMulti } from "../../store/slice-reducers/App";
+import { batch, useDispatch, useSelector } from "react-redux";
+import { resetMulti, setMulti } from "../../store/slice-reducers/App";
 import useRealmData from "../../hooks/useRealmData";
 import MultiSelect from "../../components/MultiSelect";
+import OdinaryButton from "../../components/OdinaryButton";
 
 const { useRealm } = AccountRealmContext;
 
@@ -52,6 +53,14 @@ const TaskDetailsPage = () => {
     !isAllowedTime ||
     (route.params == undefined && multipleJobs.length == 0) ||
     (route.params == undefined && password == "");
+
+  const resetField = () => {
+    batch(() => {
+      dispatch(setCurrentTask(""));
+      dispatch(setHandler(""));
+      dispatch(resetMulti());
+    });
+  };
 
   // Functions and Buttons to accept, assign and reject tasks
 
@@ -94,8 +103,7 @@ const TaskDetailsPage = () => {
         alert("Error accepting message");
       }
     });
-    dispatch(setCurrentTask(""));
-    dispatch(setHandler(""));
+    resetField();
     navigation.navigate("mytasks");
   }, [
     realm,
@@ -141,41 +149,41 @@ const TaskDetailsPage = () => {
           className='flex justify-around w-[80vw] self-center flex-row'
         >
           {/* Accept button */}
-          <Button
+          <OdinaryButton
             disabled={
               route.params?.status == "InProgress" ||
               route.params?.status == "Completed" ||
               route.params?.status == "Overdue" ||
               disableButton
             }
-            color={"#FF925C"}
-            title='Accept'
-            onPress={() => {
+            bg={"#FF925C"}
+            text='Accept'
+            navigate={() => {
               handleAcceptButton();
             }}
           />
           {/* Done button */}
-          <Button
+          <OdinaryButton
             disabled={
               route.params?.status == "Completed" ||
               route.params?.status == "Awaiting" ||
               route.params?.status == "Pending" ||
               disableButton
             }
-            color={"#006400"}
-            title='Done'
-            onPress={() => {
+            bg={"#006400"}
+            text='Done'
+            navigate={() => {
               navigation.navigate("taskdone", route.params);
             }}
           />
 
           {/* Error button */}
           {route.params !== undefined && (
-            <Button
+            <OdinaryButton
               disabled={route.params?.status == "Completed"}
-              color={"#ff4747"}
-              title='Reject'
-              onPress={() => {
+              bg={"#ff4747"}
+              text='Reject'
+              navigate={() => {
                 navigation.navigate("reject", route.params);
               }}
             />

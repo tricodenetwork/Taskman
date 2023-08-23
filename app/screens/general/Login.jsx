@@ -41,6 +41,23 @@ const Login = ({ navigation }) => {
   const [show, setShow] = useState(true);
   const app = useApp();
   const [authState, setAuthState] = useState(AuthState.None);
+  const [isOffline, setIsOffline] = useState(false);
+
+  useEffect(() => {
+    const checkNetworkConnection = async () => {
+      try {
+        const response = await fetch("https://www.google.com", {
+          method: "HEAD",
+          mode: "no-cors",
+        });
+        setIsOffline(!response.ok);
+      } catch (error) {
+        setIsOffline(true);
+      }
+    };
+
+    checkNetworkConnection();
+  }, []);
 
   const handleLogin = useCallback(async () => {
     if (usermail == " ") {
@@ -173,6 +190,17 @@ const Login = ({ navigation }) => {
           </Text>
         </View>
       </Modal>
+      {/* Add a Modal to show a message when there's no internet connection */}
+      <Modal visible={isOffline}>
+        <View className='flex bg-slate-300 space-y-[3vh] h-full justify-center items-center'>
+          <Error width={40} height={40} color='red' />
+          <Text className='text-primary' style={styles.text_md}>
+            No internet connection. Please check your network!
+          </Text>
+        </View>
+      </Modal>
+
+      {/* ... rest of your component code ... */}
       <View className='flex flex-row items-end absolute top-[4.5vh] self-center '>
         <View className=' left-0 top-0'>
           <Logo width={actuatedNormalize(35)} height={actuatedNormalize(35)} />
