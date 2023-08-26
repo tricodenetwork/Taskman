@@ -42,9 +42,9 @@ export default function SelectComponent({
           >
             <FlatList
               style={{ height: actuatedNormalize(150), marginBottom: 10 }}
-              data={data.filter((params) =>
-                params?.name?.toLowerCase().includes(filter.toLowerCase())
-              )}
+              data={typeof data[0].name === "string" ?data.filter((params) =>
+                params?.name?.toLowerCase()?.includes(filter.toLowerCase())
+              ):data}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => {

@@ -60,6 +60,7 @@ export default function Tasks({ navigation }) {
       setRefreshing(false);
     };
   }, [refreshing, modalVisible]);
+  console.log(task);
 
   const addTask = useCallback(
     (item) => {

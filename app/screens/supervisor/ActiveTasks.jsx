@@ -7,7 +7,6 @@ import TaskDetails from "../../components/TaskDetails";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../../models";
 import { useDispatch, useSelector } from "react-redux";
-import { setFilter } from "../../store/slice-reducers/Formslice";
 import { resetMulti } from "../../store/slice-reducers/App";
 import { styles } from "../../styles/stylesheet";
 

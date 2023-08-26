@@ -183,7 +183,6 @@ export default function Jobs({ navigation }) {
       </View>
       <View className='flex-row flex justify-around self-center absolute bottom-[2vh] w-[100vw]'>
         <OdinaryButton
-          style={"bg-primary  "}
           navigate={() => {
             setModalVisible(true);
           }}

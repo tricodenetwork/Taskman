@@ -51,7 +51,7 @@ export default function JobDetails({ update }) {
             }}
           >
             {route.name == "jobs" ? (
-              <JobCard id={item._id.toString()} />
+              <JobCard name={item.name} tasks={item.tasks.length} category={item.category.name} duration={item.duration} id={item._id.toString()} />
             ) : (
               <ActiveJobCard id={item._id.toString()} />
             )}
