@@ -60,7 +60,6 @@ export default function Tasks({ navigation }) {
       setRefreshing(false);
     };
   }, [refreshing, modalVisible]);
-  console.log(task);
 
   const addTask = useCallback(
     (item) => {
@@ -140,7 +139,6 @@ export default function Tasks({ navigation }) {
     if (!array) {
       return;
     }
-    // console.log(tasksArray);
     realm.write(() => {
       const tasksArray = JSON.parse(JSON.stringify(array));
       navigation.goBack();

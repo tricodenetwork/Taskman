@@ -180,7 +180,7 @@ export default function Stats() {
   const render = ({ item, index }) => {
     return (
       <TouchableOpacity activeOpacity={1}>
-        <View className='flex px-[1vw] border-b-[1px] py-[1vh] flex-row justify-center items-center'>
+        <View className='flex px-[1vw]  py-[1vh] flex-row justify-center items-center'>
           <Text style={[styles.text_sm]} className='w-[10%] text-left'>
             {index + 1}
           </Text>
@@ -205,7 +205,7 @@ export default function Stats() {
     <Background bgColor='flex flex-row items-start'>
       <FlatList
         style={{ height: "94%", padding: 0.01 * SCREEN_WIDTH }}
-        className='border-b-2 '
+        className=''
         // contentContainerStyle={{ height: "90%" }}
         ListHeaderComponent={
           <View className='flex px-[1vw] border-b-[1px] flex-row items-center'>

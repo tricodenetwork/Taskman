@@ -36,8 +36,8 @@ let AuthState;
 })(AuthState || (AuthState = {}));
 
 const Login = ({ navigation }) => {
-  const [usermail, setUsermail] = useState(" ");
-  const [password, setPassword] = useState(" ");
+  const [usermail, setUsermail] = useState("");
+  const [password, setPassword] = useState("");
   const [show, setShow] = useState(true);
   const app = useApp();
   const [authState, setAuthState] = useState(AuthState.None);
@@ -60,7 +60,7 @@ const Login = ({ navigation }) => {
   }, []);
 
   const handleLogin = useCallback(async () => {
-    if (usermail == " ") {
+    if (usermail == "") {
       alert("Enter Username 👤");
       return;
     }
@@ -83,6 +83,17 @@ const Login = ({ navigation }) => {
     }
   }, [usermail, password, setAuthState, app]);
 
+  const userName = (val) => {
+    const name = val.trim()
+
+    setUsermail(name)
+  }
+
+  const Pass = (val) => {
+    setPassword(val.trim())
+  }
+  
+
   return (
     <Background bgColor='bg-primary min-h-[90vh]   items-center justify-center'>
       <View
@@ -99,8 +110,8 @@ const Login = ({ navigation }) => {
           <View className='relative items-center flex flex-row'>
             <TextInput
               style={styles.averageText}
-              value={usermail.trimStart()}
-              onChangeText={setUsermail}
+              value={usermail}
+              onChangeText={userName}
               className='w-full h-[5vh] bg-slate-400 rounded-sm self-center'
             />
             <View className={"absolute right-[1vw]"}></View>
@@ -116,8 +127,8 @@ const Login = ({ navigation }) => {
           <View className='relative items-center flex flex-row'>
             <TextInput
               style={styles.averageText}
-              value={password.trimStart()}
-              onChangeText={setPassword}
+              value={password}
+              onChangeText={Pass}
               secureTextEntry={show}
               className='w-full h-[5vh] bg-slate-400 rounded-sm self-center'
             />

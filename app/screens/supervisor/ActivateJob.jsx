@@ -202,7 +202,7 @@ const ActivateJob = ({ navigation }) => {
               <TextInput
                 defaultValue={matno}
                 style={styles.averageText}
-                maxLength={20}
+                maxLength={22}
                 onChangeText={(value) => {
                   dispatch(setMatNo(value));
                 }}

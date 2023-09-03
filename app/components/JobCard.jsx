@@ -8,13 +8,6 @@ import {
 } from "../styles/stylesheet";
 import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
-import {
-  convertToMinutes,
-  formatDate,
-  formatDuration,
-  objectIdToDate,
-  sumField,
-} from "../api/Functions";
 import { activejob } from "../models/Task";
 import { StyleSheet } from "react-native";
 
@@ -46,12 +39,14 @@ const JobCard = ({ isActive,name,duration,category, tasks,id }) => {
   //         activeJobs.forEach((job) => {
   //           job.timeframe = sum;
   //         });
-  //       });
+  //       });  
   //     } catch (error) {
   //       console.log(error);
   //     }
   //   }
   // }, []);
+
+  console.log(duration);
 
   
 const style = StyleSheet.create({
@@ -83,10 +78,10 @@ const style = StyleSheet.create({
           <Text>Tasks:{tasks}</Text>
         ) }
         <Text style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}>
-             {`${duration.days == null ? 0 : duration.days}d ${
-                duration.hours == null ? 0 : duration.hours
+             {`${duration?.days == null ? 0 : duration?.days}d ${
+                duration?.hours == null ? 0 : duration?.hours
               }h ${
-                duration.minutes == null ? 0 : duration.minutes
+                duration?.minutes == null ? 0 : duration?.minutes
               }m`}
             
         </Text>

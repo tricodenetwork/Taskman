@@ -129,6 +129,8 @@ const CreateAccount = ({ navigation }) => {
   useEffect(() => {
     initialUser();
   }, []);
+
+  console.log(typeof error2 === "string");
   return (
     <Background bgColor='min-h-[98vh]'>
       <Topscreen
@@ -151,14 +153,10 @@ const CreateAccount = ({ navigation }) => {
                   { height: actuatedNormalizeVertical(50) },
                 ]}
                 onChangeText={(value) => {
-                  const newValue = value.replace(/\s+/g, " ").trimEnd();
-                  if (accounts.filtered(`name ==$0`, newValue).length !== 0) {
+                  if (accounts.filtered(`name ==$0`, value).length !== 0) {
                     setError2("User already exist");
-                  } else if (!/^[^\s]+\s[^\s]+$/.test(newValue)) {
-                    // Check if the entered value contains a name, a space, and then a surname
-                    setError2("Name and  Surname required ");
                   } else {
-                    dispatch(setName(newValue));
+                    dispatch(setName(value));
                     setError2(null);
                   }
                 }}
@@ -350,12 +348,13 @@ const CreateAccount = ({ navigation }) => {
                 <Text style={styles.text_md}>Generate Password</Text>
               </TouchableOpacity>
               <TextInput
-                editable={false}
+                // editable={false}
                 style={[
                   styles.averageText,
                   { height: actuatedNormalizeVertical(50) },
                 ]}
-                secureTextEntry={false}
+                onChangeText={(val) => dispatch(setPassword(val))
+                }
                 value={user.password}
                 className='w-[30vw] bg-slate-300 mt-2 text-black  rounded-sm'
               />
@@ -380,16 +379,14 @@ const CreateAccount = ({ navigation }) => {
           <LowerButton
             style={"w-[90vw]"}
             disabled={
-              route.params
-                ? false
-                : user.name === "" ||
+              user.name === "" ||
                   user.role === "" ||
                   user.dept === "" ||
                   user.phone === "" ||
                   user.email == "" ||
                   user.password == "" ||
-                  error ||
-                  error2
+                  typeof error =="string" ||
+                 typeof error2 == "string"
                 ? true
                 : false
             }

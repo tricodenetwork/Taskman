@@ -25,7 +25,6 @@ import SelectComponent from "../../components/SelectComponent";
 import { TextInput } from "react-native";
 import { Button } from "react-native";
 import useActions from "../../hooks/useActions";
-``;
 const { useRealm } = AccountRealmContext;
 
 const RejectScreen = ({ navigation }) => {
@@ -36,11 +35,15 @@ const RejectScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { currenttask, handler } = useSelector((state) => state.ActiveJob);
   const { multipleJobs } = useSelector((state) => state.App);
+  const { user } = useSelector((state) => state);
+
 
   const route = useRoute();
   const { activeJob, Accounts, ActiveJobs, handlers, pushToken } = useRealmData(
     route.params
   );
+  const update = route.params?.update;
+
 
   // Create a chat room
   const { createChatRoom } = useActions();

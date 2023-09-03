@@ -10,7 +10,7 @@ import Background from "../../components/Background";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
 import { AccountRealmContext } from "../../models";
-import { Account } from "../../models/Account";
+import { Account, client } from "../../models/Account";
 import { useDispatch, useSelector } from "react-redux";
 import {
   actuatedNormalize,
@@ -38,6 +38,7 @@ export default function MessageScreen({ navigation }) {
 
   const realm = useRealm();
   const route = useRoute();
+  const allJobs = useQuery(client);
 
   const { user } = useSelector((state) => state);
   // const { ActiveJob } = useSelector((state) => state);
@@ -64,6 +65,7 @@ export default function MessageScreen({ navigation }) {
   );
   // Create a chat room
   const { createChatRoom } = useActions();
+
   const renderItem = ({ item }, navigation, user, allChats, realm) => {
     const name =
       realm.objectForPrimaryKey(
@@ -211,10 +213,12 @@ export default function MessageScreen({ navigation }) {
 
   const deleteChat = useCallback(() => {
     const room = realm.objectForPrimaryKey("chatroom", id);
+    setIsLoading(true);
     realm.write(() => {
       realm.delete(room);
     });
-  });
+    setId("");
+  }, [realm, chatrooms.length, isLoading, id]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -245,7 +249,8 @@ export default function MessageScreen({ navigation }) {
       setChatroom(sortedChatrooms);
       setIsLoading(false);
     }, 0);
-  }, [focus]);
+  }, [focus, chatrooms.length, isLoading]);
+
   return (
     <Background>
       <SafeAreaView className='relative bg-red-100 w-full h-full'>
@@ -258,7 +263,7 @@ export default function MessageScreen({ navigation }) {
           </View>
         ) : (
           <>
-            <View className='absolute top-1 w-[100vw]'>
+            <View className='absolute top-0 w-[100vw]'>
               {!showdelete ? (
                 <View className='relative w-[20%]'>
                   <Text
@@ -275,8 +280,8 @@ export default function MessageScreen({ navigation }) {
                 <Motion.View
                   initial={{ y: -20 }}
                   animate={{ y: 0 }}
-                  transition={{ type: "spring", stiffness: 20, duration: 1 }}
-                  className='w-full h-[5vh] mt-2 bg-primary '
+                  transition={{ type: "spring", stiffness: 200, duration: 0.1 }}
+                  className='w-full h-[5vh] bg-primary '
                 >
                   {showdelete ? (
                     <TouchableOpacity

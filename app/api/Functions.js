@@ -13,7 +13,7 @@ export const sendUserDetails = async (recipient, userDetails) => {
 
     Welcome! Your account details are as follows:
 
-    **Name:** ${name}
+    **Username:** ${name}
     **Password:** ${password}
     **Email:** ${email}
     **Department:** ${dept}

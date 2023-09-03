@@ -98,17 +98,15 @@ export default function Jobs({ navigation }) {
     [realm]
   );
 
-  const sum3 = useMemo(() => {
-    const tempSum1 = sumField(jobs[0].tasks, "duration");
-    const tempSum2 = convertToMinutes(tempSum1);
-    return formatDuration(tempSum2);
-  }, [jobs.length]);
-
   useEffect(() => {
     try {
       realm.write(() => {
         jobs.forEach((job) => {
-          job.duration = sum3;
+
+const tempSum1 = sumField(job.tasks, "duration");
+    const tempSum2 = convertToMinutes(tempSum1);
+
+          job.duration = formatDuration(tempSum2);
         });
       });
     } catch (error) {

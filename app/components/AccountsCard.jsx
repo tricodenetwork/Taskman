@@ -12,25 +12,10 @@ import { remainingTimetohours } from "../api/Realm";
 import { millisecondSinceStartDate, morning } from "../api/test";
 import { useSelector } from "react-redux";
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
 
 export default function AccountsCard({ item, id }) {
-  const [time, setTime] = useState("");
-  const route = useRoute();
-  const realm = useRealm();
 
-  const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
 
-  const status =
-    item.status === "Pending" || item.status == ""
-      ? "gray"
-      : item.status === "InProgress" && !time.includes("-")
-      ? "#FFD700"
-      : item.status === "InProgress" && time.includes("-")
-      ? "#ff4747"
-      : item.status === "Completed"
-      ? "green"
-      : null;
   const dynamicColor = () => {
     const textColor =
       item.role.toUpperCase() === "ADMIN"
@@ -55,9 +40,8 @@ export default function AccountsCard({ item, id }) {
         ? "rgba(108, 93, 211, 0.15)"
         : "rgba(242, 153, 74, 0.15)";
 
-    return { textColor, statusColor, backgroundColor, status };
+    return { textColor, statusColor, backgroundColor };
   };
-  const Time = Completed(item.completedIn, item.inProgress); // Variable to store the remaining time when the interval is paused
 
   return (
     <View
@@ -66,10 +50,10 @@ export default function AccountsCard({ item, id }) {
     >
       <View
         style={{
-          backgroundColor: item.role ? dynamicColor().statusColor : status,
+          backgroundColor:dynamicColor().statusColor
         }}
         className={`bg-${
-          item.role ? dynamicColor().textColor : null
+         dynamicColor().textColor
         } absolute w-[1vw] rounded-full left-[-2px] h-[60%]`}
       ></View>
       <View
@@ -91,8 +75,8 @@ export default function AccountsCard({ item, id }) {
       </View>
       <View
         style={{
-          backgroundColor: item.role ? dynamicColor().backgroundColor : status,
-          borderColor: item.role ? dynamicColor().statusColor : status,
+          backgroundColor: dynamicColor().backgroundColor,
+          borderColor: dynamicColor().statusColor ,
           borderWidth: 1,
         }}
         className={` rounded-md  py-2 w-[21vw]`}
@@ -100,14 +84,11 @@ export default function AccountsCard({ item, id }) {
         <Text
           style={[styles.text_md, { fontSize: actuatedNormalize(10) }]}
           className={`${
-            item.role ? dynamicColor().textColor : status
+             dynamicColor().textColor  
           } text-center`}
         >
-          {item.role ? item.role.toUpperCase() : null}
+          {item.role.toUpperCase()}
 
-          {item.status
-            ? item.status.toUpperCase()
-            : item.status == "" && "PENDING"}
         </Text>
       </View>
       <Text

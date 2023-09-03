@@ -36,7 +36,7 @@ const useActions = () => {
         return roomId[0]._id;
       }
     },
-    [realm]
+    [realm, chatrooms.length]
   );
 
   return {

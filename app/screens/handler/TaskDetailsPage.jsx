@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { View, Text, Button } from "react-native";
 import { styles } from "../../styles/stylesheet";
 import Background from "../../components/Background";
@@ -47,13 +47,12 @@ const TaskDetailsPage = () => {
       </View>
     );
   }
-
   const disableButton =
-    isWeekend ||
-    !isAllowedTime ||
-    (route.params == undefined && multipleJobs.length == 0) ||
-    (route.params == undefined && password == "");
-
+  isWeekend ||
+  !isAllowedTime ||
+  (route.params == undefined && multipleJobs.length == 0) ||
+  (route.params == undefined && password == "");
+  
   const resetField = () => {
     batch(() => {
       dispatch(setCurrentTask(""));
@@ -61,6 +60,11 @@ const TaskDetailsPage = () => {
       dispatch(resetMulti());
     });
   };
+
+  useEffect(() => {
+    resetField()
+    
+  }, []);
 
   // Functions and Buttons to accept, assign and reject tasks
 
@@ -97,12 +101,12 @@ const TaskDetailsPage = () => {
           });
         }
         alert("Task Accepted! ✔");
-        update([]);
       } catch (error) {
         console.log({ error, msg: "Error Accepting Task" });
         alert("Error accepting message");
       }
     });
+    update([]);
     resetField();
     navigation.navigate("mytasks");
   }, [

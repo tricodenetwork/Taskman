@@ -16,6 +16,8 @@ import LowerButton from "../../components/LowerButton";
 import { useUser } from "@realm/react/";
 import { useSelector } from "react-redux";
 import { chatroom, chats as chat } from "../../models/Chat";
+import { client } from "../../models/Account";
+import { useIsFocused } from "@react-navigation/native";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 

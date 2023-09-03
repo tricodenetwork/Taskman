@@ -18,6 +18,7 @@ import { activejob } from "../../models/Task";
 import { useUser } from "@realm/react";
 import { chats as chat, chatroom } from "../../models/Chat";
 import { useIsFocused } from "@react-navigation/native";
+import { client } from "../../models/Account";
 
 const { useRealm, useQuery, useObject } = AccountRealmContext;
 
@@ -89,7 +90,6 @@ export default function Supervisor() {
   }
 
   const supervisorStats = countStatusBySupervisor(activeJobs, name);
-  // console.log(_id);
   // Create rooms where user is present and filter for incoming messages that hasnt been read
   const userRooms = useQuery(chatroom)
     .filtered(`recieverId == $0 || senderId == $0`, _id)
@@ -102,6 +102,8 @@ export default function Supervisor() {
           roomId
         ).length > 0
     );
+
+
 
   return (
     <Background bgColor='min-h-[96vh]'>
