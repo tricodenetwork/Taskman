@@ -37,13 +37,11 @@ const RejectScreen = ({ navigation }) => {
   const { multipleJobs } = useSelector((state) => state.App);
   const { user } = useSelector((state) => state);
 
-
   const route = useRoute();
   const { activeJob, Accounts, ActiveJobs, handlers, pushToken } = useRealmData(
     route.params
   );
   const update = route.params?.update;
-
 
   // Create a chat room
   const { createChatRoom } = useActions();
@@ -72,7 +70,7 @@ const RejectScreen = ({ navigation }) => {
       `role == "Handler" AND name == $0`,
       handler
     )[0]?._id;
-    const roomId = createChatRoom(receiverId.toHexString());
+    const roomId = createChatRoom(receiverId?.toHexString());
 
     const onSend = () => {
       const messageObject = {

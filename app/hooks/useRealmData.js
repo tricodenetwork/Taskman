@@ -14,7 +14,7 @@ const useRealmData = (routeParams) => {
   const activeJob = useObject(activejob, Realm.BSON.ObjectId(routeParams?.id));
   const Accounts = useQuery(Account);
   const ActiveJobs = useQuery(activejob);
-  const tasks = useQuery(job).filtered(`name == "Transcript"`)[0].tasks;
+  const tasks = useQuery(job).filtered(`name == "Transcript"`)[0]?.tasks;
   const handlers = Accounts.filter(
     (obj) =>
       (obj.role == "Handler") & (obj.category?.name == user?.category?.name)
@@ -30,7 +30,7 @@ const useRealmData = (routeParams) => {
   const result = useMemo(
     () =>
       ActiveJobs.reduce((acc, params) => {
-        const filteredTasks = params.tasks.filter(
+        const filteredTasks = params?.tasks.filter(
           (item) => item.handler == user.name
         );
         return acc.concat(filteredTasks);

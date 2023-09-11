@@ -47,8 +47,6 @@ export default function IndividualTask({ navigation }) {
     (item) => item.name == route.params?.taskName
   )[0].inProgress;
 
-  console.log(inProgress);
-
   const holidas = useQuery(holiday);
   const isTodayHoliday = holidas.some((holiday) => {
     const holidayDate = new Date(holiday.day);
@@ -188,12 +186,19 @@ export default function IndividualTask({ navigation }) {
     ActiveJobs,
     route.params?.taskName,
   ]);
-
   useEffect(() => {
     dispatch(setHandler(""));
-    // return () => {};
   }, []);
 
+  // Callback Functions
+  const confirmTaskandCloseModal = useCallback(() => {
+    assignNextTask();
+    setVisible(!visible);
+  }, []);
+
+  const toggleVisible = useCallback(() => {
+    setVisible((prevVisible) => !prevVisible);
+  }, []);
   return (
     <Background bgColor=''>
       <View className=' h-[90%] pt-[5vh] self-center flex justify-between items-center'>
@@ -261,10 +266,7 @@ export default function IndividualTask({ navigation }) {
               </Text>
               <OdinaryButton
                 style={"rounded-sm mt-4 bg-primary"}
-                navigate={() => {
-                  assignNextTask();
-                  setVisible(!visible);
-                }}
+                navigate={confirmTaskandCloseModal}
                 text={"OK"}
               />
             </Motion.View>
@@ -276,11 +278,7 @@ export default function IndividualTask({ navigation }) {
         >
           <OdinaryButton
             disabled={
-              inProgress ||
-              isWeekend ||
-              !isAllowedTime ||
-              isTodayHoliday ||
-              handler == ""
+              inProgress || isWeekend || !isAllowedTime || isTodayHoliday
                 ? true
                 : false
             }
@@ -291,24 +289,13 @@ export default function IndividualTask({ navigation }) {
             style={"w-[30vw]"}
           />
           <OdinaryButton
-            disabled={handler == ""}
             color={"white"}
             // bg={"#1F271B"}
             bg={"#E57310"}
             text={handler == "" ? "Unassign" : "Assign"}
-            navigate={() => setVisible(!visible)}
+            navigate={toggleVisible}
             style={"w-[30vw]"}
           />
-          {/* <Button
-            title='Back'
-            onPress={() => {
-              route.params
-                ? navigation.navigate("activetasks", {
-                    id: route.params?.id,
-                  })
-                : navigation.goBack();
-            }}
-          /> */}
         </View>
       </View>
     </Background>
