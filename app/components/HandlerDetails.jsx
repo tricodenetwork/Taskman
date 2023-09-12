@@ -1,10 +1,6 @@
 import { TouchableOpacity } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  useIsFocused,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
 import HandlerCard from "./HandlerCard";
@@ -17,10 +13,8 @@ export default function HandlerDetails({ taskdata, update }) {
   const { search, filter } = useSelector((state) => state.app);
   const col = filter && filter.toLowerCase();
 
-  const route = useRoute();
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const { user } = useSelector((state) => state);
 
   const render = ({ item }) => {
     const { name, id, job, matno, supervisor, handler, status } = item;
