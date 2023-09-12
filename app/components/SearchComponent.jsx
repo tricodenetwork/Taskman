@@ -2,7 +2,7 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import React, { memo, useEffect, useState } from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setSearch, setFilter } from "../store/slice-reducers/Formslice";
 import { AntDesign } from "@expo/vector-icons";
 import { Motion } from "@legendapp/motion";
@@ -87,4 +87,4 @@ function SearchComponent({ filterItems = [], initialFilter }) {
   );
 }
 
-export default memo(SearchComponent);
+export default SearchComponent;

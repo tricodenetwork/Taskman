@@ -7,7 +7,7 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Background from "../../components/Background";
 import Topscreen from "../../components/Topscreen";
 import {
@@ -19,13 +19,9 @@ import { FontAwesome } from "@expo/vector-icons";
 import LowerButton from "../../components/LowerButton";
 import SearchComponent from "../../components/SearchComponent";
 import JobDetails from "../../components/JobDetails";
-import { useSelector, useDispatch } from "react-redux";
-import { replaceTask, setTask } from "../../store/slice-reducers/JobSlice";
-import OdinaryButton from "../../components/OdinaryButton";
 import { TextInput } from "react-native";
 import { AccountRealmContext } from "../../models";
 import { category, job } from "../../models/Task";
-import { setFilter } from "../../store/slice-reducers/Formslice";
 import {
   convertToMinutes,
   formatDuration,
@@ -102,9 +98,8 @@ export default function Jobs({ navigation }) {
     try {
       realm.write(() => {
         jobs.forEach((job) => {
-
-const tempSum1 = sumField(job.tasks, "duration");
-    const tempSum2 = convertToMinutes(tempSum1);
+          const tempSum1 = sumField(job.tasks, "duration");
+          const tempSum2 = convertToMinutes(tempSum1);
 
           job.duration = formatDuration(tempSum2);
         });

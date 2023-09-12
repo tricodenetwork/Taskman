@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import Background from "../../components/Background";
 import HandlerTopscreen from "../../components/HandlerTopScreen";
 import {
@@ -16,10 +16,8 @@ import LowerButton from "../../components/LowerButton";
 import { useUser } from "@realm/react/";
 import { useSelector } from "react-redux";
 import { chatroom, chats as chat } from "../../models/Chat";
-import { client } from "../../models/Account";
-import { useIsFocused } from "@react-navigation/native";
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useQuery } = AccountRealmContext;
 
 export default function Handler({ navigation }) {
   const activeJobs = useQuery(activejob);

@@ -16,14 +16,14 @@ import { useDispatch } from "react-redux";
 import { Account, client } from "../../models/Account";
 import { activejob } from "../../models/Task";
 
-const { useObject, useQuery,useRealm } = AccountRealmContext;
+const { useObject, useQuery, useRealm } = AccountRealmContext;
 
 export default function Taskman({ navigation }) {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const user = useUser();
   const oid = user.identities[0].id;
-  const realm = useRealm() 
+  const realm = useRealm();
   const cleanedOid = oid.replace(/[^0-9a-zA-Z]/g, "");
 
   const account = useObject("account", Realm.BSON.ObjectId(cleanedOid));
@@ -48,20 +48,16 @@ export default function Taskman({ navigation }) {
     }).start();
   };
 
-  const Accounts = useQuery(client)
-
   useEffect(() => {
     dispatch(setUser(account));
-//     realm.write(() => {
-//       Accounts.forEach(account => {
-//         if (account.clientId) {
-//           account.clientId = account.clientId.replace(/\s+/g, '-');
-//         }
-//       });
-//     });
-// console.log("done");
-
-
+    //     realm.write(() => {
+    //       Accounts.forEach(account => {
+    //         if (account.clientId) {
+    //           account.clientId = account.clientId.replace(/\s+/g, '-');
+    //         }
+    //       });
+    //     });
+    // console.log("done");
   }, [isFocused]);
   useEffect(() => {
     initial();

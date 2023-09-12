@@ -76,7 +76,7 @@ const CreateAccount = ({ navigation }) => {
     (user) => {
       // Alternatively if passing the ID as the argument to handleToggleTaskStatus:
       realm?.write(() => {
-        const account = realm?.objectForPrimaryKey(
+        const account = realm.objectForPrimaryKey(
           "account",
           Realm.BSON.ObjectId(route.params.id)
         ); // If the ID is passed as an ObjectId

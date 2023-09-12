@@ -3,13 +3,11 @@ import { useSelector } from "react-redux";
 import { activejob, job } from "../models/Task";
 import { AccountRealmContext } from "../models";
 import { useMemo } from "react";
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useQuery, useObject } = AccountRealmContext;
 
 const useRealmData = (routeParams) => {
   const { user } = useSelector((state) => state);
-  const { currenttask, handler, password } = useSelector(
-    (state) => state.ActiveJob
-  );
+  const { handler } = useSelector((state) => state.ActiveJob);
 
   const activeJob = useObject(activejob, Realm.BSON.ObjectId(routeParams?.id));
   const Accounts = useQuery(Account);

@@ -5,30 +5,29 @@ import {
   TouchableHighlight,
   ActivityIndicator,
 } from "react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Background from "../../components/Background";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
 import { AccountRealmContext } from "../../models";
-import { Account, client } from "../../models/Account";
-import { useDispatch, useSelector } from "react-redux";
+import { Account } from "../../models/Account";
+import { useSelector } from "react-redux";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
 } from "../../styles/stylesheet";
-import { chatroom, chats, user } from "../../models/Chat";
+import { chats } from "../../models/Chat";
 import { FlatList } from "react-native-gesture-handler";
 import { Motion } from "@legendapp/motion";
 import { activejob } from "../../models/Task";
 import { Ionicons } from "@expo/vector-icons";
-import { useIsFocused, useRoute } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import useActions from "../../hooks/useActions";
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useRealm, useQuery } = AccountRealmContext;
 
 export default function MessageScreen({ navigation }) {
-  const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [chatroom, setChatroom] = useState([]);
@@ -37,8 +36,6 @@ export default function MessageScreen({ navigation }) {
   const focus = useIsFocused();
 
   const realm = useRealm();
-  const route = useRoute();
-  const allJobs = useQuery(client);
 
   const { user } = useSelector((state) => state);
   // const { ActiveJob } = useSelector((state) => state);

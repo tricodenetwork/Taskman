@@ -1,26 +1,23 @@
 import { View, ActivityIndicator } from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Background from "../../components/Background";
 import Topscreen from "../../components/Topscreen";
 import SearchComponent from "../../components/SearchComponent";
 import OdinaryButton from "../../components/OdinaryButton";
-import { useIsFocused, useRoute } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import { AccountRealmContext } from "../../models";
 import { activejob } from "../../models/Task";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import HandlerDetails from "../../components/HandlerDetails";
 import { Text } from "react-native";
 import { SCREEN_HEIGHT, styles } from "../../styles/stylesheet";
 
-const { useRealm, useQuery } = AccountRealmContext;
+const { useQuery } = AccountRealmContext;
 
 export default function MyTasks({ navigation }) {
   //--------------------------------------------------------------------------------------STATE AND VARIABLES
   const focus = useIsFocused();
-  const dispatch = useDispatch();
   const [handlerTasks, setHandlerTasks] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const route = useRoute();
   const ActiveJobs = useQuery(activejob);
   const { user } = useSelector((state) => state);
 
@@ -86,7 +83,7 @@ export default function MyTasks({ navigation }) {
           />
         </View>
         <View>
-          {handlerTasks.length ==0 ? (
+          {handlerTasks.length == 0 ? (
             <View className='relative bg-primary_light w-[35%] self-center flex items-center justify-between rounded- py-[2vh] top-[5vh]'>
               <ActivityIndicator size={"small"} color={"rgb(13 3 122)"} />
               <Text className='text-Blue relative top-2' style={styles.text_sm}>

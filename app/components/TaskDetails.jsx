@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import JobCard from "./JobCard";
 import { styles } from "../styles/stylesheet";
@@ -7,15 +7,12 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import DraggableFlatList, {
   ScaleDecorator,
 } from "react-native-draggable-flatlist";
 import DetailsCard from "./DetailsCard";
-import { AccountRealmContext } from "../models";
 import { RefreshControl } from "react-native-gesture-handler";
-
-const { useRealm, useQuery } = AccountRealmContext;
 
 export default function TaskDetails({
   jobId,
@@ -29,12 +26,10 @@ export default function TaskDetails({
   const { search, filter } = useSelector((state) => state.app);
   const col = filter && filter.toLowerCase();
 
-  const realm = useRealm();
-  const dispatch = useDispatch();
   const route = useRoute();
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const { user } = useSelector((state) => state);
+  const {} = useSelector((state) => state);
 
   const renderItem = useCallback(
     ({ item, drag, isActive, getIndex }) => {

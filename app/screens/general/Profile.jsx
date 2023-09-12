@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import Background from "../../components/Background";
 import ProfileCard from "../../components/ProfileCard";
 import OptionsCard from "../../components/OptionsCard";
@@ -54,7 +54,5 @@ const Profile = ({ navigation }) => {
     </Background>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default Profile;

@@ -1,15 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
-  StyleSheet,
   Text,
   TextInput,
-  SafeAreaView,
   Pressable,
   ActivityIndicator,
   Modal,
-  Image,
-  Button,
 } from "react-native";
 import Background from "../../components/Background";
 import {
@@ -17,9 +13,7 @@ import {
   actuatedNormalizeVertical,
   styles,
 } from "../../styles/stylesheet";
-import LowerButton from "../../components/LowerButton";
 import { Realm, useApp } from "@realm/react";
-import * as Updates from "expo-updates";
 import Eye from "../../../assets/icons/eye.svg";
 import EyesClosed from "../../../assets/icons/closed.svg";
 import Error from "../../../assets/icons/error.svg";

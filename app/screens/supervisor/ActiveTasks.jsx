@@ -69,7 +69,7 @@ export default function ActiveTasks({ navigation }) {
           ) : (
             <TaskDetails
               foreignSupervisor={foreignSupervisor}
-              taskdata={job.tasks}
+              taskdata={job?.tasks}
               jobId={route.params.id}
               clientId={job?.matno}
             />

@@ -31,4 +31,4 @@ function OdinaryButton({ navigate, text, style, disabled, bg, color }) {
   );
 }
 
-export default React.memo(OdinaryButton);
+export default OdinaryButton;

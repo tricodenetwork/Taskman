@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Realm,
-  AppProvider,
-  UserProvider,
-  createRealmContext,
-} from "@realm/react";
+import { AppProvider, UserProvider } from "@realm/react";
 import { SafeAreaView, StyleSheet } from "react-native";
 
 import { AccountRealmContext } from "./models";

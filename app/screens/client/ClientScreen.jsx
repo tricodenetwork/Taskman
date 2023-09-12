@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import Background from "../../components/Background";
 import HandlerTopscreen from "../../components/HandlerTopScreen";
 import {
@@ -14,21 +14,18 @@ import LowerButton from "../../components/LowerButton";
 import { AccountRealmContext } from "../../models";
 import { useSelector } from "react-redux";
 import { formattedDate } from "../../api/Functions";
-import { activejob } from "../../models/Task";
 import { useUser } from "@realm/react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { chats as chat, chatroom } from "../../models/Chat";
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useQuery } = AccountRealmContext;
 
 export default function ClientScreen() {
   // prettier-ignore
   //   -------------------------------------------------------------------------VARIABLES AND STATES
-  const route = useRoute();
   const user = useUser();
   const navigation = useNavigation();
   const chats = useQuery(chat);
-  const realm = useRealm();
   const { _id, clientId } = useSelector((state) => state.user);
   // const account = useObject("account", Realm.BSON.ObjectId(id));
   // const activeJobs = useQuery(activejob);

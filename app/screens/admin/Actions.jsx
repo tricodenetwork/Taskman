@@ -1,38 +1,22 @@
-import { View, Text, Button, Modal, ScrollView } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import { View, Text, ScrollView } from "react-native";
+import React, { useCallback, useState } from "react";
 import Background from "../../components/Background";
 import Topscreen from "../../components/Topscreen";
 import { actuatedNormalize, styles } from "../../styles/stylesheet";
 import OdinaryButton from "../../components/OdinaryButton";
 // import DatePicker from "react-native-date-picker";
-import { useDispatch, useSelector } from "react-redux";
-import { AddHoliday } from "../../store/slice-reducers/Formslice";
 import { AccountRealmContext } from "../../models";
 import { holiday } from "../../models/Account";
-import LowerButton from "../../components/LowerButton";
-import DateTimePicker, {
-  DateTimePickerAndroid,
-} from "@react-native-community/datetimepicker";
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useRealm, useQuery } = AccountRealmContext;
 
 export default function Actions() {
-  const [open, setOpen] = useState(false);
   const [date, setDate] = useState(new Date());
 
   const hols = useQuery(holiday);
-  const isTodayHoliday = hols.some((holiday) => {
-    const holidayDate = new Date(holiday.day);
-    const today = new Date();
 
-    return (
-      holidayDate.getFullYear() === today.getFullYear() &&
-      holidayDate.getMonth() === today.getMonth() &&
-      holidayDate.getDate() === today.getDate()
-    );
-  });
   const realm = useRealm();
-  const dispatch = useDispatch();
 
   const addHoliday = useCallback(
     (item) => {

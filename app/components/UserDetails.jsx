@@ -1,20 +1,13 @@
-import {
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { RefreshControl, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { FlatList } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { AccountRealmContext } from "../models";
 import { Account } from "../models/Account";
 import { useNavigation } from "@react-navigation/native";
 import AccountsCard from "./AccountsCard";
 
-const { useRealm, useQuery } = AccountRealmContext;
+const { useQuery } = AccountRealmContext;
 //-------------------------------------------------------------------------------------------------STATE AND VARIABLES
 
 export default function UserDetails({ onPress, set }) {
