@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, StyleSheet, Button } from "react-native";
+import { View } from "react-native";
 import OdinaryButton from "../../components/OdinaryButton";
 import { Motion } from "@legendapp/motion";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { actuatedNormalize, styles } from "../../styles/stylesheet";
 import { useRoute } from "@react-navigation/native";
 import {

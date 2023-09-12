@@ -13,17 +13,14 @@ import { useUser } from "@realm/react";
 import { AccountRealmContext } from "../../models";
 import { setUser } from "../../store/slice-reducers/userSlice";
 import { useDispatch } from "react-redux";
-import { Account, client } from "../../models/Account";
-import { activejob } from "../../models/Task";
 
-const { useObject, useQuery, useRealm } = AccountRealmContext;
+const { useObject } = AccountRealmContext;
 
 export default function Taskman({ navigation }) {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const user = useUser();
   const oid = user.identities[0].id;
-  const realm = useRealm();
   const cleanedOid = oid.replace(/[^0-9a-zA-Z]/g, "");
 
   const account = useObject("account", Realm.BSON.ObjectId(cleanedOid));

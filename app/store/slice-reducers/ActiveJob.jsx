@@ -1,6 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import Realm from "realm";
-import { category } from "../../models/Task";
 
 const initialState = {
   id: "",

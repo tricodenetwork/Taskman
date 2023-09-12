@@ -7,7 +7,7 @@ import {
   actuatedNormalizeVertical,
   styles,
 } from "../../styles/stylesheet";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import OptionsCard from "../../components/OptionsCard";
 import { FontAwesome5 } from "@expo/vector-icons";
 import LowerButton from "../../components/LowerButton";

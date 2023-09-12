@@ -39,7 +39,7 @@ export const sendUserDetails = async (recipient, userDetails) => {
   }
 
   // check if we can use this link
-  const canOpen = await Linking.canOpenURL(url);
+  // const canOpen = await Linking.canOpenURL(url);
 
   return Linking.openURL(url);
 };

@@ -1,4 +1,4 @@
-import { View, Text, Button, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import Background from "../../components/Background";
 import { FlatList } from "react-native-gesture-handler";
@@ -9,7 +9,6 @@ import OdinaryButton from "../../components/OdinaryButton";
 import {
   SCREEN_WIDTH,
   actuatedNormalize,
-  actuatedNormalizeVertical,
   styles,
 } from "../../styles/stylesheet";
 // import PDFLib, { PDFDocument, PDFPage } from "react-native-pdf-lib";
@@ -18,17 +17,15 @@ import {
 import * as MediaLibrary from "expo-media-library";
 import RNHTMLtoPDF from "react-native-html-to-pdf";
 import * as FileSystem from "expo-file-system";
-import { PermissionsAndroid } from "react-native";
 import { StorageAccessFramework } from "expo-file-system";
 import { useEffect } from "react";
 
 // Call the function to check permissions
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useQuery } = AccountRealmContext;
 
 export default function Stats() {
   const activeJobs = useQuery(activejob);
-  const { user } = useSelector((state) => state);
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
 
   function calculateTaskStats(data) {
@@ -163,8 +160,6 @@ export default function Stats() {
 
       const sourcePath =
         "file:///storage/emulated/0/Android/data/tasks.uniben.vic/files/Documents/stats.pdf";
-      const destinationPath =
-        "file:///data/user/0/tasks.uniben.vic/files/stats.pdf";
 
       savePDFToDirectory(sourcePath);
       console.log("Pdf Saved Succesfully", pdf.filePath);

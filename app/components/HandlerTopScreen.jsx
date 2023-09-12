@@ -3,7 +3,6 @@ import { View, StyleSheet, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useDispatch, useSelector } from "react-redux";
 import { setClock } from "../store/slice-reducers/Formslice";
-import { AccountRealmContext } from "../models";
 import { styles } from "../styles/stylesheet";
 
 const HandlerTopscreen = ({ text, text3, children }) => {

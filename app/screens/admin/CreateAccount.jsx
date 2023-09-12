@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
-  StyleSheet,
   TextInput,
   Text,
   TouchableOpacity,
@@ -34,7 +33,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../../models";
 import { Account } from "../../models/Account";
-import OdinaryButton from "../../components/OdinaryButton";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -47,7 +45,6 @@ const CreateAccount = ({ navigation }) => {
   const { visible, visible2 } = useSelector((state) => state.app);
   const { user } = useSelector((state) => state);
   const { Job } = useSelector((state) => state);
-  const { id, name, category, no, duration } = Job;
   const route = useRoute();
   const realm = useRealm();
   const accounts = useQuery(Account);

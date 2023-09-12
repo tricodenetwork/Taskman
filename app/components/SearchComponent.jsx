@@ -1,5 +1,5 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import React, { memo, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";

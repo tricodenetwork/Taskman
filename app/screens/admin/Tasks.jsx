@@ -6,7 +6,7 @@ import {
   RefreshControl,
   TextInput,
 } from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Background from "../../components/Background";
 import Topscreen from "../../components/Topscreen";
 import {
@@ -16,7 +16,6 @@ import {
 } from "../../styles/stylesheet";
 import { FontAwesome } from "@expo/vector-icons";
 import LowerButton from "../../components/LowerButton";
-import SearchComponent from "../../components/SearchComponent";
 import TaskDetails from "../../components/TaskDetails";
 import { Modal } from "react-native";
 import OdinaryButton from "../../components/OdinaryButton";
@@ -24,7 +23,7 @@ import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../../models";
 import SelectComponent from "../../components/SelectComponent";
 
-const { useRealm, useQuery } = AccountRealmContext;
+const { useRealm } = AccountRealmContext;
 
 export default function Tasks({ navigation }) {
   //--------------------------------------------------------------------------------------STATE AND VARIABLES
@@ -83,7 +82,7 @@ export default function Tasks({ navigation }) {
         realm.write(() => {
           if (item?.name)
             job?.tasks.map((task) => {
-              const { name, duration } = task;
+              const { name } = task;
 
               if (name == edit.name) {
                 task.name = item?.name;

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
-  StyleSheet,
   TextInput,
   Text,
   TouchableOpacity,
@@ -21,19 +20,10 @@ import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setVisible } from "../../store/slice-reducers/Formslice";
 import { Motion } from "@legendapp/motion";
-import {
-  setName,
-  setDuration,
-  setNo,
-  setCategory,
-  setId,
-} from "../../store/slice-reducers/JobSlice";
-import { Modal } from "react-native";
+import { setName, setCategory } from "../../store/slice-reducers/JobSlice";
 import { useRoute } from "@react-navigation/native";
 import { job as jobber } from "../../models/Task";
 import { AccountRealmContext } from "../../models";
-import OdinaryButton from "../../components/OdinaryButton";
-import { KeyboardAvoidingView } from "react-native";
 
 const { useRealm, useQuery } = AccountRealmContext;
 
@@ -46,7 +36,7 @@ export default function CreateJob({ navigation }) {
   const Cat = useQuery("category");
   const { visible } = useSelector((state) => state.app);
   const { Job } = useSelector((state) => state);
-  const { id, name, category, no, duration } = Job;
+  const { name, category } = Job;
   // const { jobId, name2, category2, no2, duration2 } = route.params;
 
   // console.log(jobId, name, category, no, duration);

@@ -1,8 +1,7 @@
 import "react-native-gesture-handler";
 
-import React, { useMemo } from "react";
+import React from "react";
 
-import { MainStack } from "./navigator/AppNavigator";
 import { Provider } from "react-redux";
 import { store, persistor } from "./store/store";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -10,12 +9,9 @@ import { PersistGate } from "redux-persist/lib/integration/react";
 import { Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { AccountRealmContext } from "./models";
-import { Account } from "./models/Account";
-
-const { useQuery } = AccountRealmContext;
 
 export const AppNonSync = () => {
-  const result = useQuery(Account);
+  // const result = useQuery();
 
   // const tasks = useMemo(() => result.sorted("createdAt"), [result]);
 

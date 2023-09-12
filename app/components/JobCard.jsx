@@ -2,7 +2,6 @@ import { View, Text } from "react-native";
 import React from "react";
 import { SCREEN_HEIGHT, actuatedNormalize, styles } from "../styles/stylesheet";
 import { useRoute } from "@react-navigation/native";
-import { AccountRealmContext } from "../models";
 import { StyleSheet } from "react-native";
 
 const JobCard = ({ isActive, name, duration, category, tasks, id }) => {
@@ -37,7 +36,7 @@ const JobCard = ({ isActive, name, duration, category, tasks, id }) => {
   //   }
   // }, []);
 
-  console.log(duration);
+  // console.log(duration);
 
   const style = StyleSheet.create({
     text: { fontSize: actuatedNormalize(12) },

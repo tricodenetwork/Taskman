@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { resetMulti } from "../../store/slice-reducers/App";
 import { styles } from "../../styles/stylesheet";
 
-const { useRealm, useQuery } = AccountRealmContext;
+const { useRealm } = AccountRealmContext;
 
 export default function ActiveTasks({ navigation }) {
   //--------------------------------------------------------------------------------------STATE AND VARIABLES
@@ -24,7 +24,7 @@ export default function ActiveTasks({ navigation }) {
   );
   const [update, setUpdate] = useState(false);
   const { user } = useSelector((state) => state);
-  const foreignSupervisor = job?.supervisor !== user.name ?? true;
+  const foreignSupervisor = job?.supervisor !== user.name;
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
 

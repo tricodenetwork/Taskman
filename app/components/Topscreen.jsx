@@ -17,7 +17,7 @@ import { AccountRealmContext } from "../models";
 import OdinaryButton from "./OdinaryButton";
 import { useNavigation } from "@react-navigation/native";
 
-const { useRealm, useQuery } = AccountRealmContext;
+const { useRealm } = AccountRealmContext;
 
 const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
   const route = useRoute();

@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { sendPushNotification } from "../../api/Functions";
 import { Account, client } from "../../models/Account";
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useRealm, useQuery } = AccountRealmContext;
 
 export default function ChatScreen() {
   const [message, setMessage] = useState([]);
@@ -74,26 +74,26 @@ export default function ChatScreen() {
   };
 
   // Handler for long press on message
-  const handleLongPress = (context, message) => {
-    // Perform desired actions based on the long press event
-    console.log("Long press on message:", message);
-    // Delete the message
-    // deleteMessage(message);
-  };
+  // const handleLongPress = (context, message) => {
+  //   // Perform desired actions based on the long press event
+  //   console.log("Long press on message:", message);
+  //   // Delete the message
+  //   // deleteMessage(message);
+  // };
 
-  const renderMessageActions = (props, message) => {
-    return (
-      <Actions
-        {...props}
-        options={{
-          delete: {
-            onLongPress: () => handleLongPress(props.context, message),
-          },
-          // Add other options if needed
-        }}
-      />
-    );
-  };
+  // const renderMessageActions = (props, message) => {
+  //   return (
+  //     <Actions
+  //       {...props}
+  //       options={{
+  //         delete: {
+  //           onLongPress: () => handleLongPress(props.context, message),
+  //         },
+  //         // Add other options if needed
+  //       }}
+  //     />
+  //   );
+  // };
 
   const onSend = useCallback((mess = []) => {
     const messageObject = {
@@ -117,9 +117,6 @@ export default function ChatScreen() {
   }, []);
 
   function renderBubble(props) {
-    const isMessageSent = props.currentMessage.status === "sent";
-    const isMessageRead = props.currentMessage.status === null;
-
     return (
       <Bubble
         {...props}

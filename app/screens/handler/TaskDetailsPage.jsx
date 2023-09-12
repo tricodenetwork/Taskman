@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useCallback, useEffect } from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text } from "react-native";
 import { styles } from "../../styles/stylesheet";
 import Background from "../../components/Background";
 import Topscreen from "../../components/Topscreen";
@@ -12,7 +12,7 @@ import {
   setPassword,
 } from "../../store/slice-reducers/ActiveJob";
 import { batch, useDispatch, useSelector } from "react-redux";
-import { resetMulti, setMulti } from "../../store/slice-reducers/App";
+import { resetMulti } from "../../store/slice-reducers/App";
 import useRealmData from "../../hooks/useRealmData";
 import MultiSelect from "../../components/MultiSelect";
 import OdinaryButton from "../../components/OdinaryButton";
