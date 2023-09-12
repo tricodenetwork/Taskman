@@ -81,8 +81,8 @@ export default function CreateJob({ navigation }) {
 
         // console.log(typeof item.category, typeof Item.category);
 
-        job.name = item.name;
-        job.category = item.category;
+        job?.name = item.name;
+        job?.category = item.category;
       });
 
       alert("Job Edited Successfuly!");

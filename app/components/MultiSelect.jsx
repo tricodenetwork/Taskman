@@ -50,7 +50,7 @@ export default function MultiSelect({
               initialNumToRender={60}
               maxToRenderPerBatch={120}
               style={{ height: actuatedNormalize(150), paddingBottom: 20 }}
-              data={data.filter((item) =>
+              data={data?.filter((item) =>
                 item.matno.toLowerCase().includes(filter.toLowerCase())
               )}
               renderItem={({ item, index }) => (

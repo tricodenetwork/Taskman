@@ -1,21 +1,8 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, Text } from "react-native";
+import React from "react";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
-import Svg, { Circle, Rect } from "react-native-svg";
-import { useIsFocused, useRoute } from "@react-navigation/native";
-import { Fragment as MainBox } from "react";
-import { Completed } from "../api/Functions";
-import { MaterialIcons } from "@expo/vector-icons";
-import { AccountRealmContext } from "../models";
-import { activejob } from "../models/Task";
-import { remainingTimetohours } from "../api/Realm";
-import { millisecondSinceStartDate, morning } from "../api/test";
-import { useSelector } from "react-redux";
-
 
 export default function AccountsCard({ item, id }) {
-
-
   const dynamicColor = () => {
     const textColor =
       item.role.toUpperCase() === "ADMIN"
@@ -50,10 +37,10 @@ export default function AccountsCard({ item, id }) {
     >
       <View
         style={{
-          backgroundColor:dynamicColor().statusColor
+          backgroundColor: dynamicColor().statusColor,
         }}
         className={`bg-${
-         dynamicColor().textColor
+          dynamicColor().textColor
         } absolute w-[1vw] rounded-full left-[-2px] h-[60%]`}
       ></View>
       <View
@@ -76,19 +63,16 @@ export default function AccountsCard({ item, id }) {
       <View
         style={{
           backgroundColor: dynamicColor().backgroundColor,
-          borderColor: dynamicColor().statusColor ,
+          borderColor: dynamicColor().statusColor,
           borderWidth: 1,
         }}
         className={` rounded-md  py-2 w-[21vw]`}
       >
         <Text
           style={[styles.text_md, { fontSize: actuatedNormalize(10) }]}
-          className={`${
-             dynamicColor().textColor  
-          } text-center`}
+          className={`${dynamicColor().textColor} text-center`}
         >
           {item.role.toUpperCase()}
-
         </Text>
       </View>
       <Text

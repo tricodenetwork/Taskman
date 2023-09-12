@@ -84,15 +84,14 @@ const Login = ({ navigation }) => {
   }, [usermail, password, setAuthState, app]);
 
   const userName = (val) => {
-    const name = val.trim()
+    const name = val.trim();
 
-    setUsermail(name)
-  }
+    setUsermail(name);
+  };
 
   const Pass = (val) => {
-    setPassword(val.trim())
-  }
-  
+    setPassword(val.trim());
+  };
 
   return (
     <Background bgColor='bg-primary min-h-[90vh]   items-center justify-center'>
@@ -143,13 +142,13 @@ const Login = ({ navigation }) => {
                   <EyesClosed
                     width={actuatedNormalize(22)}
                     height={actuatedNormalizeVertical(22)}
-                    color={show ? "purple" : "gray"}
+                    color={"gray"}
                   />
                 ) : (
                   <Eye
                     width={actuatedNormalize(23)}
                     height={actuatedNormalizeVertical(23)}
-                    color={show ? " rgb(147 51 234)" : "gray"}
+                    color={"rgb(147 51 234)"}
                   />
                 )}
               </Pressable>

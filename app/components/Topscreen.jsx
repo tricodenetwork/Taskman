@@ -15,11 +15,7 @@ import { Motion } from "@legendapp/motion";
 import { useRoute } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setMenu,
-  openNotification,
-  setVisible,
-} from "../store/slice-reducers/Formslice";
+import { setMenu } from "../store/slice-reducers/Formslice";
 import Menu from "./Menu";
 import { AccountRealmContext } from "../models";
 import { Account } from "../models/Account";
@@ -44,10 +40,6 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
 
   const toggleMenu = () => {
     dispatch(setMenu());
-  };
-
-  const toggleNotifications = () => {
-    dispatch(openNotification());
   };
 
   //

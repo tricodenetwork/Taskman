@@ -1,42 +1,15 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  Dimensions,
-  PixelRatio,
-} from "react-native";
+import React, { useEffect } from "react";
+import { View, StyleSheet, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import Notify from "../../assets/images/notify.svg";
-import { actuatedNormalize, styles } from "../styles/stylesheet";
-import Svg, { Circle, Rect } from "react-native-svg";
-import ProfileCard from "./ProfileCard";
-import { Motion } from "@legendapp/motion";
-import { useRoute } from "@react-navigation/native";
-import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setMenu,
-  openNotification,
-  setClock,
-} from "../store/slice-reducers/Formslice";
+import { setClock } from "../store/slice-reducers/Formslice";
 import { AccountRealmContext } from "../models";
-import { setName, setUser } from "../store/slice-reducers/userSlice";
-import { activejob } from "../models/Task";
+import { styles } from "../styles/stylesheet";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-
-const { useRealm, useQuery, useObject } = AccountRealmContext;
-
-const HandlerTopscreen = ({ text, text2, text3, children, Edit }) => {
-  const route = useRoute();
+const HandlerTopscreen = ({ text, text3, children }) => {
   const dispatch = useDispatch();
-  const realm = useRealm();
-  const { user } = useSelector((state) => state);
   // const account = useObject("account", Realm.BSON.ObjectId(id));
-  const { menu, clock } = useSelector((state) => state.app);
+  const { clock } = useSelector((state) => state.app);
 
   useEffect(() => {
     let interval = null;

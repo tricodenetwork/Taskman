@@ -60,14 +60,14 @@ export default function TaskDetails({
                   handler: handler,
                   status: status,
                 });
-
-              (route.name == "activetasks") & !foreignSupervisor &&
+              if (route.name === "activetasks" && !foreignSupervisor) {
                 navigation.navigate("it", {
                   taskName: name,
                   id: route.params.id,
                   clientId: clientId,
                   taskHandler: handler,
                 });
+              }
             }}
           >
             {!item.name ? (
@@ -132,7 +132,7 @@ export default function TaskDetails({
         />
       }
       containerStyle={{
-        height: route.name == "tasks" || user.role == "Client" ? "95%" : "95%",
+        height: "95%",
       }}
       onDragEnd={({ data }) => {
         route.name == "tasks" && reArrange(data);

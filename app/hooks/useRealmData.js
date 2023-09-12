@@ -16,8 +16,7 @@ const useRealmData = (routeParams) => {
   const ActiveJobs = useQuery(activejob);
   const tasks = useQuery(job).filtered(`name == "Transcript"`)[0]?.tasks;
   const handlers = Accounts.filter(
-    (obj) =>
-      (obj.role == "Handler") & (obj.category?.name == user?.category?.name)
+    (obj) => obj.role == "Handler" && obj.category?.name == user?.category?.name
   );
   const account = useQuery("account").filtered(
     `name == $0 AND role == "Handler"`,

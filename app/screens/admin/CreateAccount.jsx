@@ -81,13 +81,13 @@ const CreateAccount = ({ navigation }) => {
           Realm.BSON.ObjectId(route.params.id)
         ); // If the ID is passed as an ObjectId
         // const task = realm?.objectForPrimaryKey('Task', Realm.BSON.ObjectId(id));  // If the ID is passed as a string
-        account.name = user.name;
-        account.email = user.email;
-        account.dept = user.dept;
-        account.password = user.password;
-        account.role = user.role;
-        account.phone = user.phone;
-        account.category.name = user.category.name;
+        account?.name = user.name;
+        account?.email = user.email;
+        account?.dept = user.dept;
+        account?.password = user.password;
+        account?.role = user.role;
+        account?.phone = user.phone;
+        account?.category.name = user.category.name;
       });
       sendUserDetails(user.email, user); // Assuming `sendUserDetails` is a function that sends the email
 

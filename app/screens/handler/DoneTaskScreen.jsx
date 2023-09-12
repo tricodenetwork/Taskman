@@ -30,27 +30,21 @@ const DoneTaskScreen = ({ navigation }) => {
     (state) => state.ActiveJob
   );
   const { user } = useSelector((state) => state);
-  
-  
+
   const { multipleJobs } = useSelector((state) => state.App);
-  
+
   const route = useRoute();
   const update = route.params?.update;
   const { activeJob, ActiveJobs, tasks, handlers, pushToken } = useRealmData(
     route.params
   );
 
-
-
-   
- 
-       
   const resetField = () => {
     batch(() => {
       dispatch(setCurrentTask(""));
-    dispatch(setHandler(""));
-    dispatch(resetMulti());
-    dispatch(setPassword(""));
+      dispatch(setHandler(""));
+      dispatch(resetMulti());
+      dispatch(setPassword(""));
     });
   };
   // Create a chat room
@@ -58,7 +52,6 @@ const DoneTaskScreen = ({ navigation }) => {
   const filterMultipleJobs = (ActiveJobs, param) => {
     return ActiveJobs.filtered(`matno ==$0`, param)[0]?.tasks;
   };
-
 
   const handleNextTaskSubmit = useCallback(() => {
     // Perform the necessary actions to assign the next task and handler
@@ -143,8 +136,7 @@ const DoneTaskScreen = ({ navigation }) => {
   ]);
 
   useEffect(() => {
-    resetField()
-    
+    resetField();
   }, []);
 
   return (
@@ -165,7 +157,7 @@ const DoneTaskScreen = ({ navigation }) => {
               route.params
                 ? activeJob?.tasks.filter(
                     (obj) =>
-                      (obj.status == "Pending" || obj.status == "") &
+                      (obj.status == "Pending" || obj.status == "") &&
                       (obj.handler == "" || obj.handler == null)
                   )
                 : tasks
@@ -215,8 +207,8 @@ const DoneTaskScreen = ({ navigation }) => {
         >
           <OdinaryButton
             // disabled={handler == "" || currenttask == ""}
-            text={handler == "" && currenttask == ""?"Done":'Assign'}
-            bg={handler == "" && currenttask == ""?"#006400":"#E57310"}
+            text={handler == "" && currenttask == "" ? "Done" : "Assign"}
+            bg={handler == "" && currenttask == "" ? "#006400" : "#E57310"}
             navigate={() => setVisible(!visible)}
           />
           <OdinaryButton

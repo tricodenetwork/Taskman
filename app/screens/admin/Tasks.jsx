@@ -47,9 +47,9 @@ export default function Tasks({ navigation }) {
     "job",
     Realm.BSON.ObjectId(route.params.id)
   );
-  const [task, setTask] = useState(job.tasks);
+  const [task, setTask] = useState(job?.tasks);
 
-  // const value = job.tasks.filtered(`name == $0`, edit.name);
+  // const value = job?.tasks.filtered(`name == $0`, edit.name);
   const value = task.filter((obj) => obj.name == edit.name);
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
@@ -64,30 +64,30 @@ export default function Tasks({ navigation }) {
   const addTask = useCallback(
     (item) => {
       if (
-        item.name == "" ||
-        item.duration == { days: 0, hours: 0, minutes: 0 }
+        item?.name == "" ||
+        item?.duration == { days: 0, hours: 0, minutes: 0 }
       ) {
         alert("Field cannot be empty ❗");
         return;
       }
       const sameName =
-        job.tasks.filtered(`name == $0`, item.name)[0]?.name ?? "";
+        job?.tasks.filtered(`name == $0`, item?.name)[0]?.name ?? "";
       if (sameName !== "") {
         alert(`${sameName} already exist ❗ `);
         return;
       }
 
-      const index = job.tasks.findIndex((obj) => obj.name == item.name);
+      const index = job?.tasks.findIndex((obj) => obj.name == item?.name);
 
       if (value.length !== 0) {
         realm.write(() => {
-          if (item.name)
-            job.tasks.map((task) => {
+          if (item?.name)
+            job?.tasks.map((task) => {
               const { name, duration } = task;
 
               if (name == edit.name) {
-                task.name = item.name;
-                task.duration = item.duration;
+                task.name = item?.name;
+                task.duration = item?.duration;
                 alert("Task edited successfully!");
                 setName("");
 
@@ -102,9 +102,9 @@ export default function Tasks({ navigation }) {
           item?.duration?.minutes == null ? 0 : item?.duration?.minutes;
         let newDuration = { days, hours, minutes };
 
-        const Task = { name: item.name, duration: newDuration };
+        const Task = { name: item?.name, duration: newDuration };
         realm.write(() => {
-          Task && job.tasks.push(Task);
+          Task && job?.tasks.push(Task);
           alert("Task added successfully!");
           setName("");
           setDuration({ days: 0, hours: 0, minutes: 0 });
@@ -113,7 +113,7 @@ export default function Tasks({ navigation }) {
         alert("Task already exist");
         return;
       }
-      setTask(job.tasks);
+      setTask(job?.tasks);
     },
     [realm, edit]
   );
@@ -123,14 +123,14 @@ export default function Tasks({ navigation }) {
       // Alternatively if passing the ID as the argument to handleDeleteTask:
       // realm?.delete(value);
 
-      const index = job.tasks.findIndex((obj) => obj.name == edit.name);
-      // setTask(job.tasks);
+      const index = job?.tasks.findIndex((obj) => obj.name == edit.name);
+      // setTask(job?.tasks);
 
       if (index !== -1) {
         navigation.navigate("jobs");
-        job.tasks.splice(index, 1);
+        job?.tasks.splice(index, 1);
         alert("Task deleted successfully! 🚮");
-        setTask(job.tasks);
+        setTask(job?.tasks);
       }
     });
   }, [realm, edit]);
@@ -142,7 +142,7 @@ export default function Tasks({ navigation }) {
     realm.write(() => {
       const tasksArray = JSON.parse(JSON.stringify(array));
       navigation.goBack();
-      job.tasks = tasksArray;
+      job?.tasks = tasksArray;
       navigation.navigate("tasks", { id: route.params.id });
     });
   };
@@ -150,26 +150,26 @@ export default function Tasks({ navigation }) {
     return (
       <TouchableOpacity
         onPress={() => {
-          setName(item.name);
-          setDuration(item.duration);
-          setEdit({ name: item.name });
+          setName(item?.name);
+          setDuration(item?.duration);
+          setEdit({ name: item?.name });
         }}
       >
         <View
           style={{
             backgroundColor:
-              edit.name == item.name ? "rgba(200,60,150,.4)" : "transparent",
+              edit.name == item?.name ? "rgba(200,60,150,.4)" : "transparent",
           }}
           className='flex mb-1 border-b-[.5px] py-[1vh] px-[1vw]  border-b-primary_light pr-[2vw] justify-around  flex-row'
-          key={item.name}
+          key={item?.name}
         >
           <Text style={styles.text_sm} className='w-[50%] text-left text-white'>
-            {item.name}
+            {item?.name}
           </Text>
           <Text style={styles.text_sm} className='w-[50%] text-white'>
-            {`${item.duration.days == null ? 0 : item.duration.days}d ${
-              item.duration.hours == null ? 0 : item.duration.hours
-            }h ${item.duration.minutes == null ? 0 : item.duration.minutes}m`}
+            {`${item?.duration.days == null ? 0 : item?.duration.days}d ${
+              item?.duration.hours == null ? 0 : item?.duration.hours
+            }h ${item?.duration.minutes == null ? 0 : item?.duration.minutes}m`}
           </Text>
           <TouchableOpacity
             onPress={() => {
@@ -177,7 +177,7 @@ export default function Tasks({ navigation }) {
               setName("");
             }}
           >
-            {edit.name == item.name && (
+            {edit.name == item?.name && (
               <View className=''>
                 <FontAwesome
                   name='close'
@@ -201,8 +201,8 @@ export default function Tasks({ navigation }) {
             id: route.params.id,
           });
         }}
-        text2={job ? job.tasks.length : item.supervisor}
-        text={job.name}
+        text2={job ? job?.tasks.length : item?.supervisor}
+        text={job?.name}
       />
 
       <View

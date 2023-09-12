@@ -88,7 +88,7 @@ export default function HandlerDetails({ taskdata, update }) {
       maxToRenderPerBatch={100}
       // removeClippedSubviews
       // windowSize={15}
-      style={{ height: route.name == "tasks" ? "95%" : "95%" }}
+      style={{ height: "95%" }}
     />
   );
 }

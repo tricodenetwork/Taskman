@@ -19,7 +19,7 @@ function OdinaryButton({ navigate, text, style, disabled, bg, color }) {
             styles.text_md2,
             {
               fontSize: actuatedNormalize(13),
-              color: disabled |!color ? "white" : color && color,
+              color: disabled || !color ? "white" : color && color,
             },
           ]}
           className='text-center text-white'
