@@ -110,10 +110,7 @@ export default function Actions() {
         >
           Public Holidays
         </Text>
-        <OdinaryButton
-          navigate={() => console.log("kool") & showDatePicker()}
-          text='ADD'
-        />
+        <OdinaryButton navigate={showDatePicker} text='ADD' />
         <OdinaryButton navigate={() => clear()} text='RESET' />
 
         {/* <Modal visible={open}>

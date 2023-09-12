@@ -81,13 +81,13 @@ const CreateAccount = ({ navigation }) => {
           Realm.BSON.ObjectId(route.params.id)
         ); // If the ID is passed as an ObjectId
         // const task = realm?.objectForPrimaryKey('Task', Realm.BSON.ObjectId(id));  // If the ID is passed as a string
-        account?.name = user.name;
-        account?.email = user.email;
-        account?.dept = user.dept;
-        account?.password = user.password;
-        account?.role = user.role;
-        account?.phone = user.phone;
-        account?.category.name = user.category.name;
+        account.name = user.name;
+        account.email = user.email;
+        account.dept = user.dept;
+        account.password = user.password;
+        account.role = user.role;
+        account.phone = user.phone;
+        account.category.name = user.category.name;
       });
       sendUserDetails(user.email, user); // Assuming `sendUserDetails` is a function that sends the email
 
@@ -353,8 +353,7 @@ const CreateAccount = ({ navigation }) => {
                   styles.averageText,
                   { height: actuatedNormalizeVertical(50) },
                 ]}
-                onChangeText={(val) => dispatch(setPassword(val))
-                }
+                onChangeText={(val) => dispatch(setPassword(val))}
                 value={user.password}
                 className='w-[30vw] bg-slate-300 mt-2 text-black  rounded-sm'
               />
@@ -380,13 +379,13 @@ const CreateAccount = ({ navigation }) => {
             style={"w-[90vw]"}
             disabled={
               user.name === "" ||
-                  user.role === "" ||
-                  user.dept === "" ||
-                  user.phone === "" ||
-                  user.email == "" ||
-                  user.password == "" ||
-                  typeof error =="string" ||
-                 typeof error2 == "string"
+              user.role === "" ||
+              user.dept === "" ||
+              user.phone === "" ||
+              user.email == "" ||
+              user.password == "" ||
+              typeof error == "string" ||
+              typeof error2 == "string"
                 ? true
                 : false
             }

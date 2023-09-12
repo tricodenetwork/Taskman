@@ -230,8 +230,8 @@ export default function IndividualTask({ navigation }) {
             placeholder={"Assign Next Handler"}
             data={Accounts.filter(
               (obj) =>
-                (obj.role == "Handler") &
-                (obj.category?.name == user.category.name)
+                obj.role == "Handler" &&
+                obj.category?.name == user.category.name
             )}
             setData={(params) => {
               dispatch(setHandler(params));

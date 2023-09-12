@@ -67,7 +67,7 @@ const DoneTaskScreen = ({ navigation }) => {
           multipleJobs.forEach((params) => {
             filterMultipleJobs(ActiveJobs, params).map((task) => {
               // on handling next task, first of all set your current task to completed
-              if ((task.name == password) & (task.handler == user.name)) {
+              if (task.name == password && task.handler == user.name) {
                 const timeCompleted = millisecondSinceStartDate(
                   task.inProgress
                 );

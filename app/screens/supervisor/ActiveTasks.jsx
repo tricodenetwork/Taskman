@@ -24,7 +24,7 @@ export default function ActiveTasks({ navigation }) {
   );
   const [update, setUpdate] = useState(false);
   const { user } = useSelector((state) => state);
-  const foreignSupervisor = job.supervisor !== user.name ?? true;
+  const foreignSupervisor = job?.supervisor !== user.name ?? true;
 
   //-------------------------------------------------------------EFFECTS AND FUNCTIONS
 
@@ -46,9 +46,9 @@ export default function ActiveTasks({ navigation }) {
             id: route.params.id,
           });
         }}
-        text2={job ? job.tasks.length : item.supervisor}
-        text3={job.job}
-        text={job.matno}
+        text2={job ? job?.tasks.length : item.supervisor}
+        text3={job?.job}
+        text={job?.matno}
       />
 
       <View

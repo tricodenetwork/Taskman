@@ -1,9 +1,9 @@
-import React from 'react';
-import {View, StyleSheet, Image, Text} from 'react-native';
-import { actuatedNormalize, styles } from "../styles/stylesheet";
+import React from "react";
+import { View, Text } from "react-native";
+import { styles } from "../styles/stylesheet";
 import { useSelector } from "react-redux";
 import { AccountRealmContext } from "../models";
-const { useRealm, useObject } = AccountRealmContext;
+const { useObject } = AccountRealmContext;
 const ProfileCard = () => {
   const { user } = useSelector((state) => state);
   const account = useObject("account", Realm.BSON.ObjectId(user._id));
@@ -30,7 +30,5 @@ const ProfileCard = () => {
     </View>
   );
 };
-
-
 
 export default ProfileCard;

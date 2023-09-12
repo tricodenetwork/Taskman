@@ -39,20 +39,20 @@ const TaskDetailsPage = () => {
   if (route.params) {
     clientDetails = (
       <View className='h-[50vh] flex justify-around'>
-        <Text style={[styles.text_md]}>ClientId: {route.params.matno}</Text>
+        <Text style={[styles.text_md]}>ClientId: {route.params?.matno}</Text>
         <Text style={[styles.text_md]}>
-          Supervisor: {route.params.supervisor}
+          Supervisor: {route.params?.supervisor}
         </Text>
-        <Text style={[styles.text_md]}>Task: {route.params.name}</Text>
+        <Text style={[styles.text_md]}>Task: {route.params?.name}</Text>
       </View>
     );
   }
   const disableButton =
-  isWeekend ||
-  !isAllowedTime ||
-  (route.params == undefined && multipleJobs.length == 0) ||
-  (route.params == undefined && password == "");
-  
+    isWeekend ||
+    !isAllowedTime ||
+    (route.params == undefined && multipleJobs.length == 0) ||
+    (route.params == undefined && password == "");
+
   const resetField = () => {
     batch(() => {
       dispatch(setCurrentTask(""));
@@ -62,8 +62,7 @@ const TaskDetailsPage = () => {
   };
 
   useEffect(() => {
-    resetField()
-    
+    resetField();
   }, []);
 
   // Functions and Buttons to accept, assign and reject tasks
@@ -82,7 +81,7 @@ const TaskDetailsPage = () => {
           multipleJobs.forEach((params) => {
             ActiveJobs.filtered(`matno ==$0`, params)[0]?.tasks.map((task) => {
               // Set task to inProgress and begin counting
-              if ((task.name == password) & (task.handler == user.name)) {
+              if (task.name == password && task.handler == user.name) {
                 task.status = "InProgress";
                 task.inProgress = new Date();
               }
@@ -92,8 +91,8 @@ const TaskDetailsPage = () => {
           activeJob?.tasks.map((task) => {
             // Set task to inProgress and begin counting
             if (
-              (task.name == route.params?.name) &
-              (task.handler == route.params.handler)
+              task.name == route.params?.name &&
+              task.handler == route.params?.handler
             ) {
               task.status = "InProgress";
               task.inProgress = new Date();
@@ -138,7 +137,7 @@ const TaskDetailsPage = () => {
             <MultiSelect
               title={"Jobs:"}
               setData={(params) => {
-                dispatch(setMulti(params));
+                dispatch(params);
               }}
               data={Array.from(ActiveJobs).sort(
                 (a, b) => b._id.getTimestamp() - a._id.getTimestamp()

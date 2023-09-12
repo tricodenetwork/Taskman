@@ -283,31 +283,31 @@ export default function MessageScreen({ navigation }) {
                   transition={{ type: "spring", stiffness: 200, duration: 0.1 }}
                   className='w-full h-[5vh] bg-primary '
                 >
-                  {showdelete ? (
-                    <TouchableOpacity
-                      onPress={() => {
-                        setShowdelete(!showdelete);
-                        deleteChat();
-                      }}
-                    >
-                      <View className='flex flex-row justify-center items-center'>
-                        <Text
-                          style={[
-                            styles.text,
-                            { fontSize: actuatedNormalize(17) },
-                          ]}
-                          className='px-[2vw] text-Secondary'
-                        >
-                          Delete
-                        </Text>
-                        <Ionicons
-                          name='close'
-                          size={actuatedNormalize(16)}
-                          color={"green"}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  ) : null}
+                  (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowdelete(!showdelete);
+                      deleteChat();
+                    }}
+                  >
+                    <View className='flex flex-row justify-center items-center'>
+                      <Text
+                        style={[
+                          styles.text,
+                          { fontSize: actuatedNormalize(17) },
+                        ]}
+                        className='px-[2vw] text-Secondary'
+                      >
+                        Delete
+                      </Text>
+                      <Ionicons
+                        name='close'
+                        size={actuatedNormalize(16)}
+                        color={"green"}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                  )
                 </Motion.View>
               )}
             </View>

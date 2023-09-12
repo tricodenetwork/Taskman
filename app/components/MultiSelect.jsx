@@ -6,11 +6,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Motion } from "@legendapp/motion";
 
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { actuatedNormalize, styles } from "../styles/stylesheet";
 
 export default function MultiSelect({
-  value,
   data,
   setData,
   title,
@@ -18,19 +17,9 @@ export default function MultiSelect({
   inputStyles = "w-[60vw]",
   visibleStyles = "w-[60vw]",
 }) {
-  const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
-  const [placehold, setPlacehold] = useState("");
   const [filter, setFilter] = useState("");
-  const [selected, setSelected] = useState(Array(data.length).fill(false));
   const { multipleJobs } = useSelector((state) => state.App);
-
-  const handlePress = (index) => {
-    // const newSelected = [...selected];
-    // newSelected[index] = !newSelected[index];
-    // setSelected(newSelected);
-    multipleJobs.includes(index);
-  };
 
   return (
     <View id='TASK' className='flex items-center  justify-between  flex-row'>
@@ -56,7 +45,6 @@ export default function MultiSelect({
               renderItem={({ item, index }) => (
                 <TouchableOpacity
                   onPress={() => {
-                    handlePress(index);
                     setData(item.matno);
                   }}
                   className={`${
@@ -82,7 +70,7 @@ export default function MultiSelect({
         )}
         <TextInput
           // keyboardType=''
-          defaultValue={placehold}
+          defaultValue={""}
           // value={multipleJobs.toString()}
           onChangeText={setFilter}
           //   editable={false}

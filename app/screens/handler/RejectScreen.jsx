@@ -93,8 +93,8 @@ const RejectScreen = ({ navigation }) => {
         activeJob?.tasks.map((task) => {
           // set your recieved task to pending and not the time you've spent on the route.params?.job
           if (
-            (task.name == route.params?.name) &
-            (task.handler == route.params?.handler)
+            task.name == route.params?.name &&
+            task.handler == route.params?.handler
           ) {
             task.handler = "";
             Error = millisecondSinceStartDate(task.inProgress);
