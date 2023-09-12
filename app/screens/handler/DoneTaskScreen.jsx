@@ -42,8 +42,6 @@ const DoneTaskScreen = ({ navigation }) => {
     batch(() => {
       dispatch(setCurrentTask(""));
       dispatch(setHandler(""));
-      dispatch(resetMulti());
-      dispatch(setPassword(""));
     });
   };
   // Create a chat room
@@ -55,7 +53,6 @@ const DoneTaskScreen = ({ navigation }) => {
   const handleNextTaskSubmit = useCallback(() => {
     // Perform the necessary actions to assign the next task and handler
     // based on the values of nextTask and nextHandler
-
     if (user.role !== "Handler") {
       alert("Unauthorized Handler!! ❌.");
     }
@@ -119,9 +116,12 @@ const DoneTaskScreen = ({ navigation }) => {
         console.log({ error, msg: "Error Assigning next task" });
       }
     });
-    update([]);
+    update && update([]);
     resetField();
-    navigation.navigate("mytasks");
+    dispatch(resetMulti());
+    dispatch(setPassword(""));
+
+    // navigation.navigate("mytasks");
     // setIsNextTaskModalOpen(false);
   }, [
     realm,

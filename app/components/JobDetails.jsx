@@ -1,7 +1,11 @@
 import { FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import JobCard from "./JobCard";
-import { useIsFocused, useRoute } from "@react-navigation/native";
+import {
+  useIsFocused,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import { activejob, job } from "../models/Task";
 import { useSelector } from "react-redux";
@@ -20,6 +24,7 @@ export default function JobDetails({ update }) {
   const [data, setData] = useState([]);
   const col = filter && filter.toLowerCase();
   const isFocused = useIsFocused();
+  const navigation = useNavigation();
   const client = activeJobs.filtered(`matno ==$0`, user.clientId) ?? [];
 
   // Move the renderItem function outside of the component

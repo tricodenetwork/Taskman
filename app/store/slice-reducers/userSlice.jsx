@@ -1,3 +1,4 @@
+import { Realm } from "@realm/react";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {

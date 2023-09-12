@@ -41,11 +41,9 @@ export default function IndividualTask({ navigation }) {
   const datas = Array.from(ActiveJobs);
   const { user } = useSelector((state) => state);
   const { multipleJobs } = useSelector((state) => state.App);
-
   const inProgress = activeJob?.tasks.filter(
     (item) => item.name == route.params?.taskName
   )[0].inProgress;
-
   const holidas = useQuery(holiday);
   const isTodayHoliday = holidas.some((holiday) => {
     const holidayDate = new Date(holiday.day);
@@ -62,7 +60,6 @@ export default function IndividualTask({ navigation }) {
     batch(() => {
       dispatch(setCurrentTask(""));
       dispatch(setHandler(""));
-      dispatch(resetMulti());
     });
   };
 
@@ -120,6 +117,10 @@ export default function IndividualTask({ navigation }) {
       alert("No task to assign");
       return;
     }
+    if (handler == "" && !route.params?.handler) {
+      alert("Not assigned yet!!");
+      return;
+    }
 
     realm.write(() => {
       try {
@@ -148,14 +149,14 @@ export default function IndividualTask({ navigation }) {
           return;
         } else {
           activeJob?.tasks.map((task) => {
-            const { name } = task;
-            if (name == route.params?.taskName) {
+            if (task.name == route.params?.taskName) {
               task.handler = handler;
               if (handler == "") {
                 task.status = "Pending";
                 task.started = null;
                 task.inProgress = null;
                 alert(`${route.params?.taskName} 📃 Unassigned Single`);
+                return;
               } else {
                 task.status = "Awaiting";
                 task.started = new Date();
@@ -165,8 +166,8 @@ export default function IndividualTask({ navigation }) {
                 alert(
                   `${route.params?.taskName} 📃 assign to ${handler} single👤 `
                 );
+                return;
               }
-              return;
             }
           });
         }
@@ -176,6 +177,8 @@ export default function IndividualTask({ navigation }) {
     });
 
     resetFields();
+    dispatch(resetMulti());
+
     // navigation.navigate("activetasks", { id: route.params.id });
   }, [
     realm,
@@ -193,11 +196,11 @@ export default function IndividualTask({ navigation }) {
   const confirmTaskandCloseModal = useCallback(() => {
     assignNextTask();
     setVisible(!visible);
-  }, []);
+  }, [visible]);
 
   const toggleVisible = useCallback(() => {
     setVisible((prevVisible) => !prevVisible);
-  }, []);
+  }, [visible]);
   return (
     <Background bgColor=''>
       <View className=' h-[90%] pt-[5vh] self-center flex justify-between items-center'>

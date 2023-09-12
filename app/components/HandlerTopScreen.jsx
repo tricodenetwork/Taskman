@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useDispatch, useSelector } from "react-redux";
 import { setClock } from "../store/slice-reducers/Formslice";
-import { styles } from "../styles/stylesheet";
+import { actuatedNormalize, styles } from "../styles/stylesheet";
 
 const HandlerTopscreen = ({ text, text3, children }) => {
   const dispatch = useDispatch();
@@ -70,8 +70,6 @@ const HandlerTopscreen = ({ text, text3, children }) => {
 
 const styls = StyleSheet.create({
   topSection: { height: "50%", borderBottomLeftRadius: 35, zIndex: 20 },
-  // backArrow:{position:'absolute',left:0,top:0, alignSelf:'flex-start', marginLeft: 20, marginTop: 20}
-  // backArrow:{position:'absolute',left:0,top:0, alignSelf:'flex-start', marginLeft: 20, marginTop: 20}
 });
 
 export default HandlerTopscreen;

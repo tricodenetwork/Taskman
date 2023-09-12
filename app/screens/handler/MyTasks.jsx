@@ -47,7 +47,6 @@ export default function MyTasks({ navigation }) {
         );
       };
       setHandlerTasks(tasks);
-      setIsLoading(false);
     }, 0);
   }, [handlerTasks.length, focus]);
 

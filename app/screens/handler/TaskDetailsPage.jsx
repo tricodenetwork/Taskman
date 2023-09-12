@@ -12,7 +12,7 @@ import {
   setPassword,
 } from "../../store/slice-reducers/ActiveJob";
 import { batch, useDispatch, useSelector } from "react-redux";
-import { resetMulti } from "../../store/slice-reducers/App";
+import { resetMulti, setMulti } from "../../store/slice-reducers/App";
 import useRealmData from "../../hooks/useRealmData";
 import MultiSelect from "../../components/MultiSelect";
 import OdinaryButton from "../../components/OdinaryButton";
@@ -66,7 +66,6 @@ const TaskDetailsPage = () => {
   }, []);
 
   // Functions and Buttons to accept, assign and reject tasks
-
   const handleAcceptButton = useCallback(() => {
     // Perform the necessary actions to accept task
     // based on the values of nextTask and nextHandler
@@ -105,7 +104,7 @@ const TaskDetailsPage = () => {
         alert("Error accepting message");
       }
     });
-    update([]);
+    update && update([]);
     resetField();
     navigation.navigate("mytasks");
   }, [
@@ -137,7 +136,7 @@ const TaskDetailsPage = () => {
             <MultiSelect
               title={"Jobs:"}
               setData={(params) => {
-                dispatch(params);
+                dispatch(setMulti(params));
               }}
               data={Array.from(ActiveJobs).sort(
                 (a, b) => b._id.getTimestamp() - a._id.getTimestamp()
