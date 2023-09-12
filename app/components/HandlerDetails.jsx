@@ -78,7 +78,7 @@ export default function HandlerDetails({ taskdata, update }) {
         />
       }
       containerStyle={{
-        height: route.name == "tasks" || user.role == "Client" ? "95%" : "95%",
+        height: "95%",
       }}
       data={filteredData}
       renderItem={render}

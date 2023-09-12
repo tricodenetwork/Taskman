@@ -42,7 +42,7 @@ const DeleteJobs = ({ navigation }) => {
         return;
       }
     });
-  });
+  }, [realm, multiplejobs, activeJobs]);
 
   //----------------------------------------------------RENDERED COMPONENT
 
