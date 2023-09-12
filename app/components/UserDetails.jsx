@@ -19,13 +19,9 @@ const { useRealm, useQuery } = AccountRealmContext;
 
 export default function UserDetails({ onPress, set }) {
   const { search, filter } = useSelector((state) => state.app);
-  const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const dispatch = useDispatch();
-  const realm = useRealm();
   const accounts = useQuery(Account);
   const navigation = useNavigation();
-  const cloneAccounts = Object.assign({}, accounts);
 
   const col = filter && filter.toLowerCase();
   // console.log(col, accounts);
@@ -40,48 +36,36 @@ export default function UserDetails({ onPress, set }) {
   //_____________________________________________________________________________________________________RENDERED COMPONENT
 
   return (
-    data !== [] && (
-      <FlatList
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => {
-              setRefreshing(true);
+    <FlatList
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => {
+            setRefreshing(true);
+          }}
+        />
+      }
+      data={accounts.filter(
+        (item, index) =>
+          item[col] && item[col].toLowerCase().includes(search.toLowerCase())
+      )}
+      renderItem={({ item }) => {
+        return (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => {
+              navigation.navigate("CreateAccount", {
+                id: item._id.toString(),
+              });
             }}
-          />
-        }
-        data={accounts.filter(
-          (item, index) =>
-            item[col] && item[col].toLowerCase().includes(search.toLowerCase())
-        )}
-        renderItem={({ item }) => {
-          return (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => {
-                navigation.navigate("CreateAccount", {
-                  id: item._id.toString(),
-                });
-              }}
-            >
-              <AccountsCard item={item} />
-            </TouchableOpacity>
-          );
-        }}
-        showsVerticalScrollIndicator
-        keyExtractor={(item) => item._id}
-        style={{ height: "80%" }}
-      />
-    )
+          >
+            <AccountsCard item={item} />
+          </TouchableOpacity>
+        );
+      }}
+      showsVerticalScrollIndicator
+      keyExtractor={(item) => item._id}
+      style={{ height: "80%" }}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  shadow: {
-    shadowColor: "blue",
-    shadowOffset: { width: 0, height: 50 },
-    elevation: 5,
-    // shadowOpacity: 1,
-    shadowRadius: 50,
-  },
-});

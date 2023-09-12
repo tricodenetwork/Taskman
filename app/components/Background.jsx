@@ -1,26 +1,13 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  ImageBackground,
-  StyleSheet,
-  TouchableOpacity,
-  useWindowDimensions,
-  KeyboardAvoidingView,
-} from "react-native";
+import React from "react";
+import { Text } from "react-native";
 // import AppLoading from "expo-app-loading";
-import * as Font from "expo-font";
 import { useFonts } from "expo-font";
 
 // import {
 //  Axiforma_Bold,
 // } from "../../assets/fonts/axiforma/Axiforma_Bold";
-import { styles } from "../styles/stylesheet";
 
-import { Motion } from "@legendapp/motion";
 import DismissKeyboard from "./DismissKeyboard";
-import Topscreen from "./Topscreen";
-import ProfileCard from "./ProfileCard";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const Background = ({ children, bgColor = "bg-slate-200" }) => {
@@ -44,8 +31,6 @@ const Background = ({ children, bgColor = "bg-slate-200" }) => {
     AxiformaThin: require("../../assets/fonts/axiforma/Axiforma_Thin.ttf"),
     AxiformaLight: require("../../assets/fonts/axiforma/Axiforma_Light.ttf"),
   });
-
-  const windowHeight = useWindowDimensions().height;
 
   if (!fontsLoaded) {
     return (

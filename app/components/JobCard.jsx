@@ -1,21 +1,12 @@
 import { View, Text } from "react-native";
-import React, { useEffect, useMemo } from "react";
-import {
-  SCREEN_HEIGHT,
-  actuatedNormalize,
-  actuatedNormalizeVertical,
-  styles,
-} from "../styles/stylesheet";
+import React from "react";
+import { SCREEN_HEIGHT, actuatedNormalize, styles } from "../styles/stylesheet";
 import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
-import { activejob } from "../models/Task";
 import { StyleSheet } from "react-native";
 
-const { useQuery, useRealm } = AccountRealmContext;
-
-const JobCard = ({ isActive,name,duration,category, tasks,id }) => {
+const JobCard = ({ isActive, name, duration, category, tasks, id }) => {
   const route = useRoute();
-  const realm = useRealm();
 
   // const sumAll = useMemo(() => {
   //   return sumField(
@@ -39,7 +30,7 @@ const JobCard = ({ isActive,name,duration,category, tasks,id }) => {
   //         activeJobs.forEach((job) => {
   //           job.timeframe = sum;
   //         });
-  //       });  
+  //       });
   //     } catch (error) {
   //       console.log(error);
   //     }
@@ -48,18 +39,16 @@ const JobCard = ({ isActive,name,duration,category, tasks,id }) => {
 
   console.log(duration);
 
-  
-const style = StyleSheet.create({
-  text: { fontSize: actuatedNormalize(12) },
-  bg: {
-    backgroundColor: "rgba(45, 206, 214, 0.7)",
-  },
-  card: {
-    height: 0.14 * SCREEN_HEIGHT,
-    backgroundColor: isActive ? "pink" : "white",
-  },
-});
-
+  const style = StyleSheet.create({
+    text: { fontSize: actuatedNormalize(12) },
+    bg: {
+      backgroundColor: "rgba(45, 206, 214, 0.7)",
+    },
+    card: {
+      height: 0.14 * SCREEN_HEIGHT,
+      backgroundColor: isActive ? "pink" : "white",
+    },
+  });
 
   return (
     <View
@@ -74,30 +63,22 @@ const style = StyleSheet.create({
         <Text style={styles.text_md2} className='text-primary'>
           {name}
         </Text>
-        {route.name == "jobs" && (
-          <Text>Tasks:{tasks}</Text>
-        ) }
+        {route.name == "jobs" && <Text>Tasks:{tasks}</Text>}
         <Text style={[styles.text_sm, { fontSize: actuatedNormalize(10) }]}>
-             {`${duration?.days == null ? 0 : duration?.days}d ${
-                duration?.hours == null ? 0 : duration?.hours
-              }h ${
-                duration?.minutes == null ? 0 : duration?.minutes
-              }m`}
-            
+          {`${duration?.days == null ? 0 : duration?.days}d ${
+            duration?.hours == null ? 0 : duration?.hours
+          }h ${duration?.minutes == null ? 0 : duration?.minutes}m`}
         </Text>
       </View>
- 
+
       <Text
         style={[styles.averageText, style.text]}
         className='absolute text-Handler3 bottom-1 left-[22%]'
       >
         {category}
       </Text>
-     
     </View>
   );
-
 };
-
 
 export default React.memo(JobCard);

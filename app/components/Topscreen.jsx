@@ -2,15 +2,11 @@ import React, { Fragment, useCallback, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-import Notify from "../../assets/images/notify.svg";
 import {
-  SCREEN_HEIGHT,
   actuatedNormalize,
   actuatedNormalizeVertical,
   styles,
 } from "../styles/stylesheet";
-import Svg, { Circle, Rect } from "react-native-svg";
-import ProfileCard from "./ProfileCard";
 import { Motion } from "@legendapp/motion";
 import { useRoute } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
@@ -18,7 +14,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMenu } from "../store/slice-reducers/Formslice";
 import Menu from "./Menu";
 import { AccountRealmContext } from "../models";
-import { Account } from "../models/Account";
 import OdinaryButton from "./OdinaryButton";
 import { useNavigation } from "@react-navigation/native";
 
@@ -27,11 +22,10 @@ const { useRealm, useQuery } = AccountRealmContext;
 const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
   const route = useRoute();
   const dispatch = useDispatch();
-  const { menu, notify } = useSelector((state) => state.app);
+  const { menu } = useSelector((state) => state.app);
   const { user } = useSelector((state) => state);
   const [visible, setVisible] = useState(false);
   const realm = useRealm();
-  const accounts = useQuery(Account);
   const nav = useNavigation();
   const back = () => {
     nav.goBack();
@@ -42,7 +36,20 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
     dispatch(setMenu());
   };
 
-  //
+  const navigate = useCallback(() => {
+    if (route.name === "CreateJob") {
+      deleteJob();
+      nav.navigate("jobs");
+    } else if (route.name === "ActivateJob") {
+      del();
+      nav.navigate("activeJobs");
+    } else if (route.name === "CreateAccount") {
+      deleteAccount();
+      console.log("deleted account successfully");
+      nav.navigate("accounts");
+    }
+    setVisible(!visible);
+  }, [route.name, visible]);
 
   const deleteAccount = useCallback(() => {
     realm.write(() => {
@@ -92,18 +99,7 @@ const Topscreen = ({ text, text2, text3, children, del, Edit }) => {
             </Text>
             <OdinaryButton
               style={"rounded-sm mt-2 bg-primary"}
-              navigate={() => {
-                route.name == "CreateJob"
-                  ? deleteJob() & nav.navigate("jobs")
-                  : route.name == "ActivateJob"
-                  ? del() & nav.navigate("activeJobs")
-                  : route.name == "CreateAccount"
-                  ? deleteAccount() &
-                    console.log("deleted account sucessfully") &
-                    nav.navigate("accounts")
-                  : null;
-                setVisible(!visible);
-              }}
+              navigate={navigate}
               text={"OK"}
             />
           </Motion.View>

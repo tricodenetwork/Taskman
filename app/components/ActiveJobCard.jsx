@@ -6,7 +6,6 @@ import {
   actuatedNormalizeVertical,
   styles,
 } from "../styles/stylesheet";
-import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import { formatDate, objectIdToDate } from "../api/Functions";
 import { StyleSheet } from "react-native";
@@ -14,7 +13,6 @@ import { StyleSheet } from "react-native";
 const { useRealm } = AccountRealmContext;
 
 const ActiveJobCard = ({ id }) => {
-  const route = useRoute();
   const realm = useRealm();
   const item = realm.objectForPrimaryKey("activejob", Realm.BSON.ObjectId(id));
   const status =

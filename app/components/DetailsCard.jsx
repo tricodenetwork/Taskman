@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
@@ -17,7 +17,6 @@ const { useQuery } = AccountRealmContext;
 const DetailsCard = React.memo(
   ({ item, id, index }) => {
     const hols = useQuery(holiday);
-    const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
     const { user } = useSelector((state) => state);
 
     const status =

@@ -1,34 +1,23 @@
 import { FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import JobCard from "./JobCard";
-import {
-  useIsFocused,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
+import { useIsFocused, useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../models";
 import { activejob, job } from "../models/Task";
-import { useSelector, useDispatch } from "react-redux";
-import { Realm } from "@realm/react";
-import { setRefresh } from "../store/slice-reducers/App";
-import { millisecondSinceStartDate } from "../api/test";
-import { holiday } from "../models/Account";
+import { useSelector } from "react-redux";
 import { SCREEN_HEIGHT } from "../styles/stylesheet";
 import ActiveJobCard from "./ActiveJobCard";
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useQuery } = AccountRealmContext;
 
 export default function JobDetails({ update }) {
   const [refreshing, setRefreshing] = useState(false);
   const { search, filter } = useSelector((state) => state.app);
   const { user } = useSelector((state) => state);
   const route = useRoute();
-  const realm = useRealm();
   const jobs = useQuery(job);
-  const dispatch = useDispatch();
   const activeJobs = useQuery(activejob);
   const [data, setData] = useState([]);
-  const navigation = useNavigation();
   const col = filter && filter.toLowerCase();
   const isFocused = useIsFocused();
   const client = activeJobs.filtered(`matno ==$0`, user.clientId) ?? [];
@@ -51,7 +40,13 @@ export default function JobDetails({ update }) {
             }}
           >
             {route.name == "jobs" ? (
-              <JobCard name={item.name} tasks={item.tasks.length} category={item.category.name} duration={item.duration} id={item._id.toString()} />
+              <JobCard
+                name={item.name}
+                tasks={item.tasks.length}
+                category={item.category.name}
+                duration={item.duration}
+                id={item._id.toString()}
+              />
             ) : (
               <ActiveJobCard id={item._id.toString()} />
             )}

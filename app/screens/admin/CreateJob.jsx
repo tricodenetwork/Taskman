@@ -72,7 +72,7 @@ export default function CreateJob({ navigation }) {
   const editJob = useCallback(
     (item) => {
       realm?.write(() => {
-        const job = realm?.objectForPrimaryKey(
+        const job = realm.objectForPrimaryKey(
           "job",
           Realm.BSON.ObjectId(route.params?.id)
         );
@@ -81,8 +81,8 @@ export default function CreateJob({ navigation }) {
 
         // console.log(typeof item.category, typeof Item.category);
 
-        job?.name = item.name;
-        job?.category = item.category;
+        job.name = item.name;
+        job.category = item.category;
       });
 
       alert("Job Edited Successfuly!");

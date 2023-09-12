@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   actuatedNormalize,
   actuatedNormalizeVertical,
@@ -7,7 +7,6 @@ import {
 } from "../styles/stylesheet";
 import { AccountRealmContext } from "../models";
 import { calculateTime, millisecondSinceStartDate } from "../api/test";
-import { useSelector } from "react-redux";
 import { holiday } from "../models/Account";
 import { MaterialIcons } from "@expo/vector-icons";
 import { formatDate } from "../api/Functions";

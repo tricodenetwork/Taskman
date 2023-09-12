@@ -142,7 +142,7 @@ export default function Tasks({ navigation }) {
     realm.write(() => {
       const tasksArray = JSON.parse(JSON.stringify(array));
       navigation.goBack();
-      job?.tasks = tasksArray;
+      job.tasks = tasksArray;
       navigation.navigate("tasks", { id: route.params.id });
     });
   };

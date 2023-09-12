@@ -1,26 +1,17 @@
 import { View, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-import React, { useCallback } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Motion } from "@legendapp/motion";
 import { styles } from "../styles/stylesheet";
-import { useApp, useUser } from "@realm/react";
 import { setMenu } from "../store/slice-reducers/Formslice";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Menu() {
   const { menu } = useSelector((state) => state.app);
-  const { role } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigation = useNavigation();
-
-  const user = useUser();
-
-  const handleLogout = useCallback(() => {
-    dispatch(setMenu());
-    user?.logOut();
-  }, [user]);
 
   if (!menu) {
     return null;

@@ -1,13 +1,5 @@
-import { View, Text, ImageBackground, Animated } from "react-native";
+import { ImageBackground, Animated } from "react-native";
 import React, { useEffect, useRef } from "react";
-import { Image } from "react-native";
-import { Motion } from "@legendapp/motion";
-import {
-  actuatedNormalize,
-  actuatedNormalizeVertical,
-  styles,
-} from "../styles/stylesheet";
-import { ActivityIndicator } from "react-native";
 
 export default function SplashScreen() {
   // fadeAnim will be used as the value for opacity. Initial Value: 0
