@@ -8,7 +8,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PersistGate } from "redux-persist/lib/integration/react";
 import { Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { AccountRealmContext } from "./models";
 
 export const AppNonSync = () => {
   // const result = useQuery();
