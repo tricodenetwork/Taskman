@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import Background from "../../components/Background";
-import { Bubble, GiftedChat, Actions } from "react-native-gifted-chat";
+import { Bubble, GiftedChat } from "react-native-gifted-chat";
 import { useRoute } from "@react-navigation/native";
 import { AccountRealmContext } from "../../models";
 import { chats as Chats } from "../../models/Chat";

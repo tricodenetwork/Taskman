@@ -8,7 +8,7 @@ import Topscreen from "../../components/Topscreen";
 import SearchComponent from "../../components/SearchComponent";
 import JobDetails from "../../components/JobDetails";
 import LowerButton from "../../components/LowerButton";
-import { setFilter, setSearch } from "../../store/slice-reducers/Formslice";
+import { setSearch } from "../../store/slice-reducers/Formslice";
 import { holiday } from "../../models/Account";
 import { AccountRealmContext } from "../../models";
 import OdinaryButton from "../../components/OdinaryButton";

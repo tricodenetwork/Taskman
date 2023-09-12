@@ -4,18 +4,16 @@ import { View, Text, ActivityIndicator } from "react-native";
 import Background from "../../components/Background";
 import Topscreen from "../../components/Topscreen";
 import { styles } from "../../styles/stylesheet";
-import { useRoute } from "@react-navigation/native";
 import LowerButton from "../../components/LowerButton";
 import { AccountRealmContext } from "../../models";
 import { activejob } from "../../models/Task";
 import MultiSelect from "../../components/MultiSelect";
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useRealm, useQuery } = AccountRealmContext;
 
 const DeleteJobs = ({ navigation }) => {
   //--------------------------------------------------------------------------------------STATE AND VARIABLES
 
-  const route = useRoute();
   const realm = useRealm();
   const activeJobs = useQuery(activejob);
   const [isLoading, setIsLoading] = useState(false);

@@ -4,7 +4,6 @@ import Background from "../../components/Background";
 import { FlatList } from "react-native-gesture-handler";
 import { AccountRealmContext } from "../../models";
 import { activejob } from "../../models/Task";
-import { useSelector } from "react-redux";
 import OdinaryButton from "../../components/OdinaryButton";
 import {
   SCREEN_WIDTH,

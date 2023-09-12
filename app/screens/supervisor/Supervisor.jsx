@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import Background from "../../components/Background";
 import HandlerTopscreen from "../../components/HandlerTopScreen";
 import {
@@ -7,7 +7,7 @@ import {
   actuatedNormalizeVertical,
   styles,
 } from "../../styles/stylesheet";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import OptionsCard from "../../components/OptionsCard";
 import { FontAwesome5 } from "@expo/vector-icons";
 import LowerButton from "../../components/LowerButton";
@@ -17,31 +17,20 @@ import { formattedDate } from "../../api/Functions";
 import { activejob } from "../../models/Task";
 import { useUser } from "@realm/react";
 import { chats as chat, chatroom } from "../../models/Chat";
-import { useIsFocused } from "@react-navigation/native";
-import { client } from "../../models/Account";
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useQuery } = AccountRealmContext;
 
 export default function Supervisor() {
   // prettier-ignore
   //   -------------------------------------------------------------------------VARIABLES AND STATES
-  const route = useRoute();
-  const [isLoading, setIsLoading] = useState(true);
 
   const user = useUser();
   const navigation = useNavigation();
-  const realm = useRealm();
-  const [data, setData] = useState();
-
   const { _id, name } = useSelector((state) => state.user);
   // const account = useObject("account", Realm.BSON.ObjectId(id));
   const activeJobs = useQuery(activejob);
   const chats = useQuery(chat);
-  const focus = useIsFocused();
-  const chatrooms = useQuery("chatroom").filtered(
-    "senderId == $0 ||  recieverId == $0",
-    _id
-  );
+
   // const allChats = useQuery(chats);
 
   const handleLogout = useCallback(() => {
@@ -102,8 +91,6 @@ export default function Supervisor() {
           roomId
         ).length > 0
     );
-
-
 
   return (
     <Background bgColor='min-h-[96vh]'>

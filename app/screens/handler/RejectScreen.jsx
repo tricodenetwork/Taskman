@@ -23,7 +23,6 @@ import Background from "../../components/Background";
 import { Text } from "react-native";
 import SelectComponent from "../../components/SelectComponent";
 import { TextInput } from "react-native";
-import { Button } from "react-native";
 import useActions from "../../hooks/useActions";
 const { useRealm } = AccountRealmContext;
 

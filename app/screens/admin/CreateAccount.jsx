@@ -44,7 +44,6 @@ const CreateAccount = ({ navigation }) => {
   const dispatch = useDispatch();
   const { visible, visible2 } = useSelector((state) => state.app);
   const { user } = useSelector((state) => state);
-  const { Job } = useSelector((state) => state);
   const route = useRoute();
   const realm = useRealm();
   const accounts = useQuery(Account);

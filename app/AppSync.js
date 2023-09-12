@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useApp, useUser } from "@realm/react";
-import { Platform, KeyboardAvoidingView } from "react-native";
+import { useUser } from "@realm/react";
+import { Platform } from "react-native";
 
 import { holiday } from "./models/Account";
 import { AccountRealmContext } from "./models";

@@ -36,7 +36,7 @@ import { Account, client } from "../../models/Account";
 import Realm from "realm";
 import { generatePassword, sendClientDetails } from "../../api/Functions";
 
-const { useRealm, useQuery, useObject } = AccountRealmContext;
+const { useRealm, useQuery } = AccountRealmContext;
 
 const ActivateJob = ({ navigation }) => {
   //--------------------------------------------------------------------------------------STATE AND VARIABLES
@@ -154,7 +154,7 @@ const ActivateJob = ({ navigation }) => {
         )
       );
     });
-  });
+  }, [realm]);
   const validateEmail = (email) => {
     // Regular expression to check if email is valid
     const re = /\S+@\S+\.\S+/;

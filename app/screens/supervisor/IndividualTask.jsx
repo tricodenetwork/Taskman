@@ -15,7 +15,6 @@ import { AccountRealmContext } from "../../models";
 import { holiday } from "../../models/Account";
 import Background from "../../components/Background";
 import { useCallback } from "react";
-import { Button } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import OdinaryButton from "../../components/OdinaryButton";
 import { Motion } from "@legendapp/motion";

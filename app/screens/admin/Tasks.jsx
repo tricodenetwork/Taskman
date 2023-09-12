@@ -103,7 +103,7 @@ export default function Tasks({ navigation }) {
 
         const Task = { name: item?.name, duration: newDuration };
         realm.write(() => {
-          Task && job?.tasks.push(Task);
+          job?.tasks.push(Task);
           alert("Task added successfully!");
           setName("");
           setDuration({ days: 0, hours: 0, minutes: 0 });

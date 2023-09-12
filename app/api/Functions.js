@@ -45,7 +45,7 @@ export const sendUserDetails = async (recipient, userDetails) => {
 };
 
 export const sendClientDetails = async (recipient, userDetails) => {
-  const { matno, email, password } = userDetails;
+  const { matno, password } = userDetails;
   let url = `mailto:${recipient}`;
 
   const subject = "Welcome to Taskman"; // Specify the email subject
@@ -77,7 +77,7 @@ export const sendClientDetails = async (recipient, userDetails) => {
   }
 
   // check if we can use this link
-  const canOpen = await Linking.canOpenURL(url);
+  // const canOpen = await Linking.canOpenURL(url);
 
   return Linking.openURL(url);
 };
