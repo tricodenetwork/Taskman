@@ -187,6 +187,7 @@ export default function IndividualTask({ navigation }) {
     multipleJobs,
     ActiveJobs,
     route.params?.taskName,
+    route.params?.handler,
   ]);
   useEffect(() => {
     dispatch(setHandler(""));
