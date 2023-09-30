@@ -2,6 +2,7 @@ import { Account } from "../models/Account";
 import { useSelector } from "react-redux";
 import { activejob, job } from "../models/Task";
 import { AccountRealmContext } from "../models";
+import { global } from "../models/Account";
 import { useMemo } from "react";
 const { useQuery, useObject } = AccountRealmContext;
 
@@ -11,6 +12,7 @@ const useRealmData = (routeParams) => {
 
   const activeJob = useObject(activejob, Realm.BSON.ObjectId(routeParams?.id));
   const Accounts = useQuery(Account);
+  const globe = useQuery(global)[0];
   const ActiveJobs = useQuery(activejob);
   const tasks = useQuery(job).filtered(`name == "Transcript"`)[0]?.tasks;
   const handlers = Accounts.filter(
@@ -56,6 +58,7 @@ const useRealmData = (routeParams) => {
     chatrooms,
     uniqueTasks,
     pushToken,
+    globe
   };
 };
 

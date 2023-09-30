@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useUser } from "@realm/react";
 import { Platform } from "react-native";
 
-import { holiday } from "./models/Account";
+import { global, holiday } from "./models/Account";
 import { AccountRealmContext } from "./models";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
@@ -93,6 +93,7 @@ export const AppSync = () => {
       mutableSubs.add(realm.objects(chatroom));
       mutableSubs.add(realm.objects(category));
       mutableSubs.add(realm.objects(holiday));
+      mutableSubs.add(realm.objects(global));
       mutableSubs.add(realm.objects(job));
       // mutableSubs.add(realm.objects(client));
     });

@@ -1,5 +1,5 @@
 import { createRealmContext } from "@realm/react";
-import { Account, client, holiday } from "./Account";
+import { Account, client, global, holiday } from "./Account";
 import { job, task, activejob, duration, category } from "./Task";
 import { user, chatroom, chats } from "./Chat";
 
@@ -19,6 +19,7 @@ export const AccountRealmContext = createRealmContext({
     category,
     client,
     holiday,
+    global
   ],
   schemaVersion: 3,
   // onMigration: (oldRealm, newRealm) => {

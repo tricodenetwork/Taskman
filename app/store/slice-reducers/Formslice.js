@@ -17,7 +17,7 @@ const initialState = {
   filter: "Name",
   menu: false,
   isAllowedTime: isAllowedTime,
-  isWeekend: isWeekend,
+  isWeekend: !isWeekend,
   clock: "00:00",
   holiday: [new Date()],
 };

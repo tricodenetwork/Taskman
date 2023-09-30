@@ -16,6 +16,7 @@ import { resetMulti, setMulti } from "../../store/slice-reducers/App";
 import useRealmData from "../../hooks/useRealmData";
 import MultiSelect from "../../components/MultiSelect";
 import OdinaryButton from "../../components/OdinaryButton";
+import { global } from "../../models/Account";
 
 const { useRealm } = AccountRealmContext;
 
@@ -32,9 +33,9 @@ const TaskDetailsPage = () => {
   const dispatch = useDispatch();
   const { multipleJobs } = useSelector((state) => state.App);
   const update = route.params?.update;
-
-  const { activeJob, ActiveJobs, uniqueTasks } = useRealmData(route.params);
-
+  
+  const { activeJob, ActiveJobs, uniqueTasks,globe } = useRealmData(route.params);
+  console.log(globe);
   let clientDetails = null;
   if (route.params) {
     clientDetails = (
@@ -60,6 +61,28 @@ const TaskDetailsPage = () => {
       dispatch(resetMulti());
     });
   };
+
+   const updateTime = useCallback(
+    (item) => {
+      const TimeExist = globe !== undefined
+
+
+      if (TimeExist) {
+        globe.update_time = new Date();
+        globe.mut = Date.now()
+        return;
+      }
+        const newUpdate = { update_time: new Date(),
+        mut:Date.now()
+        };
+        try {
+          return new global(realm, newUpdate);
+        } catch (error) {
+          console.log({ error, msg: "Error updatig time" });
+        }
+    },
+    [realm]
+  );
 
   useEffect(() => {
     resetField();
@@ -99,6 +122,7 @@ const TaskDetailsPage = () => {
           });
         }
         alert("Task Accepted! ✔");
+        updateTime()
       } catch (error) {
         console.log({ error, msg: "Error Accepting Task" });
         alert("Error accepting message");
@@ -152,12 +176,12 @@ const TaskDetailsPage = () => {
         >
           {/* Accept button */}
           <OdinaryButton
-            disabled={
-              route.params?.status == "InProgress" ||
-              route.params?.status == "Completed" ||
-              route.params?.status == "Overdue" ||
-              disableButton
-            }
+            // disabled={
+            //   route.params?.status == "InProgress" ||
+            //   route.params?.status == "Completed" ||
+            //   route.params?.status == "Overdue" ||
+            //   disableButton
+            // }
             bg={"#FF925C"}
             text='Accept'
             navigate={() => {

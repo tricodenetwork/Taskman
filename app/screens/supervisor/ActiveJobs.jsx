@@ -67,10 +67,10 @@ export default function ActiveJobs({ navigation }) {
   }
 
   const updateJobStatus = () => {
-    if (user.clientId) {
-      setUpdate(true);
-      return;
-    }
+    // if (user.clientId) {
+    //   setUpdate(true);
+    //   return;
+    // }
 
     realm.write(() => {
       activeJobs.forEach((activejob) => {

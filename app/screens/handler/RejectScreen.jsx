@@ -41,6 +41,7 @@ const RejectScreen = ({ navigation }) => {
     route.params
   );
   const update = route.params?.update;
+  console.log(activeJob);
 
   // Create a chat room
   const { createChatRoom } = useActions();
@@ -59,7 +60,7 @@ const RejectScreen = ({ navigation }) => {
       return;
     }
     if (!currenttask) {
-      alert("No Task selected ❌.");
+      alert("No Completed task ❌.");
       return;
     }
 
@@ -132,7 +133,7 @@ const RejectScreen = ({ navigation }) => {
   ]);
   return (
     <Background>
-      <View className=' h-[70%] pt-[5vh] flex min-h-[40vh] self-center justify-between items-center'>
+      <View className=' h-[80%]  pt-[5vh] flex min-h-[40vh] self-center justify-between items-center'>
         <Text
           className='self-center  text-center w-[50vw]'
           style={[
@@ -146,7 +147,7 @@ const RejectScreen = ({ navigation }) => {
           Report Error
         </Text>
 
-        <View className='h-[70vh] flex justify-between'>
+        <View className='h-[70vh]  flex justify-between'>
           <View className='h-[40vh] self-start px-[5vw] flex justify-between'>
             <SelectComponent
               title={"Task"}
@@ -174,9 +175,9 @@ const RejectScreen = ({ navigation }) => {
             onChangeText={(text) => setErrorMessage(text)}
           />
           {visible ? (
-            <TouchableOpacity
+            <View
               className='bg-primary_light rounded-2xl self-center absolute top-[12vh] justify-center w-[90%] h-[55%]'
-              activeOpacity={1}
+              // activeOpacity={1}
             >
               <Motion.View
                 initial={{ x: -500 }}
@@ -196,7 +197,7 @@ const RejectScreen = ({ navigation }) => {
                   text={"OK"}
                 />
               </Motion.View>
-            </TouchableOpacity>
+            </View>
           ) : null}
           <View
             id='BUTTONS'

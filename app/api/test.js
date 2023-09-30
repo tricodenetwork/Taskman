@@ -52,7 +52,12 @@ export function millisecondSinceStartDate(startDate, holidays = []) {
 
   // Adjust the start time to 8 AM if it's before 8 AM
   const adjustedStartTimestamp = new Date(startTimestamp);
-  // adjustedStartTimestamp.setUTCHours(7, 0, 0, 0);
+    if (adjustedStartTimestamp.getUTCHours() < 8) {
+    adjustedStartTimestamp.setUTCHours(8, 0, 0, 0); // Set to 8:00 AM
+  } else if (adjustedStartTimestamp.getUTCHours() >= 16) {
+    adjustedStartTimestamp.setUTCDate(adjustedStartTimestamp.getUTCDate() + 1); // Move to the next day
+    adjustedStartTimestamp.setUTCHours(8, 0, 0, 0); // Set to 8:00 AM
+  }
 
   // Calculate the number of milliseconds in a day
   const millisecondsInADay = 24 * 60 * 60 * 1000;
@@ -98,10 +103,7 @@ export function millisecondSinceStartDate(startDate, holidays = []) {
           0
         );
 
-        // Check if the start time is beyond the end of the workday
-        // if (startTimestamp > endOfWorkday.getTime()) {
-        //   continue; // Skip to the next day
-        // }
+      
 
         // Calculate the milliseconds within the workday range
         const dayStart = Math.max(startTimestamp, startOfWorkday.getTime());

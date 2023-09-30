@@ -55,6 +55,7 @@ export default function IndividualTask({ navigation }) {
       holidayDate.getDate() === today.getDate()
     );
   });
+    const item = route.params?.id && realm.objectForPrimaryKey("activejob", Realm.BSON.ObjectId(route.params?.id));
 
   const resetFields = () => {
     batch(() => {
@@ -117,7 +118,11 @@ export default function IndividualTask({ navigation }) {
       alert("No task to assign");
       return;
     }
-    if (handler == "" && !route.params?.handler) {
+    if(handler=="" && !route.params?.taskHandler){
+      alert("No handler chosen")
+      return;
+    }
+    if (handler == "" && !route.params?.taskHandler) {
       alert("Not assigned yet!!");
       return;
     }
@@ -179,7 +184,7 @@ export default function IndividualTask({ navigation }) {
     resetFields();
     dispatch(resetMulti());
 
-    // navigation.navigate("activetasks", { id: route.params.id });
+   route.params?.taskName &&  navigation.navigate("activetasks", { id: route.params?.id });
   }, [
     realm,
     currenttask,
@@ -205,8 +210,21 @@ export default function IndividualTask({ navigation }) {
   return (
     <Background bgColor=''>
       <View className=' h-[90%] pt-[5vh] self-center flex justify-between items-center'>
-        <Text
-          className='self-center  text-center w-[50vw]'
+        <View className="w-screen">
+          <Text
+          className='self-center mb-3  text-center w-full'
+          style={[
+            styles.text_sm2,
+            {
+              fontSize: actuatedNormalize(20),
+              lineHeight: actuatedNormalizeVertical(20 * 1.5),
+            },
+          ]}
+        >
+          {item?.matno}
+        </Text>
+          <Text
+          className='self-center  text-center '
           style={[
             styles.text_sm2,
             {
@@ -217,6 +235,7 @@ export default function IndividualTask({ navigation }) {
         >
           Assign Task
         </Text>
+        </View>
 
         <View className='h-[50vh]   px-[5vw] flex justify-around'>
           <SelectComponent
@@ -229,9 +248,10 @@ export default function IndividualTask({ navigation }) {
             placeholder={"Assign Next Task"}
           />
           <SelectComponent
+          value={route.params?.taskHandler}
             title={"Handler:"}
             placeholder={"Assign Next Handler"}
-            data={Accounts.filter(
+            data={route.params?.taskHandler? null:Accounts.filter(
               (obj) =>
                 obj.role == "Handler" &&
                 obj.category?.name == user.category.name
@@ -294,8 +314,9 @@ export default function IndividualTask({ navigation }) {
           <OdinaryButton
             color={"white"}
             // bg={"#1F271B"}
+            // disabled={}
             bg={"#E57310"}
-            text={handler == "" ? "Unassign" : "Assign"}
+            text={route.params?.taskHandler ? "Unassign" : "Assign"}
             navigate={toggleVisible}
             style={"w-[30vw]"}
           />

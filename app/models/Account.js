@@ -71,3 +71,19 @@ export class holiday extends Realm.Object {
     },
   };
 }
+export class global extends Realm.Object {
+  constructor(realm, global) {
+    super(realm, global);
+  }
+
+  // To use a class as a Realm object type in JS, define the object schema on the static property "schema".
+  static schema = {
+    name: "global",
+    primaryKey: "_id",
+    properties: {
+      _id: { type: "objectId?", default: () => new Realm.BSON.ObjectId() },
+      update_time: "date?",
+      mut:"int?",
+    },
+  };
+}
