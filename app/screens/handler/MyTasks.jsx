@@ -7,10 +7,11 @@ import OdinaryButton from "../../components/OdinaryButton";
 import { useIsFocused } from "@react-navigation/native";
 import { AccountRealmContext } from "../../models";
 import { activejob } from "../../models/Task";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import HandlerDetails from "../../components/HandlerDetails";
 import { Text } from "react-native";
 import { SCREEN_HEIGHT, styles } from "../../styles/stylesheet";
+import { global } from "../../models/Account";
 
 const { useQuery } = AccountRealmContext;
 
@@ -18,15 +19,18 @@ export default function MyTasks({ navigation }) {
   //--------------------------------------------------------------------------------------STATE AND VARIABLES
   const focus = useIsFocused();
   const [handlerTasks, setHandlerTasks] = useState([]);
+  const {updateCon} = useSelector(state=>state.app)
   const ActiveJobs = useQuery(activejob);
   const { user } = useSelector((state) => state);
+  const updateCondition = useQuery(global)[0].mut
+  const dispatch = useDispatch()
 
   useEffect(() => {
     setTimeout(() => {
-      // const tasksAssignedToHandler =
-      //   ActiveJobs.map((job) =>
-      //     job?.tasks.filter((obj) => obj.handler === user.name)
-      //   ) ?? [];
+    //    if (updateCondition == updateCon) {
+    //   setUpdate(true);
+    //   return;
+    // }
 
       const tasks = () => {
         const myTasks = Array.from(ActiveJobs).map((job) => {
@@ -48,7 +52,7 @@ export default function MyTasks({ navigation }) {
       };
       setHandlerTasks(tasks);
     }, 0);
-  }, [handlerTasks.length, focus]);
+  }, [handlerTasks.length,updateCondition]);
 
   // //-------------------------------------------------------------EFFECTS AND FUNCTIONS
   // useEffect(() => {

@@ -35,7 +35,6 @@ const TaskDetailsPage = () => {
   const update = route.params?.update;
   
   const { activeJob, ActiveJobs, uniqueTasks,globe } = useRealmData(route.params);
-  console.log(globe);
   let clientDetails = null;
   if (route.params) {
     clientDetails = (
@@ -49,10 +48,12 @@ const TaskDetailsPage = () => {
     );
   }
   const disableButton =
-    isWeekend ||
-    !isAllowedTime ||
+    // isWeekend ||
+    // !isAllowedTime ||
     (route.params == undefined && multipleJobs.length == 0) ||
     (route.params == undefined && password == "");
+
+
 
   const resetField = () => {
     batch(() => {
@@ -176,12 +177,12 @@ const TaskDetailsPage = () => {
         >
           {/* Accept button */}
           <OdinaryButton
-            // disabled={
-            //   route.params?.status == "InProgress" ||
-            //   route.params?.status == "Completed" ||
-            //   route.params?.status == "Overdue" ||
-            //   disableButton
-            // }
+            disabled={
+              route.params?.status == "InProgress" ||
+              route.params?.status == "Completed" ||
+              route.params?.status == "Overdue" ||
+              disableButton
+            }
             bg={"#FF925C"}
             text='Accept'
             navigate={() => {

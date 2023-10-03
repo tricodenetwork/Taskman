@@ -8,23 +8,25 @@ import Topscreen from "../../components/Topscreen";
 import SearchComponent from "../../components/SearchComponent";
 import JobDetails from "../../components/JobDetails";
 import LowerButton from "../../components/LowerButton";
-import { setSearch } from "../../store/slice-reducers/Formslice";
-import { holiday } from "../../models/Account";
+import { setSearch, setUpdateCon } from "../../store/slice-reducers/Formslice";
+import { global, holiday } from "../../models/Account";
 import { AccountRealmContext } from "../../models";
 import OdinaryButton from "../../components/OdinaryButton";
 import { activejob } from "../../models/Task";
-import { millisecondSinceStartDate } from "../../api/test";
+import { millisecondSinceStartDate } from "../../api/main";
 import { SCREEN_HEIGHT, styles } from "../../styles/stylesheet";
 
 const { useRealm, useQuery } = AccountRealmContext;
 export default function ActiveJobs({ navigation }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state);
+  const { updateCon } = useSelector((state) => state.app);
   const [update, setUpdate] = useState(false);
   const realm = useRealm();
   const Focus = useIsFocused();
   const activeJobs = useQuery(activejob);
   const hols = useQuery(holiday);
+  const updateCondition = useQuery(global)[0]?.mut
 
   function calculateRemainingTime(duration, item) {
     // Check if the task is completed
@@ -67,10 +69,10 @@ export default function ActiveJobs({ navigation }) {
   }
 
   const updateJobStatus = () => {
-    // if (user.clientId) {
-    //   setUpdate(true);
-    //   return;
-    // }
+    if (updateCondition == updateCon) {
+      setUpdate(true);
+      return;
+    }
 
     realm.write(() => {
       activeJobs.forEach((activejob) => {
@@ -119,7 +121,11 @@ export default function ActiveJobs({ navigation }) {
     });
     console.log("updating");
     setUpdate(true);
-  };
+    dispatch(setUpdateCon(updateCondition))
+  }
+  console.log(updateCon);
+
+
   useEffect(() => {
     dispatch(setSearch(""));
   }, [Focus]);
@@ -128,7 +134,7 @@ export default function ActiveJobs({ navigation }) {
     setTimeout(() => {
       updateJobStatus();
     }, 0);
-  }, []);
+  }, [updateCondition]);
 
   return (
     <Background bgColor='min-h-[98vh]'>

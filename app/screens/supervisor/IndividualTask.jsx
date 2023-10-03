@@ -34,7 +34,7 @@ export default function IndividualTask({ navigation }) {
   const route = useRoute();
   const realm = useRealm();
 
-  const { pushToken, tasks, Accounts, ActiveJobs, activeJob } = useRealmData(
+  const { pushToken, tasks, Accounts, ActiveJobs, activeJob,globe } = useRealmData(
     route.params
   );
   const dispatch = useDispatch();
@@ -57,7 +57,29 @@ export default function IndividualTask({ navigation }) {
   });
     const item = route.params?.id && realm.objectForPrimaryKey("activejob", Realm.BSON.ObjectId(route.params?.id));
 
-  const resetFields = () => {
+   const updateTime = useCallback(
+    (item) => {
+      const TimeExist = globe !== undefined
+
+
+      if (TimeExist) {
+        globe.update_time = new Date();
+        globe.mut = Date.now()
+        return;
+      }
+        const newUpdate = { update_time: new Date(),
+        mut:Date.now()
+        };
+        try {
+          return new global(realm, newUpdate);
+        } catch (error) {
+          console.log({ error, msg: "Error updatig time" });
+        }
+    },
+    [realm]
+  );
+  
+    const resetFields = () => {
     batch(() => {
       dispatch(setCurrentTask(""));
       dispatch(setHandler(""));
@@ -99,6 +121,7 @@ export default function IndividualTask({ navigation }) {
           });
           alert("Task Activated! ✔");
         }
+        updateTime()
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
       }
@@ -176,6 +199,7 @@ export default function IndividualTask({ navigation }) {
             }
           });
         }
+        updateTime()
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
       }

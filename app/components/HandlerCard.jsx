@@ -6,7 +6,7 @@ import {
   styles,
 } from "../styles/stylesheet";
 import { AccountRealmContext } from "../models";
-import { calculateTime, millisecondSinceStartDate } from "../api/test";
+import { calculateTime, millisecondSinceStartDate } from "../api/main";
 import { holiday } from "../models/Account";
 import { MaterialIcons } from "@expo/vector-icons";
 import { formatDate } from "../api/Functions";

@@ -4,13 +4,9 @@ import OdinaryButton from "../../components/OdinaryButton";
 import { Motion } from "@legendapp/motion";
 import { actuatedNormalize, styles } from "../../styles/stylesheet";
 import { useRoute } from "@react-navigation/native";
-import {
-  setCurrentTask,
-  setHandler,
-  setPassword,
-} from "../../store/slice-reducers/ActiveJob";
+import {setCurrentTask,setHandler,setPassword,} from "../../store/slice-reducers/ActiveJob";
 import { batch, useDispatch, useSelector } from "react-redux";
-import { millisecondSinceStartDate } from "../../api/test";
+import { millisecondSinceStartDate } from "../../api/main";
 import { sendPushNotification } from "../../api/Functions";
 import useRealmData from "../../hooks/useRealmData";
 import { AccountRealmContext } from "../../models";
@@ -34,7 +30,7 @@ const DoneTaskScreen = ({ navigation }) => {
 
   const route = useRoute();
   const update = route.params?.update;
-  const { activeJob, ActiveJobs, tasks, handlers, pushToken } = useRealmData(
+  const { activeJob, ActiveJobs, tasks, handlers, pushToken,globe } = useRealmData(
     route.params
   );
 
@@ -44,6 +40,46 @@ const DoneTaskScreen = ({ navigation }) => {
       dispatch(setHandler(""));
     });
   };
+ const updateTime = useCallback(
+    (item) => {
+      const TimeExist = globe !== undefined
+
+
+      if (TimeExist) {
+        globe.update_time = new Date();
+        globe.mut = Date.now()
+        return;
+      }
+        const newUpdate = { update_time: new Date(),
+        mut:Date.now()
+        };
+        try {
+          return new global(realm, newUpdate);
+        } catch (error) {
+          console.log({ error, msg: "Error updatig time" });
+        }
+    },
+    [realm]
+  );
+
+      const cantClickDone = (tasks, taskname) => {
+    // Check if the task with taskname is the last task
+
+    if(activeJob?.tasks == undefined){
+      return
+    }
+    const isLastTask = tasks[tasks?.length - 1]?.name === taskname;
+
+    // Check all tasks' statuses
+    return tasks.every(task => {
+        return task.status !== "InProgress" &&
+               task.status !== "Overdue" &&
+               task.status !== "Awaiting";
+    }) && !isLastTask;
+}
+
+const doneCondition = cantClickDone(activeJob?.tasks, route.params?.name);
+
   // Create a chat room
 
   const filterMultipleJobs = (ActiveJobs, param) => {
@@ -112,6 +148,7 @@ const DoneTaskScreen = ({ navigation }) => {
           });
           alert("Task Completed! ✔ single");
         }
+        updateTime()
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
       }
@@ -205,7 +242,7 @@ const DoneTaskScreen = ({ navigation }) => {
           className='flex justify-between align-bottom w-[50vw]  self-center flex-row'
         >
           <OdinaryButton
-            // disabled={handler == "" || currenttask == ""}
+            disabled={doneCondition}
             text={handler == "" && currenttask == "" ? "Done" : "Assign"}
             bg={handler == "" && currenttask == "" ? "#006400" : "#E57310"}
             navigate={() => setVisible(!visible)}

@@ -12,12 +12,12 @@ const isAllowedTime = currentHour >= 8 && currentHour < 16;
 const initialState = {
   visible: false,
   visible2: false,
-  visible3: false,
+  updateCon: 0,
   search: "",
   filter: "Name",
   menu: false,
   isAllowedTime: isAllowedTime,
-  isWeekend: !isWeekend,
+  isWeekend: isWeekend,
   clock: "00:00",
   holiday: [new Date()],
 };
@@ -32,8 +32,8 @@ const formSlice = createSlice({
     setVisible2(state, action) {
       state.visible2 = !state.visible2;
     },
-    setVisible3(state, action) {
-      state.visible3 = !state.visible3;
+    setUpdateCon(state, action) {
+      state.updateCon = action.payload;
     },
     setSearch(state, action) {
       state.search = action.payload;
@@ -60,7 +60,7 @@ const formSlice = createSlice({
 export const {
   setVisible,
   setVisible2,
-  setVisible3,
+  setUpdateCon,
   setSearch,
   setFilter,
   setMenu,

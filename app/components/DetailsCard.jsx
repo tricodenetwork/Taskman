@@ -7,7 +7,7 @@ import {
 } from "../styles/stylesheet";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AccountRealmContext } from "../models";
-import { calculateTime, millisecondSinceStartDate } from "../api/test";
+import { calculateTime, millisecondSinceStartDate } from "../api/main";
 import { useSelector } from "react-redux";
 import { holiday } from "../models/Account";
 import { formatDate } from "../api/Functions";
