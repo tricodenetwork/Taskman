@@ -42,9 +42,15 @@ export default function SelectComponent({
           >
             <FlatList
               style={{ height: actuatedNormalize(150), marginBottom: 10 }}
-              data={typeof data[0]?.name === "string" ?data.filter((params) =>
-                params?.name?.toLowerCase()?.includes(filter.toLowerCase())
-              ):data}
+              data={
+                typeof data[0]?.name === "string"
+                  ? data.filter((params) =>
+                      params?.name
+                        ?.toLowerCase()
+                        ?.includes(filter.toLowerCase())
+                    )
+                  : data
+              }
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => {
@@ -85,7 +91,7 @@ export default function SelectComponent({
             >
               <AntDesign
                 name='caretdown'
-                size={actuatedNormalize(20)}
+                size={actuatedNormalize(22)}
                 color='#004343'
               />
             </TouchableOpacity>

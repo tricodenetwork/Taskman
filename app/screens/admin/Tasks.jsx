@@ -33,9 +33,9 @@ export default function Tasks({ navigation }) {
   const [name, setName] = useState("");
   const [duration, setDuration] = useState({ days: 0, hours: 0, minutes: 0 });
   const { days, hours, minutes } = duration;
-  const day = days ?? 0;
-  const hour = hours ?? 0;
-  const minute = minutes ?? 0;
+  const day = days;
+  const hour = hours;
+  const minute = minutes;
 
   const [edit, setEdit] = useState({
     name: "",
@@ -71,7 +71,7 @@ export default function Tasks({ navigation }) {
       }
       const sameName =
         job?.tasks.filtered(`name == $0`, item?.name)[0]?.name ?? "";
-      if (sameName !== "") {
+      if ((sameName !== "") & (edit.name == "")) {
         alert(`${sameName} already exist ❗ `);
         return;
       }
@@ -145,13 +145,17 @@ export default function Tasks({ navigation }) {
       navigation.navigate("tasks", { id: route.params.id });
     });
   };
+  const updateStates = (itemName, itemDuration) => {
+    setName(itemName);
+    setDuration(itemDuration);
+    setEdit({ name: itemName, duration: itemDuration });
+  };
   const render = ({ item }) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          setName(item?.name);
-          setDuration(item?.duration);
-          setEdit({ name: item?.name });
+          console.log(item?.duration);
+          updateStates(item?.name, item?.duration);
         }}
       >
         <View
@@ -190,6 +194,9 @@ export default function Tasks({ navigation }) {
       </TouchableOpacity>
     );
   };
+  useEffect(() => {
+    console.log("Duration Updated:", duration);
+  }, [duration]);
 
   //----------------------------------------------------RENDERED COMPONENT
   return (
@@ -266,16 +273,22 @@ export default function Tasks({ navigation }) {
                       D
                     </Text>
                     <SelectComponent
-                      value={day.toString()}
+                      value={day?.toString()}
                       setData={(e) => {
-                        setDuration({ ...duration, days: e });
+                        setDuration((prevDuration) => {
+                          return {
+                            days: e,
+                            hours: prevDuration.hours,
+                            minutes: prevDuration.minutes,
+                          };
+                        });
                       }}
                       data={[...Array(31)].map((_, index) => {
                         const obj = { name: index };
                         return obj;
                       })}
                       visibleStyles='w-[15vw]'
-                      inputStyles='w-[11vw]'
+                      inputStyles='w-[13vw]'
                     />
                   </View>
                   <View className='flex flex-row items-center'>
@@ -283,16 +296,20 @@ export default function Tasks({ navigation }) {
                       H
                     </Text>
                     <SelectComponent
-                      value={hour.toString()}
+                      value={hour?.toString()}
                       setData={(e) => {
-                        setDuration({ ...duration, hours: e });
+                        setDuration((prevDuration) => ({
+                          days: prevDuration.days,
+                          hours: e,
+                          minutes: prevDuration.minutes,
+                        }));
                       }}
                       data={[...Array(24)].map((_, index) => {
                         const obj = { name: index };
                         return obj;
                       })}
                       visibleStyles='w-[15vw]'
-                      inputStyles='w-[11vw]'
+                      inputStyles='w-[13vw]'
                     />
                   </View>
                   <View className='flex flex-row items-center'>
@@ -300,16 +317,20 @@ export default function Tasks({ navigation }) {
                       M
                     </Text>
                     <SelectComponent
-                      value={minute.toString()}
+                      value={minute?.toString()}
                       setData={(e) => {
-                        setDuration({ ...duration, minutes: e });
+                        setDuration((prevDuration) => ({
+                          days: prevDuration.days,
+                          hours: prevDuration.hours,
+                          minutes: e,
+                        }));
                       }}
                       data={[...Array(60)].map((_, index) => {
                         const obj = { name: index };
                         return obj;
                       })}
                       visibleStyles='w-[15vw]'
-                      inputStyles='w-[11vw]'
+                      inputStyles='w-[13vw]'
                     />
                   </View>
                 </View>

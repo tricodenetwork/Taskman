@@ -20,7 +20,10 @@ export default function JobDetails({ update }) {
   const { user } = useSelector((state) => state);
   const route = useRoute();
   const jobs = useQuery(job);
-  const activeJobs = useQuery(activejob);
+  const activeJobs = useQuery(activejob).filtered(
+    `category==$0`,
+    user.category.name
+  );
   const [data, setData] = useState([]);
   const col = filter && filter.toLowerCase();
   const isFocused = useIsFocused();

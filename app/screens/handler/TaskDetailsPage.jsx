@@ -21,8 +21,6 @@ import { global } from "../../models/Account";
 const { useRealm } = AccountRealmContext;
 
 const TaskDetailsPage = () => {
-  const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
-
   const { currenttask, handler, password } = useSelector(
     (state) => state.ActiveJob
   );
@@ -33,8 +31,9 @@ const TaskDetailsPage = () => {
   const dispatch = useDispatch();
   const { multipleJobs } = useSelector((state) => state.App);
   const update = route.params?.update;
-  
-  const { activeJob, ActiveJobs, uniqueTasks,globe } = useRealmData(route.params);
+  const { activeJob, ActiveJobs, uniqueTasks, globe } = useRealmData(
+    route.params
+  );
   let clientDetails = null;
   if (route.params) {
     clientDetails = (
@@ -53,8 +52,6 @@ const TaskDetailsPage = () => {
     (route.params == undefined && multipleJobs.length == 0) ||
     (route.params == undefined && password == "");
 
-
-
   const resetField = () => {
     batch(() => {
       dispatch(setCurrentTask(""));
@@ -63,24 +60,21 @@ const TaskDetailsPage = () => {
     });
   };
 
-   const updateTime = useCallback(
+  const updateTime = useCallback(
     (item) => {
-      const TimeExist = globe !== undefined
-
+      const TimeExist = globe !== undefined;
 
       if (TimeExist) {
         globe.update_time = new Date();
-        globe.mut = Date.now()
+        globe.mut = Date.now();
         return;
       }
-        const newUpdate = { update_time: new Date(),
-        mut:Date.now()
-        };
-        try {
-          return new global(realm, newUpdate);
-        } catch (error) {
-          console.log({ error, msg: "Error updatig time" });
-        }
+      const newUpdate = { update_time: new Date(), mut: Date.now() };
+      try {
+        return new global(realm, newUpdate);
+      } catch (error) {
+        console.log({ error, msg: "Error updatig time" });
+      }
     },
     [realm]
   );
@@ -123,7 +117,7 @@ const TaskDetailsPage = () => {
           });
         }
         alert("Task Accepted! ✔");
-        updateTime()
+        updateTime();
       } catch (error) {
         console.log({ error, msg: "Error Accepting Task" });
         alert("Error accepting message");
@@ -143,7 +137,7 @@ const TaskDetailsPage = () => {
 
   return (
     <Background bgColor='min-h-screen bg-white'>
-      <Topscreen text={route.params?.job} />
+      <Topscreen text={route.params?.job} text3={route.params?.matno} />
       <View className='h-[75vh] absolute bottom-5 bg-white w-full flex items-start pb-[3vh] pt-[5vh] px-[3vw] justify-between'>
         {/* Display the task details */}
         <View>

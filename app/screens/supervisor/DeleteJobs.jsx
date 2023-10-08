@@ -35,7 +35,6 @@ const DeleteJobs = ({ navigation }) => {
       if (multiplejobs.length != 0) {
         multiplejobs.forEach((params) => {
           const itemToDelete = activeJobs.filtered(`matno == $0`, params)[0];
-          console.log(itemToDelete);
           realm.delete(itemToDelete);
         });
       } else {

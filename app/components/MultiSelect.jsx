@@ -88,7 +88,7 @@ export default function MultiSelect({
             >
               <AntDesign
                 name='caretdown'
-                size={actuatedNormalize(20)}
+                size={actuatedNormalize(22)}
                 color='#004343'
               />
             </TouchableOpacity>

@@ -2,9 +2,17 @@ import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import OdinaryButton from "../../components/OdinaryButton";
 import { Motion } from "@legendapp/motion";
-import { actuatedNormalize, styles } from "../../styles/stylesheet";
+import {
+  actuatedNormalize,
+  actuatedNormalizeVertical,
+  styles,
+} from "../../styles/stylesheet";
 import { useRoute } from "@react-navigation/native";
-import {setCurrentTask,setHandler,setPassword,} from "../../store/slice-reducers/ActiveJob";
+import {
+  setCurrentTask,
+  setHandler,
+  setPassword,
+} from "../../store/slice-reducers/ActiveJob";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { millisecondSinceStartDate } from "../../api/main";
 import { sendPushNotification } from "../../api/Functions";
@@ -30,9 +38,8 @@ const DoneTaskScreen = ({ navigation }) => {
 
   const route = useRoute();
   const update = route.params?.update;
-  const { activeJob, ActiveJobs, tasks, handlers, pushToken,globe } = useRealmData(
-    route.params
-  );
+  const { activeJob, ActiveJobs, tasks, handlers, pushToken, globe } =
+    useRealmData(route.params);
 
   const resetField = () => {
     batch(() => {
@@ -40,46 +47,52 @@ const DoneTaskScreen = ({ navigation }) => {
       dispatch(setHandler(""));
     });
   };
- const updateTime = useCallback(
+  const updateTime = useCallback(
     (item) => {
-      const TimeExist = globe !== undefined
-
+      const TimeExist = globe !== undefined;
 
       if (TimeExist) {
         globe.update_time = new Date();
-        globe.mut = Date.now()
+        globe.mut = Date.now();
         return;
       }
-        const newUpdate = { update_time: new Date(),
-        mut:Date.now()
-        };
-        try {
-          return new global(realm, newUpdate);
-        } catch (error) {
-          console.log({ error, msg: "Error updatig time" });
-        }
+      const newUpdate = { update_time: new Date(), mut: Date.now() };
+      try {
+        return new global(realm, newUpdate);
+      } catch (error) {
+        console.log({ error, msg: "Error updatig time" });
+      }
     },
     [realm]
   );
 
-      const cantClickDone = (tasks, taskname) => {
+  const cantClickDone = (tasks, taskname) => {
     // Check if the task with taskname is the last task
 
-    if(activeJob?.tasks == undefined){
-      return
+    if (activeJob?.tasks == undefined) {
+      return;
     }
     const isLastTask = tasks[tasks?.length - 1]?.name === taskname;
+    const inputField = handler == "" || currenttask == "";
 
     // Check all tasks' statuses
-    return tasks.every(task => {
-        return task.status !== "InProgress" &&
-               task.status !== "Overdue" &&
-               task.status !== "Awaiting";
-    }) && !isLastTask;
-}
+    return (
+      tasks.every((task) => {
+        if (task.name == taskname) {
+          return true;
+        }
+        return (
+          task.status !== "InProgress" &&
+          task.status !== "Overdue" &&
+          task.status !== "Awaiting"
+        );
+      }) &&
+      !isLastTask &&
+      inputField
+    );
+  };
 
-const doneCondition = cantClickDone(activeJob?.tasks, route.params?.name);
-
+  const doneCondition = cantClickDone(activeJob?.tasks, route.params?.name);
   // Create a chat room
 
   const filterMultipleJobs = (ActiveJobs, param) => {
@@ -91,6 +104,15 @@ const doneCondition = cantClickDone(activeJob?.tasks, route.params?.name);
     // based on the values of nextTask and nextHandler
     if (user.role !== "Handler") {
       alert("Unauthorized Handler!! ❌.");
+      return;
+    }
+    if (handler == "") {
+      alert("No Handler selected!! ❌.");
+      return;
+    }
+    if (currenttask == "") {
+      alert("No task selected!! ❌.");
+      return;
     }
 
     realm.write(() => {
@@ -146,9 +168,9 @@ const doneCondition = cantClickDone(activeJob?.tasks, route.params?.name);
               sendPushNotification(pushToken, task.name);
             }
           });
-          alert("Task Completed! ✔ single");
+          alert("Task Completed! ✔");
         }
-        updateTime()
+        updateTime();
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
       }
@@ -158,7 +180,7 @@ const doneCondition = cantClickDone(activeJob?.tasks, route.params?.name);
     dispatch(resetMulti());
     dispatch(setPassword(""));
 
-    // navigation.navigate("mytasks");
+    navigation.navigate("mytasks");
     // setIsNextTaskModalOpen(false);
   }, [
     realm,
@@ -178,13 +200,32 @@ const doneCondition = cantClickDone(activeJob?.tasks, route.params?.name);
   return (
     <Background>
       <View className=' h-[90%]  pt-[5vh] flex justify-between items-center'>
-        <Text
-          className=' w-[50vw]'
-          style={[styles.text_sm2, { fontSize: actuatedNormalize(20) }]}
-        >
-          Assign Next Task
-        </Text>
-
+        <View className='w-screen'>
+          <Text
+            className='self-center  text-center '
+            style={[
+              styles.text_sm2,
+              {
+                fontSize: actuatedNormalize(20),
+                lineHeight: actuatedNormalizeVertical(20 * 1.5),
+              },
+            ]}
+          >
+            Assign Task
+          </Text>
+          <Text
+            className='self-center mt-3  text-center w-full'
+            style={[
+              styles.text_sm2,
+              {
+                fontSize: actuatedNormalize(18),
+                lineHeight: actuatedNormalizeVertical(18 * 1.5),
+              },
+            ]}
+          >
+            {route.params?.matno}
+          </Text>
+        </View>
         <View className='h-[50vh] self-start px-[5vw] flex justify-around'>
           <SelectComponent
             title={"Tasks:"}

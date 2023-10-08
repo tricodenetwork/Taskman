@@ -12,7 +12,6 @@ import {
 } from "../../store/slice-reducers/ActiveJob";
 import SelectComponent from "../../components/SelectComponent";
 import { AccountRealmContext } from "../../models";
-import { holiday } from "../../models/Account";
 import Background from "../../components/Background";
 import { useCallback } from "react";
 import { useRoute } from "@react-navigation/native";
@@ -24,19 +23,18 @@ import { setMulti, resetMulti } from "../../store/slice-reducers/App";
 import { sendPushNotification } from "../../api/Functions";
 import useRealmData from "../../hooks/useRealmData";
 import { batch } from "react-redux";
+import { current } from "@reduxjs/toolkit";
 
-const { useRealm, useQuery } = AccountRealmContext;
+const { useRealm } = AccountRealmContext;
 
 export default function IndividualTask({ navigation }) {
   const { currenttask, handler } = useSelector((state) => state.ActiveJob);
-  const { isWeekend, isAllowedTime } = useSelector((state) => state.app);
   const [visible, setVisible] = useState(false);
   const route = useRoute();
   const realm = useRealm();
 
-  const { pushToken, tasks, Accounts, ActiveJobs, activeJob,globe } = useRealmData(
-    route.params
-  );
+  const { pushToken, tasks, Accounts, ActiveJobs, activeJob, globe } =
+    useRealmData(route.params);
   const dispatch = useDispatch();
   const datas = Array.from(ActiveJobs);
   const { user } = useSelector((state) => state);
@@ -44,42 +42,33 @@ export default function IndividualTask({ navigation }) {
   const inProgress = activeJob?.tasks.filter(
     (item) => item.name == route.params?.taskName
   )[0].inProgress;
-  const holidas = useQuery(holiday);
-  const isTodayHoliday = holidas.some((holiday) => {
-    const holidayDate = new Date(holiday.day);
-    const today = new Date();
-
-    return (
-      holidayDate.getFullYear() === today.getFullYear() &&
-      holidayDate.getMonth() === today.getMonth() &&
-      holidayDate.getDate() === today.getDate()
+  const item =
+    route.params?.id &&
+    realm.objectForPrimaryKey(
+      "activejob",
+      Realm.BSON.ObjectId(route.params?.id)
     );
-  });
-    const item = route.params?.id && realm.objectForPrimaryKey("activejob", Realm.BSON.ObjectId(route.params?.id));
 
-   const updateTime = useCallback(
+  const updateTime = useCallback(
     (item) => {
-      const TimeExist = globe !== undefined
-
+      const TimeExist = globe !== undefined;
 
       if (TimeExist) {
         globe.update_time = new Date();
-        globe.mut = Date.now()
+        globe.mut = Date.now();
         return;
       }
-        const newUpdate = { update_time: new Date(),
-        mut:Date.now()
-        };
-        try {
-          return new global(realm, newUpdate);
-        } catch (error) {
-          console.log({ error, msg: "Error updatig time" });
-        }
+      const newUpdate = { update_time: new Date(), mut: Date.now() };
+      try {
+        return new global(realm, newUpdate);
+      } catch (error) {
+        console.log({ error, msg: "Error updatig time" });
+      }
     },
     [realm]
   );
-  
-    const resetFields = () => {
+
+  const resetFields = () => {
     batch(() => {
       dispatch(setCurrentTask(""));
       dispatch(setHandler(""));
@@ -121,13 +110,15 @@ export default function IndividualTask({ navigation }) {
           });
           alert("Task Activated! ✔");
         }
-        updateTime()
+        updateTime();
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
       }
     });
-
-    // navigation.navigate("activetasks", { id: route.params?.id });
+    resetFields();
+    dispatch(resetMulti());
+    route.params?.taskName &&
+      navigation.navigate("activetasks", { id: route.params?.id });
   }, [
     realm,
     currenttask,
@@ -141,8 +132,8 @@ export default function IndividualTask({ navigation }) {
       alert("No task to assign");
       return;
     }
-    if(handler=="" && !route.params?.taskHandler){
-      alert("No handler chosen")
+    if (handler == "" && !route.params?.taskHandler) {
+      alert("No handler chosen");
       return;
     }
     if (handler == "" && !route.params?.taskHandler) {
@@ -172,8 +163,8 @@ export default function IndividualTask({ navigation }) {
             }
           });
           handler == ""
-            ? alert(`${route.params.taskName} 📃 Unassigned `)
-            : alert(`${route.params.taskName} 📃 assign to ${handler} 👤 `);
+            ? alert(`${currenttask} 📃 Unassigned `)
+            : alert(`${currenttask} 📃 assign to ${handler} 👤 `);
           return;
         } else {
           activeJob?.tasks.map((task) => {
@@ -199,7 +190,7 @@ export default function IndividualTask({ navigation }) {
             }
           });
         }
-        updateTime()
+        updateTime();
       } catch (error) {
         console.log({ error, msg: "Error Assigning next task" });
       }
@@ -208,7 +199,8 @@ export default function IndividualTask({ navigation }) {
     resetFields();
     dispatch(resetMulti());
 
-   route.params?.taskName &&  navigation.navigate("activetasks", { id: route.params?.id });
+    route.params?.taskName &&
+      navigation.navigate("activetasks", { id: route.params?.id });
   }, [
     realm,
     currenttask,
@@ -234,31 +226,31 @@ export default function IndividualTask({ navigation }) {
   return (
     <Background bgColor=''>
       <View className=' h-[90%] pt-[5vh] self-center flex justify-between items-center'>
-        <View className="w-screen">
+        <View className='w-screen'>
           <Text
-          className='self-center mb-3  text-center w-full'
-          style={[
-            styles.text_sm2,
-            {
-              fontSize: actuatedNormalize(20),
-              lineHeight: actuatedNormalizeVertical(20 * 1.5),
-            },
-          ]}
-        >
-          {item?.matno}
-        </Text>
+            className='self-center  text-center '
+            style={[
+              styles.text_sm2,
+              {
+                fontSize: actuatedNormalize(20),
+                lineHeight: actuatedNormalizeVertical(20 * 1.5),
+              },
+            ]}
+          >
+            Assign Task
+          </Text>
           <Text
-          className='self-center  text-center '
-          style={[
-            styles.text_sm2,
-            {
-              fontSize: actuatedNormalize(20),
-              lineHeight: actuatedNormalizeVertical(20 * 1.5),
-            },
-          ]}
-        >
-          Assign Task
-        </Text>
+            className='self-center mt-3  text-center w-full'
+            style={[
+              styles.text_sm2,
+              {
+                fontSize: actuatedNormalize(18),
+                lineHeight: actuatedNormalizeVertical(18 * 1.5),
+              },
+            ]}
+          >
+            {item?.matno}
+          </Text>
         </View>
 
         <View className='h-[50vh]   px-[5vw] flex justify-around'>
@@ -272,14 +264,18 @@ export default function IndividualTask({ navigation }) {
             placeholder={"Assign Next Task"}
           />
           <SelectComponent
-          value={route.params?.taskHandler}
+            value={route.params?.taskHandler}
             title={"Handler:"}
             placeholder={"Assign Next Handler"}
-            data={route.params?.taskHandler? null:Accounts.filter(
-              (obj) =>
-                obj.role == "Handler" &&
-                obj.category?.name == user.category.name
-            )}
+            data={
+              route.params?.taskHandler
+                ? null
+                : Accounts.filter(
+                    (obj) =>
+                      obj.role == "Handler" &&
+                      obj.category?.name == user.category.name
+                  )
+            }
             setData={(params) => {
               dispatch(setHandler(params));
             }}
@@ -324,11 +320,7 @@ export default function IndividualTask({ navigation }) {
           className='flex justify-between align-bottom w-[75vw]  self-center flex-row'
         >
           <OdinaryButton
-            disabled={
-              inProgress || isWeekend || !isAllowedTime || isTodayHoliday
-                ? true
-                : false
-            }
+            disabled={inProgress ? true : false}
             text='Activate'
             navigate={Activate}
             bg={"#8AD0AB"}

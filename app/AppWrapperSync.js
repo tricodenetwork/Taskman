@@ -9,6 +9,26 @@ import SplashScreen from "./components/SplashScreen";
 
 export const AppWrapperSync = ({ appId }) => {
   const { RealmProvider } = AccountRealmContext;
+  function update(subs, realm) {
+    const subscriptionConfigs = [
+      { object: realm.objects("account"), name: "Acounts" },
+      { object: realm.objects("activejob"), name: "ActiveJobs" },
+      { object: realm.objects("client"), name: "Client" },
+      // Add more subscription configurations as needed
+    ];
+
+    const subscriptionPromises = subscriptionConfigs.map(({ object, name }) => {
+      return subs.add(object, { name });
+    });
+
+    Promise.all(subscriptionPromises)
+      .then((data) => {
+        console.log("All subscriptions added successfully", data);
+      })
+      .catch((error) => {
+        console.error("Failed to add subscriptions:", error);
+      });
+  }
 
   // If we are logged in, add the sync configuration the the RealmProvider and render the app
   return (
@@ -19,30 +39,7 @@ export const AppWrapperSync = ({ appId }) => {
             fallback={SplashScreen}
             sync={{
               flexible: true,
-              initialSubscriptions: {
-                update(subs, realm) {
-                  const subscriptionConfigs = [
-                    { object: realm.objects("account"), name: "Acounts" },
-                    { object: realm.objects("activejob"), name: "ActiveJobs" },
-                    { object: realm.objects("client"), name: "Client" },
-                    // Add more subscription configurations as needed
-                  ];
-
-                  const subscriptionPromises = subscriptionConfigs.map(
-                    ({ object, name }) => {
-                      return subs.add(object, { name });
-                    }
-                  );
-
-                  Promise.all(subscriptionPromises)
-                    .then(() => {
-                      console.log("All subscriptions added successfully");
-                    })
-                    .catch((error) => {
-                      console.error("Failed to add subscriptions:", error);
-                    });
-                },
-              },
+              initialSubscriptions: { update },
 
               onError: console.error,
             }}
@@ -58,6 +55,7 @@ export const AppWrapperSync = ({ appId }) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    backgroundColor: "#1F271B",
   },
 });
 

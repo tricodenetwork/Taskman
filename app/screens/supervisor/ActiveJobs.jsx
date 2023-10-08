@@ -26,7 +26,7 @@ export default function ActiveJobs({ navigation }) {
   const Focus = useIsFocused();
   const activeJobs = useQuery(activejob);
   const hols = useQuery(holiday);
-  const updateCondition = useQuery(global)[0]?.mut
+  const updateCondition = useQuery(global)[0]?.mut;
 
   function calculateRemainingTime(duration, item) {
     // Check if the task is completed
@@ -121,10 +121,9 @@ export default function ActiveJobs({ navigation }) {
     });
     console.log("updating");
     setUpdate(true);
-    dispatch(setUpdateCon(updateCondition))
-  }
-  console.log(updateCon);
-
+    dispatch(setUpdateCon(updateCondition));
+  };
+  // console.log("test-re-render", updateCon);
 
   useEffect(() => {
     dispatch(setSearch(""));
@@ -180,21 +179,10 @@ export default function ActiveJobs({ navigation }) {
       {user.role !== "Client" && (
         <LowerButton
           style={"w-[90vw]"}
-          // disabled={
-          //   isWeekend || isTodayHoliday || !isAllowedTime ? true : false
-          // }
           navigate={() => {
             navigation.navigate("ActivateJob");
           }}
-          text={
-            // isTodayHoliday
-            //   ? "Public Holiday"
-            //   : isWeekend || !isAllowedTime
-            //   ? "Outside working hours"
-            //   :
-            "Activate"
-          }
-          p
+          text={"Add Job"}
         />
       )}
     </Background>
